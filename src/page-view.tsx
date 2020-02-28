@@ -4,7 +4,7 @@ import { View } from "@tarojs/components";
 export class PageView extends React.Component {
     render() {
         return <View className="page-view">
-            {this.props.children}
+            <View className="body">{this.props.children}</View>
         </View>
     }
 }
