@@ -1,0 +1,14 @@
+{
+  "name": "taro-builder-core",
+  "version": "1.0.1",
+  "dependencies": {
+    "@tarojs/components": "^3.0.0-alpha.5",
+    "@types/react": "^16.9.23"
+  },
+  "files": [
+    "out",
+    "src",
+    "index.d.ts",
+    "index.js"
+  ]
+}
