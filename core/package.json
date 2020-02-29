@@ -3,7 +3,7 @@
     "version": "1.0.2",
     "dependencies": {
         "@tarojs/components": "^3.0.0-experimental.5",
-        "@tarojs/taro": "^2.0.5",
+        "@tarojs/taro": "^3.0.0-alpha.5",
         "jueying-core": "file:../../jueying-core",
         "taro-ui": "^2.0.0-beta.2"
     },
