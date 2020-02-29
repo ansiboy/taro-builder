@@ -1,5 +1,5 @@
 {
-  "name": "test1",
+  "name": "sample-app",
   "version": "1.0.0",
   "private": true,
   "description": "",
@@ -35,10 +35,12 @@
   "dependencies": {
     "@babel/runtime": "^7.7.7",
     "@tarojs/components": "3.0.0-alpha.5",
+    "@tarojs/react": "3.0.0-alpha.5",
     "@tarojs/runtime": "3.0.0-alpha.5",
     "@tarojs/taro": "3.0.0-alpha.5",
-    "@tarojs/react": "3.0.0-alpha.5",
-    "react": "^16.10.0"
+    "@tarojs/webpack-runner": "^2.0.5",
+    "react": "^16.10.0",
+    "taro-builder-core": "^1.0.2"
   },
   "devDependencies": {
     "@types/webpack-env": "^1.13.6",

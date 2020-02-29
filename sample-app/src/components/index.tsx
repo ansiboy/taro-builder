@@ -1,2 +1,2 @@
 export * from "./carousel/component";
-export * from "./html-editor/component";
+export * from "./html-view/component";

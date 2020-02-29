@@ -1,5 +1,5 @@
 const config = {
-  projectName: 'test1',
+  projectName: 'sample-app',
   date: '2020-2-28',
   designWidth: 750,
   deviceRatio: {
@@ -68,6 +68,10 @@ const config = {
 }
 
 module.exports = function (merge) {
+
+  const path = require("path");
+  config.outputRoot = path.join("dist", process.env.TARO_ENV);
+  
   if (process.env.NODE_ENV === 'development') {
     return merge({}, config, require('./dev'))
   }
