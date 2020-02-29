@@ -49,7 +49,7 @@ export class CompoenntParser {
         let children = (componentData.children || []).map(c => this.createComponent(c));
 
         let props = (componentData.props || {}) as any;
-        let name = componentData.type;
+        let name = componentData.typeName;
         let compoenntType = this.compoenntTypes[name];
 
         if (compoenntType == null) {
