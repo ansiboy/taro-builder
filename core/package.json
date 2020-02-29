@@ -3,6 +3,7 @@
     "version": "1.0.2",
     "dependencies": {
         "@tarojs/components": "^3.0.0-experimental.5",
+        "jueying-core": "file:../../jueying-core",
         "taro-ui": "^2.2.4"
     },
     "main": "./dist/index.js",
