@@ -1,9 +1,9 @@
 
-import { ComponentData } from "./component-data";
 import React = require("react");
+import { CompoenntFactory, ComponentData } from "jueying-core";
 import { View } from "@tarojs/components";
 
-type compoenntTypes = { [name: string]: typeof React.Component|React.ComponentType};
+// type compoenntTypes = { [name: string]: typeof React.Component | React.ComponentType };
 
 
 let errors = {
@@ -21,42 +21,36 @@ let errors = {
     }
 }
 
-export class CompoenntParser {
-    private compoenntTypes: compoenntTypes;
+export class CompoenntParser extends CompoenntFactory {
 
-    constructor(compoenntTypes: compoenntTypes) {
-        this.compoenntTypes = compoenntTypes;
-    }
+    // constructor(compoenntTypes: compoenntTypes) {
+    //     super(compoenntTypes);
+    // }
 
     parse(componentData: ComponentData) {
-        try {
-            return this.createComponent(componentData);
-        }
-        catch (e) {
-            let err: Error = e;
-            return <View>
-                <View>Error:</View>
-                <View>{err.message}</View>
-            </View>
-        }
+        return super.createComponent(componentData);
     }
 
-    private createComponent(componentData: ComponentData | string) {
-
-        if (typeof componentData == "string")
-            return componentData;
-
-        let children = (componentData.children || []).map(c => this.createComponent(c));
-
-        let props = (componentData.props || {}) as any;
-        let name = componentData.typeName;
-        let compoenntType = this.compoenntTypes[name];
-
-        if (compoenntType == null) {
-            throw errors.componentNotExists(name);
-        }
-
-        let r = React.createElement(compoenntType, props, children);
-        return r;
+    createViewComponent(props?: any, ...children: React.ReactNode[]) {
+        return React.createElement(View, props, ...children) as any;
     }
+
+    // private createComponent(componentData: ComponentData | string) {
+
+    //     if (typeof componentData == "string")
+    //         return componentData;
+
+    //     let children = (componentData.children || []).map(c => this.createComponent(c));
+
+    //     let props = (componentData.props || {}) as any;
+    //     let name = componentData.typeName;
+    //     let compoenntType = this.compoenntTypes[name];
+
+    //     if (compoenntType == null) {
+    //         throw errors.componentNotExists(name);
+    //     }
+
+    //     let r = React.createElement(compoenntType, props, children);
+    //     return r;
+    // }
 }

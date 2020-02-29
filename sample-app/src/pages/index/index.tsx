@@ -22,7 +22,7 @@ export default class Index extends React.Component<{}, State> {
       pageData: {
         type: "PageView",
         props: { className: "view1" }, children: [
-          { type: "View", props: { key: "view1" }, children: ["Hello World!!!"] },
+          { type: "View", props: { key: "view1" }, children: ["Hello World"] },
           { type: "Carousel", props: { key: "carousel1" } },
           { type: "HTMLView", props: { key: "htmlView1", content: "<b>ABC</b>", } }
         ],
