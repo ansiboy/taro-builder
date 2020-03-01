@@ -1,4 +1,4 @@
-import { component } from "taro-builder-core/out/decorators";
+import { component } from "jueying-core/decorators";
 import { View, Swiper, SwiperItem } from "@tarojs/components";
 import React from "react";
 

@@ -12,18 +12,3 @@ export let taroComponents = {
     // 表单组件
     Button, Checkbox,
 };
-
-import {
-    AtIcon, AtButton, AtTabs,
-    AtAvatar, AtBadge, AtCountdown, AtCurtain, AtLoadMore, AtNoticebar,
-    AtTag, AtTimeline, AtDivider, AtSteps, AtActionSheet, AtActivityIndicator
-} from "taro-ui";
-
-export let tarouiComponents = {
-    // 基础组件
-    AtIcon, AtButton, AtTabs,
-    // 视图组件
-    AtAvatar, AtBadge, AtCountdown, AtCurtain, AtLoadMore, AtNoticebar,
-    AtTag, AtTimeline, AtDivider, AtSteps, AtActionSheet, AtActivityIndicator
-};
-

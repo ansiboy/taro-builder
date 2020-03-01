@@ -32,7 +32,7 @@ type Nodes = Array<HTMLText | HTMLNode>;
 
 import React, { Component } from "react";
 import { View, RichText } from "@tarojs/components";
-import { component } from "taro-builder-core/out/decorators";
+import { component } from "jueying-core/decorators";
 import { HTMLParser } from "./htmlparser";
 
 @component({ displayName: "编辑器", icon: "icon-list-alt", introduce: "HTML 编辑器，用于编辑 HTML 文本" })

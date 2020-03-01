@@ -1,11 +1,27 @@
 {
     "compilerOptions": {
-        "jsx": "react",
+        "allowSyntheticDefaultImports": false,
+        "jsx": "preserve",
         "experimentalDecorators": true,
         "target": "es2017",
-        "module": "commonjs",
-        "declaration": true,
+        "declaration": false,
+        "esModuleInterop": true,
+        "useDefineForClassFields": false,
+        "preserveSymlinks": true,
+        "pretty": false,
+        "baseUrl": "../",
         "outDir": "../out",
-        "esModuleInterop": true
-    }
+        "paths": {
+            "csstype": [
+                "node_modules/csstype/index.d.ts"
+            ],
+            "jueying-core": [
+                "node_modules/jueying-core/index.d.ts"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }

@@ -1,21 +1,20 @@
 {
     "name": "taro-builder-core",
     "version": "1.0.2",
+    "types": "out/index.d.ts",
+    "scripts": {
+        "build": "grunt"
+    },
     "dependencies": {
-        "@tarojs/components": "^3.0.0-experimental.5",
+        "@tarojs/components": "^3.0.0-alpha.5",
         "@tarojs/taro": "^3.0.0-alpha.5",
         "jueying-core": "file:../../jueying-core",
         "taro-ui": "^2.0.0-beta.2"
     },
-    "main": "./dist/index.js",
-    "types": "./out/index.d.ts",
     "files": [
         "out",
         "src",
         "dist"
     ],
-    "devDependencies": {
-        "@types/react": "^16.9.23",
-        "webpack": "^4.41.6"
-    }
+    "devDependencies": {}
 }
