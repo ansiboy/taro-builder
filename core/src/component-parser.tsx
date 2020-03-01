@@ -1,9 +1,13 @@
 
 import * as React from "react";
-import { ComponentFactory } from "jueying-core";
+import { ComponentFactory, CompoenntTypes } from "jueying-core";
 import { View } from "@tarojs/components";
+import { taroComponents } from "./taro-components";
 
 export class TaroComponentFactory extends ComponentFactory {
+    constructor(compoenntTypes?: CompoenntTypes) {
+        super(Object.assign(taroComponents, compoenntTypes))
+    }
     createViewComponent(props, ...children) {
         return React.createElement(View, props, ...children);
     }

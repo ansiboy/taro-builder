@@ -1,8 +1,9 @@
-import { Component } from "react";
 import { View } from "@tarojs/components";
 import React from "react";
+import { component } from "jueying-core/decorators";
 
-export class PageView extends Component {
+@component()
+export class PageView extends React.Component {
     render() {
         return <View className="page-view">
             <View className="header">

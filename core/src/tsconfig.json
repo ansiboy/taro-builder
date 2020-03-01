@@ -4,11 +4,10 @@
         "jsx": "preserve",
         "experimentalDecorators": true,
         "target": "es2017",
-        "declaration": false,
+        "declaration": true,
         "esModuleInterop": true,
         "useDefineForClassFields": false,
         "preserveSymlinks": true,
-        "pretty": false,
         "baseUrl": "../",
         "outDir": "../out",
         "paths": {
@@ -17,6 +16,9 @@
             ],
             "jueying-core": [
                 "node_modules/jueying-core/index.d.ts"
+            ],
+            "@tarojs/components":[
+                "node_modules/@tarojs/components/types/index.d.ts"
             ]
         }
     },

@@ -1,11 +1,11 @@
 
 import { Carousel } from "./carousel/component";
 import { HTMLView } from "./html-view/component";
-import { PageView } from "./page-view";
 import { TaroComponentFactory, taroComponents } from "taro-builder-core";
+import { PageView } from "./page-view";
 
 let c = Object.assign({
-    PageView, Carousel, HTMLView
-}, taroComponents);
+    PageView, Carousel, HTMLView,
+});
 
-export let parser = new TaroComponentFactory(c);
+export let factory = new TaroComponentFactory(c);
