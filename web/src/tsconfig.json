@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "target": "es6",
+        "module": "commonjs",
+        "outDir": "../out",
+        "declaration": true,
+        "jsx": "preserve",
+        "allowUnusedLabels": true,
+        "allowUmdGlobalAccess": true,
+   
+    },
+    "exclude": [
+        "sample-app"
+    ]
+}
