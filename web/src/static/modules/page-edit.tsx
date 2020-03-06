@@ -5,10 +5,10 @@ import { buttonOnClick } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../services/local-service";
 import { guid } from "maishu-toolkit";
-import { ComponentData } from "maishu-jueying";
+import { ComponentData, ComponentDataHandler } from "maishu-jueying";
 
 interface State {
-    pageRecord: PageRecord
+    // componentDataHandler: ComponentDataHandler
 }
 
 interface Props extends PageProps {
@@ -18,25 +18,29 @@ interface Props extends PageProps {
 export default class PageEdit extends React.Component<Props, State> {
 
     private localService: LocalService;
+    private componentDataHandler: ComponentDataHandler;
 
     constructor(props) {
         super(props);
 
-        this.state = { pageRecord: this.emptyPageDataRecord() };
+        this.componentDataHandler = this.emptyComponentDataHandler();
+        this.state = {};
         this.localService = this.props.createService(LocalService);
     }
 
     async save(): Promise<any> {
+        let pageData = this.componentDataHandler.pageData;
+        let recored = { id: this.props.data.id, pageData, } as PageRecord;
         if (this.props.data.id) {
-            await this.localService.updatePageRecord(this.state.pageRecord);
+            await this.localService.updatePageRecord(recored);
         }
         else {
-            await this.localService.addPageRecord(this.state.pageRecord);
+            await this.localService.addPageRecord(recored);
         }
     }
 
-    private emptyPageDataRecord(): PageRecord {
-        let pageData: PageRecord = {
+    private emptyComponentDataHandler(): ComponentDataHandler {
+        let record: PageRecord = {
             id: guid(),
             pageData: {
                 children: [],
@@ -47,14 +51,14 @@ export default class PageEdit extends React.Component<Props, State> {
             createDateTime: new Date()
         };
 
-        return pageData;
+        return new ComponentDataHandler(record.pageData);
     }
 
     componentDidMount() {
         let s = this.props.createService(LocalService);
         if (this.props.data.id) {
             s.getPageData(this.props.data.id as string).then(d => {
-                this.setState({ pageRecord: d });
+                this.componentDataHandler.pageData = d.pageData;
             })
         }
     }
@@ -64,8 +68,8 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     render() {
-        let { pageRecord: pageData } = this.state;
-        return <DesignView {...this.props} pageRecord={pageData}>
+        // let { componentDataHandler } = this.state;
+        return <DesignView {...this.props} componentDataHandler={this.componentDataHandler}>
             <ul style={{ height: 32, margin: 0, padding: 0 }}>
                 <li className="pull-right">
                     <button className="btn btn-sm btn-primary">

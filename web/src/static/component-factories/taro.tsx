@@ -1,7 +1,7 @@
 import Nerv from "nervjs";
 import { Component } from "@tarojs/taro";
 import { View, Text } from '@tarojs/components';
-import { ComponentData, ComponentFactory, PageDesigner, Context } from "maishu-jueying";
+import { ComponentData, ComponentFactory, PageDesigner, Context, ComponentDataHandler } from "maishu-jueying";
 import * as components from "../components/index";
 import { errors } from "../../errors";
 import { Callbacks } from "maishu-chitu-service";
@@ -12,15 +12,15 @@ export class TaroComponentFactory extends ComponentFactory {
     private pageView: PageView;
 
     renderDesignTimeComponent(componentData: ComponentData, element: HTMLElement, context: Context) {
-
+        debugger
         if (componentData == null) throw errors.argumentNull("compentData");
         if (element == null) throw errors.argumentNull("element");
         if (context == null) throw errors.argumentNull("context");
 
-        console.assert(context != null && context.designer != null);
+        console.assert(context != null && context.handler != null);
         let e = Nerv.createElement(PageView, {
             pageData: componentData,
-            designer: context.designer,
+            designer: context.handler,
             ref: (e: PageView) => {
                 if (!e || this.pageView == e) return;
                 this.pageView = e;
@@ -35,39 +35,41 @@ export class TaroComponentFactory extends ComponentFactory {
         throw new Error("not implement.");
     }
 
-   private onPageViewCreated(context: Context) {
+    private onPageViewCreated(context: Context) {
         let componentDidMount = this.pageView.componentDidMount;
         this.pageView.componentDidMount = () => {
             if (componentDidMount != null)
                 componentDidMount.apply(this.pageView);
 
-            this.enableDrapDrop(this.pageView, context.designer);
+            this.enableDrapDrop(this.pageView, context.handler);
         }
 
         this.pageView.componentCreated.add((sender, element, componentData) => {
             element.onclick = () => {
-                context.designer.selectComponent(componentData.props.id);
+                context.handler.selectComponent(componentData.props.id);
             }
             element.onkeydown = (ev) => {
                 const DELETE_KEY_CODE = 46;
                 if (ev.keyCode == DELETE_KEY_CODE) {
-                    context.designer.removeComponent(componentData.props.id);
+                    context.handler.removeComponent(componentData.props.id);
                 }
             }
         })
     }
 
-    private enableDrapDrop(pageView: PageView, designer: PageDesigner) {
+    private enableDrapDrop(pageView: PageView, designer: ComponentDataHandler) {
 
         if (pageView.element.className.indexOf("ui-sortable") >= 0)
             return;
 
         let props: PageViewProps = (pageView as any).props;
-        let pageData = props.pageData;
+        // let pageData = props.pageData;
 
         $(pageView.element).sortable({
             axis: "y",
             stop: () => {
+
+                let pageData = pageView.props.pageData;
                 //==============================================================================================
                 // 对组件进行排序
                 console.assert(pageData.children != null);
@@ -96,6 +98,7 @@ export class TaroComponentFactory extends ComponentFactory {
 
             },
             receive: (event, ui) => {
+                let pageData = pageView.props.pageData;
                 let componentData: ComponentData = JSON.parse(ui.helper.attr("component-data"));
                 console.assert(pageData.props.id);
                 componentData.props.parentId = pageData.props.id;

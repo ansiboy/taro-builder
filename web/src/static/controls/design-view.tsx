@@ -5,9 +5,6 @@ import { ComponentPanel } from "./component-panel";
 import { Application } from "maishu-chitu-react";
 import { Less } from "maishu-ui-toolkit";
 import { LocalService } from "../services/local-service";
-import { PageRecord } from "../../entities";
-import { ComponentLoader } from "./component-loader";
-import { errorHandle } from "maishu-chitu-admin/static";
 import { contextName } from "json!websiteConfig";
 import { loadingElement } from "../common";
 import * as ui from "maishu-ui-toolkit";
@@ -16,17 +13,18 @@ import "../component-editors/carousel";
 import "../component-editors/html-editor";
 import { componentRenders } from "../component-renders/index";
 
-// type PartialPageDataRecord = { [P in "id" | "pageData" | "name" | "type"]: WebPage[P] };
 interface Props {
     app: Application,
-    pageRecord: PageRecord,
+    // pageRecord: PageRecord,
+    componentDataHandler: ComponentDataHandler,
     hideToolbar?: boolean,
     hideEditorPanel?: boolean,
     hidePageSettingPanel?: boolean,
 }
 
 interface State {
-    pageData: ComponentData,
+    // pageData: ComponentData,
+    componentDataHandler: ComponentDataHandler,
     componentLoaded: boolean,
 }
 
@@ -39,26 +37,24 @@ export class DesignView extends React.Component<Props, State> {
 
     private static initComponents = false;
 
-    // private componentCreated = Callbacks<DesignView>()
     private editorPanel: EditorPanel;
     private componentFacotry: ComponentFactory;
     private designer: PageDesigner;
-    private componentDataHandler: ComponentDataHandler;
 
     constructor(props: Props) {
         super(props)
 
         this.state = {
-            pageData: this.props.pageRecord.pageData, componentLoaded: false
+            componentDataHandler: this.props.componentDataHandler, componentLoaded: true
         };
 
-        this.componentDataHandler = new ComponentDataHandler(this.props.pageRecord.pageData);
+        // this.componentDataHandler = new ComponentDataHandler(this.props.pageRecord.pageData);
 
-        ComponentLoader.loadPageCompontents(this.state.pageData).then(() => {
-            this.setState({ componentLoaded: true });
-        }).catch(err => {
-            errorHandle(err);
-        });
+        // ComponentLoader.loadPageCompontents(this.state.pageData).then(() => {
+        //     this.setState({ componentLoaded: true });
+        // }).catch(err => {
+        //     errorHandle(err);
+        // });
 
         this.componentFacotry = new TaroComponentFactory();
         this.localService = this.props.app.createService(LocalService as any) as any;
@@ -86,13 +82,13 @@ export class DesignView extends React.Component<Props, State> {
         // this.componentCreated.add(() => this.onComponentCreated());
     }
 
-    static getDerivedStateFromProps(nextProps: Props, preState: State) {
-        return { pageData: nextProps.pageRecord.pageData } as State;
+    static getDerivedStateFromProps(nextProps: Props) {
+        return { componentDataHandler: nextProps.componentDataHandler } as State;
     }
 
     preivew() {
-        let { pageRecord: pageDataRecord } = this.props;
-        let pageData: ComponentData = pageDataRecord.pageData;
+        let { componentDataHandler } = this.props;
+        let pageData: ComponentData = componentDataHandler.pageData;
         console.assert(pageData != null);
 
         let hasChanged = false;
@@ -102,7 +98,7 @@ export class DesignView extends React.Component<Props, State> {
         }
 
         let mobilePath = this.localService.url("mobile");
-        let url = `${mobilePath}?appKey=${this.localService.applicationId}#page?id=${pageDataRecord.id}`;
+        let url = `${mobilePath}?appKey=${this.localService.applicationId}#page?id=${this.props.app.currentPage.data.id}`;
         open(url, '_blank');
     }
 
@@ -140,6 +136,7 @@ export class DesignView extends React.Component<Props, State> {
 
         //==========================================================================================
         // 设置组件工具栏
+
         let componentInfos: ComponentInfo[] = await this.localService.componentInfos(); //getComponentInfos(this.props.app);
         console.assert(componentInfos != null);
         componentInfos = componentInfos.filter(o => o.displayName != null);
@@ -155,18 +152,16 @@ export class DesignView extends React.Component<Props, State> {
             introduce: o.introduce
         }) as ComponentDefine)
         this.componentPanel.setComponets(components);
+
         //==========================================================================================
 
         let pageViewElement = this.designer.element.querySelector(".page-view");
         console.assert(pageViewElement != null);
         this.componentPanel.addDropTarget(pageViewElement);
-        // this.editorPanel.designer = this.designer;
     }
 
-
-
     render() {
-        let { pageData, componentLoaded } = this.state;
+        let { componentDataHandler, componentLoaded } = this.state;
         if (!componentLoaded) {
             return loadingElement;
         }
@@ -183,8 +178,7 @@ export class DesignView extends React.Component<Props, State> {
                 <div className="screen mobile-page">
                     <PageDesigner context={{ app: this.props.app }}
                         componentFactory={this.componentFacotry}
-                        pageData={pageData}
-                        componentDataHandler={this.componentDataHandler}
+                        componentDataHandler={componentDataHandler}
                         ref={e => {
                             if (this.designer != null || e == null)
                                 return;
@@ -212,7 +206,7 @@ export class DesignView extends React.Component<Props, State> {
                                         显示导航菜单</div>
                                     <label className="switch">
                                         <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                            checked={this.hasMenu(pageData)}
+                                            checked={this.hasMenu(componentDataHandler.pageData)}
                                             onChange={() => this.setMenu()} />
                                         <span className="lbl middle"></span>
                                     </label>
@@ -222,7 +216,7 @@ export class DesignView extends React.Component<Props, State> {
                                         显示购物车结算栏</div>
                                     <label className="switch">
                                         <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                            checked={this.hasSettleBar(pageData)}
+                                            checked={this.hasSettleBar(componentDataHandler.pageData)}
                                             onChange={() => this.setSettleBar()} />
                                         <span className="lbl middle"></span>
                                     </label>
@@ -242,7 +236,7 @@ export class DesignView extends React.Component<Props, State> {
                             }} />
                         </>}
                         {this.props.hideEditorPanel ? null :
-                            <EditorPanel designer={this.componentDataHandler} className="well" customRender={(a, b) => this.customRender(a, b)}
+                            <EditorPanel designer={componentDataHandler} className="well" customRender={(a, b) => this.customRender(a, b)}
                                 ref={e => {
                                     if (this.editorPanel != null || e == null)
                                         return;
@@ -254,18 +248,11 @@ export class DesignView extends React.Component<Props, State> {
                     </div>
                 </div>
             </div>
-        </React.Fragment >
+        </React.Fragment>
     }
 
 }
 
-async function loadEditors(localService: LocalService) {
-    let files = await localService.clientFiles();
-    let editorFiles = files.filter(o => o.startsWith("components") && o.endsWith(".js") && o.indexOf("editor") >= 0)
-        .map(o => o.substring(0, o.length - ".js".length));
-
-    editorFiles.forEach(path => requirejs({ context: contextName }, [path]));
-}
 
 async function loadLessFiles(localService: LocalService) {
     let files = await localService.clientFiles();

@@ -18,7 +18,7 @@ export default class PageList extends DataListPage<PageRecord> {
             <span>添加</span>
         </button>
     }
-
+    
     protected getEditButton(dataItem: PageRecord) {
         return <button className="btn btn-minier btn-info"
             onClick={() => this.executeEdit(dataItem)}>

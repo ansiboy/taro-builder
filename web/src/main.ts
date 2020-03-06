@@ -13,8 +13,8 @@ start({
         password: "81263",
         port: 3306
     },
-    // virtualPaths: {
-    //     "node_modules": path.join(__dirname, "../node_modules"),
-    //     "maishu-chitu-admin/static": null
-    // }
+    virtualPaths: {
+        "node_modules": path.join(__dirname, "../node_modules"),
+        // "maishu-chitu-admin/static": null
+    }
 })
