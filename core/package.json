@@ -1,10 +1,10 @@
 {
     "name": "taro-builder-core",
     "version": "1.0.2",
-    "types": "out/src/index.d.ts",
-    "main": "out/src/index.js",
+    "types": "out/index.d.ts",
+    "main": "out/index.js",
     "scripts": {
-        "build": "grunt --force"
+        "build": "grunt"
     },
     "dependencies": {
         "@tarojs/components": "^2.0.5",

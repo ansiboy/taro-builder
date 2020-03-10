@@ -1,4 +1,4 @@
-import { component } from "jueying-core/decorators";
+import { component } from "maishu-jueying-core/decorators";
 import { View, Swiper, SwiperItem } from "@tarojs/components";
 import React from "react";
 

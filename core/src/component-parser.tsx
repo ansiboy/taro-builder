@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { ComponentFactory, CompoenntTypes } from "jueying-core";
+import { ComponentFactory, CompoenntTypes } from "maishu-jueying-core";
 import { View } from "@tarojs/components";
 import { taroComponents } from "./taro-components";
 

@@ -4,23 +4,13 @@
         "jsx": "preserve",
         "experimentalDecorators": true,
         "target": "es2017",
+        "module": "CommonJS",
         "declaration": true,
         "esModuleInterop": true,
         "useDefineForClassFields": false,
         "preserveSymlinks": true,
         "baseUrl": "../",
-        "outDir": "../out",
-        "paths": {
-            "csstype": [
-                "node_modules/csstype/index.d.ts"
-            ],
-            "jueying-core": [
-                "node_modules/jueying-core/index.d.ts"
-            ],
-            "@tarojs/components":[
-                "node_modules/@tarojs/components/types/index.d.ts"
-            ]
-        }
+        "outDir": "../out"
     },
     "exclude": [
         "node_modules",
