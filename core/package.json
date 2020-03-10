@@ -9,7 +9,7 @@
     "dependencies": {
         "@tarojs/components": "^2.0.5",
         "@tarojs/taro": "^3.0.0-alpha.5",
-        "jueying-core": "file:../../jueying-core",
+        "maishu-jueying-core": "^1.0.3",
         "react": "^16.13.0",
         "taro-ui": "^2.0.0-beta.2"
     },
