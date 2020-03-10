@@ -12,7 +12,6 @@ export class TaroComponentFactory extends ComponentFactory {
     private pageView: PageView;
 
     renderDesignTimeComponent(componentData: ComponentData, element: HTMLElement, context: Context) {
-        debugger
         if (componentData == null) throw errors.argumentNull("compentData");
         if (element == null) throw errors.argumentNull("element");
         if (context == null) throw errors.argumentNull("context");
@@ -42,17 +41,19 @@ export class TaroComponentFactory extends ComponentFactory {
                 componentDidMount.apply(this.pageView);
 
             this.enableDrapDrop(this.pageView, context.handler);
+            this.pageView.wrapper.onkeydown = (ev) => {
+                const DELETE_KEY_CODE = 46;
+                if (ev.keyCode == DELETE_KEY_CODE) {
+                    let ids = context.handler.selectedComponents.map(c => c.id || c.id);
+                    context.handler.removeComponents(ids);
+                }
+            }
         }
 
         this.pageView.componentCreated.add((sender, element, componentData) => {
             element.onclick = () => {
-                context.handler.selectComponent(componentData.props.id);
-            }
-            element.onkeydown = (ev) => {
-                const DELETE_KEY_CODE = 46;
-                if (ev.keyCode == DELETE_KEY_CODE) {
-                    context.handler.removeComponent(componentData.props.id);
-                }
+                context.handler.selectComponent(componentData.id);
+                this.pageView.wrapper.focus();
             }
         })
     }
@@ -61,9 +62,6 @@ export class TaroComponentFactory extends ComponentFactory {
 
         if (pageView.element.className.indexOf("ui-sortable") >= 0)
             return;
-
-        let props: PageViewProps = (pageView as any).props;
-        // let pageData = props.pageData;
 
         $(pageView.element).sortable({
             axis: "y",
@@ -84,14 +82,14 @@ export class TaroComponentFactory extends ComponentFactory {
 
                     console.assert(childId != null);
 
-                    let child = pageData.children.filter((o: ComponentData) => o.props.id == childId)[0] as ComponentData;
+                    let child = pageData.children.filter((o: ComponentData) => o.id == childId)[0] as ComponentData;
                     console.assert(child != null);
 
                     childComponentDatas.push(child);
                 }
 
-                let childIds = childComponentDatas.map(o => o.props.id);
-                pageData.children = pageData.children.filter((o: ComponentData) => childIds.indexOf(o.props.id) < 0);
+                let childIds = childComponentDatas.map(o => o.id);
+                pageData.children = pageData.children.filter((o: ComponentData) => childIds.indexOf(o.id) < 0);
 
                 pageData.children.push(...childComponentDatas);
                 //==============================================================================================
@@ -100,8 +98,8 @@ export class TaroComponentFactory extends ComponentFactory {
             receive: (event, ui) => {
                 let pageData = pageView.props.pageData;
                 let componentData: ComponentData = JSON.parse(ui.helper.attr("component-data"));
-                console.assert(pageData.props.id);
-                componentData.props.parentId = pageData.props.id;
+                console.assert(pageData.id);
+                componentData.parentId = pageData.id;
                 let elementIndex: number = 0;
                 ui.helper.parent().children().each((index, element) => {
                     if (element == ui.helper[0]) {
@@ -115,17 +113,17 @@ export class TaroComponentFactory extends ComponentFactory {
                 let isLatest = elementIndex == ui.helper.parent().children().length - 1;
 
                 if (isFirst) {
-                    designer.appendComponent(pageData.props.id, componentData, 0);
+                    designer.appendComponent(pageData.id, componentData, 0);
                 }
                 else if (isLatest) {
-                    designer.appendComponent(pageData.props.id, componentData);
+                    designer.appendComponent(pageData.id, componentData);
                 }
                 else {
                     let nextComponentDataId = ui.helper.parent().children()[elementIndex].getAttribute("data-component-id");
-                    let componentIds = pageData.children.map((o: ComponentData) => o.props.id);
+                    let componentIds = pageData.children.map((o: ComponentData) => o.id);
                     let nextComponentDataIndex = componentIds.indexOf(nextComponentDataId);
                     console.assert(nextComponentDataId != null);
-                    designer.appendComponent(pageData.props.id, componentData, nextComponentDataIndex);
+                    designer.appendComponent(pageData.id, componentData, nextComponentDataIndex);
                 }
 
 
@@ -141,6 +139,7 @@ interface PageViewProps {
 
 class PageView extends Component<PageViewProps> {
     element: HTMLElement;
+    wrapper: HTMLElement;
     componentCreated = Callbacks<PageView, HTMLElement, ComponentData>();
 
     componentDidMount() {
@@ -174,20 +173,22 @@ class PageView extends Component<PageViewProps> {
     render() {
         let props: PageViewProps = this.props;
         let children = props.pageData.children as ComponentData[] || [];
-        return <ul className="page-view" ref={e => this.element = e || this.element} style={{ width: "100%", height: "100%" }}>
-            {children.length == 0 ?
-                <li className="text-center" style={{ paddingTop: 100 }}>
-                    <h4>请拖放组件到此处</h4>
-                </li> :
-                children.map(o =>
-                    <li ref={e => {
-                        if (!e) return;
-                        this.componentCreated.fire(this, e, o);
-                    }}>
-                        {this.createComponentElement(o)}
-                    </li>
-                )
-            }
-        </ul>
+        return <div tabIndex={0} ref={e => this.wrapper = e || this.wrapper} style={{ width: "100%", height: "100%" }}>
+            <ul className="page-view" ref={e => this.element = e || this.element} style={{ width: "100%", height: "100%" }}>
+                {children.length == 0 ?
+                    <li className="text-center" style={{ paddingTop: 100 }}>
+                        <h4>请拖放组件到此处</h4>
+                    </li> :
+                    children.map(o =>
+                        <li ref={e => {
+                            if (!e) return;
+                            this.componentCreated.fire(this, e, o);
+                        }}>
+                            {this.createComponentElement(o)}
+                        </li>
+                    )
+                }
+            </ul>
+        </div>
     }
 }

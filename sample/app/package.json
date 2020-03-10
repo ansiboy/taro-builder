@@ -39,7 +39,7 @@
     "@tarojs/runtime": "3.0.0-alpha.5",
     "@tarojs/taro": "3.0.0-alpha.5",
     "@tarojs/webpack-runner": "^2.0.5",
-    "jueying-core": "file:../../jueying-core",
+    "jueying-core": "file:../../../jueying-core",
     "react": "^16.10.0",
     "taro-builder-core": "file:../core",
     "taro-ui": "^2.3.0"

@@ -48,38 +48,13 @@ export class DesignView extends React.Component<Props, State> {
             componentDataHandler: this.props.componentDataHandler, componentLoaded: true
         };
 
-        // this.componentDataHandler = new ComponentDataHandler(this.props.pageRecord.pageData);
-
-        // ComponentLoader.loadPageCompontents(this.state.pageData).then(() => {
-        //     this.setState({ componentLoaded: true });
-        // }).catch(err => {
-        //     errorHandle(err);
-        // });
-
         this.componentFacotry = new TaroComponentFactory();
         this.localService = this.props.app.createService(LocalService as any) as any;
         if (!DesignView.initComponents) {
             DesignView.initComponents = true;
-            // loadEditors(this.localService);
             loadLessFiles(this.localService);
         }
 
-
-        // this.designerStore.attach(designer => {
-        //     if (!designer) return;
-        //     //==================================================================================
-        //     // 重写 designer 添加组件方法，在添加组件之前，先加载组件
-        //     let appendComponent = designer.appendComponent;
-        //     designer.appendComponent = async (parentId: string, componentData: ComponentData, componentIndex?: number) => {
-        //         await ComponentLoader.loadSingleComponent(componentData);
-        //         appendComponent.apply(designer, [parentId, componentData, componentIndex]);
-        //     }
-        //     //==================================================================================
-        //     if (this.editorPanel)
-        //         this.editorPanel.designer = designer;
-        // })
-
-        // this.componentCreated.add(() => this.onComponentCreated());
     }
 
     static getDerivedStateFromProps(nextProps: Props) {
@@ -92,7 +67,7 @@ export class DesignView extends React.Component<Props, State> {
         console.assert(pageData != null);
 
         let hasChanged = false;
-        if (hasChanged || !pageData.props.id) {
+        if (hasChanged || !pageData.id) {
             ui.alert({ title: '提示', message: `预览前必须先保存页面, 请点击"保存"按钮保存页面` });
             return;
         }

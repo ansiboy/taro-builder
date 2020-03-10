@@ -7,7 +7,7 @@ export type MyWebsiteConfig = {
 
 
 let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
-    contextName: "jueying-web",
+    contextName: "taro-builder",
     requirejs: {
         paths: {
             "maishu-jueying": "node_modules/maishu-jueying/dist/index",
