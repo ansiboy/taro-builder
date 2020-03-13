@@ -1,36 +1,40 @@
 const config = {
-  projectName: 'sample-app',
-  date: '2020-2-28',
+  projectName: 'app1',
+  date: '2020-3-11',
   designWidth: 750,
   deviceRatio: {
-    640: 2.34 / 2,
-    750: 1,
-    828: 1.81 / 2
+    '640': 2.34 / 2,
+    '750': 1,
+    '828': 1.81 / 2
   },
   sourceRoot: 'src',
   outputRoot: 'dist',
+  babel: {
+    sourceMap: true,
+    presets: [
+      ['env', {
+        modules: false
+      }]
+    ],
+    plugins: [
+      'transform-decorators-legacy',
+      'transform-class-properties',
+      'transform-object-rest-spread'
+    ]
+  },
   plugins: [],
   defineConstants: {
   },
-  copy: {
-    patterns: [
-    ],
-    options: {
-    }
-  },
-  framework: 'react',
   mini: {
     postcss: {
       pxtransform: {
         enable: true,
-        config: {
-
-        }
+        config: {}
       },
       url: {
         enable: true,
         config: {
-          limit: 1024 // 设定转换尺寸上限
+          limit: 10240 // 设定转换尺寸上限
         }
       },
       cssModules: {
@@ -63,7 +67,8 @@ const config = {
           generateScopedName: '[name]__[local]___[hash:base64:5]'
         }
       }
-    }
+    },
+    esnextModules: ['taro-ui']
   }
 }
 
