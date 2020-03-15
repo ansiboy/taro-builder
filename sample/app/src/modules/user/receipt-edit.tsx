@@ -1,11 +1,23 @@
 import Taro, { Config } from "@tarojs/taro";
 import { View, Picker, Text, Label } from "@tarojs/components";
 import { AtForm, AtButton, AtInput, AtSwitch } from "taro-ui";
+import { Service } from "../../services/service";
 
 export default class ReceiptEditPage extends Taro.Component {
 
     config: Config = {
         navigationBarTitleText: "添加地址"
+    }
+
+    constructor(props) {
+        super(props);
+
+        // http://service1.alinq.cn/UserShop/Coupon/GetStoreCouponsCount
+
+        let s = new Service();
+        s.get("http://service1.alinq.cn/UserShop/Coupon/GetStoreCouponsCount").then(r => {
+            console.log(r);
+        })
     }
 
     render() {
