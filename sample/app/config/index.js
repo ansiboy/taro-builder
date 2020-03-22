@@ -1,5 +1,5 @@
 const config = {
-  projectName: 'app1',
+  projectName: 'taro-sammple-app',
   date: '2020-3-11',
   designWidth: 750,
   deviceRatio: {
@@ -19,7 +19,16 @@ const config = {
     plugins: [
       'transform-decorators-legacy',
       'transform-class-properties',
-      'transform-object-rest-spread'
+      'transform-object-rest-spread',
+      [
+        "transform-runtime",
+        {
+          "helpers": false,
+          "polyfill": false,
+          "regenerator": true,
+          "moduleName": "babel-runtime"
+        }
+      ]
     ]
   },
   plugins: [],
@@ -76,7 +85,7 @@ module.exports = function (merge) {
 
   const path = require("path");
   config.outputRoot = path.join("dist", process.env.TARO_ENV);
-  
+
   if (process.env.NODE_ENV === 'development') {
     return merge({}, config, require('./dev'))
   }

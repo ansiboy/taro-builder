@@ -41,10 +41,7 @@ export async function start(settings: Settings) {
     console.assert(staticDirectory != null);
     serverContextData.staticRoot = staticDirectory;
 
-    // r.rootDirectory.addVirtualDirectory("static", path.join(__dirname, "static"), "merge");
-    // r.rootDirectory.addVirtualDirectory("controllers", path.join(__dirname, "controllers"), "merge");
-    // debugger
-    let componentsDirectory = staticDirectory.addVirtualDirectory(ComponentsDirectoryName, settings.componentsPhysicalPath, "replace");debugger
+    let componentsDirectory = staticDirectory.addVirtualDirectory(ComponentsDirectoryName, settings.componentsPhysicalPath, "replace");
     let items = getClientComponentInfos(componentsDirectory);
     componentInfos.push(...items);
 
