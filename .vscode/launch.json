@@ -8,8 +8,8 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/web/out/main.js",
-            "cwd": "${workspaceFolder}/web"
+            "program": "${workspaceFolder}/demo/main.js",
+            "cwd": "${workspaceFolder}/demo"
         }
     ]
 }

@@ -1,10 +1,11 @@
-import { start as startTaroBuilder, } from "../..//out/index";
-import config from "./config";
-import path = require("path");
-
-let componentsPhysicalPath = path.join(__dirname, "../app/src/components");
-startTaroBuilder({
-    port: config.port,
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../out/index");
+const config_1 = require("./config");
+const path = require("path");
+let componentsPhysicalPath = path.join(__dirname, "./app/src/components");
+index_1.start({
+    port: config_1.default.port,
     rootPhysicalPath: path.join(__dirname),
     componentsPhysicalPath: componentsPhysicalPath,
     db: {
@@ -17,4 +18,4 @@ startTaroBuilder({
     virtualPaths: {
         "node_modules": path.join(__dirname, "../node_modules")
     }
-})
+});
