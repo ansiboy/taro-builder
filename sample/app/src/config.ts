@@ -18,9 +18,10 @@ export let style = {
     emptyIconSize: 150
 }
 
+let host = "192.168.1.100:2858"
 export let config = {
-    shopUrl: "http://192.168.1.100:2858/UserShop/",
-    stockUrl: "http://192.168.1.100:2858/UserStock/",
+    shopUrl: `http://${host}/UserShop/`,
+    stockUrl: `http://${host}/UserStock/`,
 
     pageSize: 15,
 }

@@ -1,7 +1,7 @@
 import { start } from "./index";
 import path = require("path");
 
-let componentsPhysicalPath = path.join(__dirname, "../../sample-app/.temp/components");
+let componentsPhysicalPath = path.join(__dirname, "../../sample/app/src/components");//path.join(__dirname, "static/components");//path.join(__dirname, "../../sampleap/p/.temp/components");
 start({
     port: 5216,
     rootPhysicalPath: __dirname,

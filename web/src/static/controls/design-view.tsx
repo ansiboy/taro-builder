@@ -38,8 +38,9 @@ export class DesignView extends React.Component<Props, State> {
     private static initComponents = false;
 
     private editorPanel: EditorPanel;
-    private componentFacotry: ComponentFactory;
+    // private componentFacotry: ComponentFactory;
     private designer: PageDesigner;
+    private mobilePageElement: HTMLElement;
 
     constructor(props: Props) {
         super(props)
@@ -48,7 +49,7 @@ export class DesignView extends React.Component<Props, State> {
             componentDataHandler: this.props.componentDataHandler, componentLoaded: true
         };
 
-        this.componentFacotry = new TaroComponentFactory();
+        // this.componentFacotry = TaroComponentFactory;
         this.localService = this.props.app.createService(LocalService as any) as any;
         if (!DesignView.initComponents) {
             DesignView.initComponents = true;
@@ -130,7 +131,7 @@ export class DesignView extends React.Component<Props, State> {
 
         //==========================================================================================
 
-        let pageViewElement = this.designer.element.querySelector(".page-view");
+        let pageViewElement = this.mobilePageElement.querySelector(".page-view");
         console.assert(pageViewElement != null);
         this.componentPanel.addDropTarget(pageViewElement);
     }
@@ -150,10 +151,10 @@ export class DesignView extends React.Component<Props, State> {
                 <div className="camera"></div>
                 <div className="sensor"></div>
                 <div className="speaker"></div>
-                <div className="screen mobile-page">
+                <div className="screen mobile-page" ref={e => this.mobilePageElement = this.mobilePageElement || e}>
                     <PageDesigner context={{ app: this.props.app }}
-                        componentFactory={this.componentFacotry}
-                        componentDataHandler={componentDataHandler}
+                        componentFactory={(pageData) => TaroComponentFactory(pageData, { handler: componentDataHandler })}
+                        handler={componentDataHandler}
                         ref={e => {
                             if (this.designer != null || e == null)
                                 return;

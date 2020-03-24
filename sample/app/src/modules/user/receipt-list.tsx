@@ -1,15 +1,17 @@
-import Taro, { Config, useContext, Component } from '@tarojs/taro';
+import Taro, { Config, } from '@tarojs/taro';
 import { View } from '@tarojs/components';
 
 import "./receipt-list.less";
-import { AtForm, AtButton, AtListItem, AtList } from 'taro-ui';
-import { services } from '../../services';
-import { Empty } from '../../controls/empty';
+import { AtForm, AtButton } from 'taro-ui';
+
 import { events } from '../../events';
 // import { ShoppingLoading, ShoppingLoadingContext } from '../../controls/loading';
 import { DataList } from '../../controls/data-list';
 import { AtListItemProps } from 'taro-ui/types/list';
 import { dataSources } from '../../services/data-sources';
+import { tempDataItems } from '../../services/temp-data-items';
+import { Loading } from '../../controls/loading';
+import { ReceiptListItems } from './receipt-list-items';
 
 interface Props {
 
@@ -20,6 +22,8 @@ interface State {
     selectedIds: string[],
 }
 
+const dataListId = "0bf48482-5d13-fa63-36fd-8f507a45b225";
+console.log(dataListId);
 export default class ReceiptListPage extends Taro.Component<Props, State> {
 
     // static contextType = ShoppingLoadingContext;
@@ -35,7 +39,7 @@ export default class ReceiptListPage extends Taro.Component<Props, State> {
         super(props);
 
         this.state = { selectedIds: [] };
-        events.receiptInfoSave.add(args => {
+        events.receiptInfoSave.add(() => {
             // let items = this.loading.state.data || [];
             // let existsItem = items.filter(o => o.Id == args.item.Id)[0];
             // debugger
@@ -64,7 +68,7 @@ export default class ReceiptListPage extends Taro.Component<Props, State> {
         return selectedIds.indexOf(id) >= 0;
     }
 
-    outputItem(dataItem: ReceiptInfo, listItem: Component<AtListItemProps>) {
+    outputItem() {
         // return <AtListItem key={dataItem.Id} iconInfo={{ value: "check-circle", size: 18 }}
         //     title={dataItem.Name} note={this.detail(dataItem)} />
     }
@@ -78,7 +82,10 @@ export default class ReceiptListPage extends Taro.Component<Props, State> {
     render() {
         let { selectedIds } = this.state;
         return <View>
-            <DataList ref={e => this.dataList = this.dataList || e} dataSource={dataSources.receiptInfo}
+            <Loading loadData={() => dataSources.receiptInfo.select()}>
+                <ReceiptListItems />
+            </Loading>
+            {/* <DataList<ReceiptInfo> uid={dataListId} ref={e => this.dataList = this.dataList || e} dataSource={dataSources.receiptInfo}
                 itemProps={(dataItem) => {
                     let isSelected = selectedIds.indexOf(dataItem.Id) >= 0;
                     let props = {
@@ -102,7 +109,10 @@ export default class ReceiptListPage extends Taro.Component<Props, State> {
                         }
                     } as AtListItemProps;
                     return props;
-                }} />
+                }}
+            >
+                <View>{(tempDataItems[dataListId] as ReceiptInfo).Address + "ABC"}</View>
+            </DataList> */}
 
             <View className="footer">
                 <AtForm className="container">
@@ -113,31 +123,3 @@ export default class ReceiptListPage extends Taro.Component<Props, State> {
         </View>
     }
 }
-
-{/* <ShoppingLoading method="receiptInfos" ref={e => this.loading = this.loading || e}> */ }
-{/* {this.context.data != null && this.context.data.length == 0 ?
-                    <Empty icon="mail" text="暂无收货地址" /> :
-                    <AtList>
-                        {(this.context.data || []).map(r => {
-                            let isSelected = selectedIds.indexOf(r.Id) >= 0;
-                            return <AtListItem key={r.Id} className="container" arrow="right"
-                                iconInfo={{ size: 18, value: "check-circle", customStyle: { color: isSelected ? "red" : "" } }}
-                                title={r.Name} note={this.detail(r)}
-                                onClick={e => {
-                                    if (e.currentTarget["x"] <= 50) {
-                                        if (isSelected) {
-                                            selectedIds = selectedIds.filter(o => o != r.Id);
-                                        }
-                                        else {
-                                            selectedIds.push(r.Id);
-                                        }
-
-                                        this.setState({ selectedIds });
-                                        return;
-                                    }
-                                    Taro.navigateTo({ url: `./receipt-edit?id=${r.Id}` })
-                                }}>
-                            </AtListItem>
-                        })}
-                    </AtList>} */}
-{/* </ShoppingLoading> */ }

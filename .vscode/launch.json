@@ -8,11 +8,8 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/sample/out/main.js",
-            "cwd": "${workspaceFolder}/sample"
+            "program": "${workspaceFolder}/web/out/main.js",
+            "cwd": "${workspaceFolder}/web"
         }
     ]
 }

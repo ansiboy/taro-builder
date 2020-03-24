@@ -1,14 +1,29 @@
 import Nerv from "nervjs";
-import { Component } from "@tarojs/taro";
+import { Component, } from "@tarojs/taro";
 import { View, Text } from '@tarojs/components';
-import { ComponentData, ComponentFactory, PageDesigner, Context, ComponentDataHandler } from "maishu-jueying";
+import { ComponentData, ComponentFactory, PageDesigner, ComponentDataHandler } from "maishu-jueying";
 import * as components from "../components/index";
 import { errors } from "../../errors";
 import { Callbacks } from "maishu-chitu-service";
+import React = require("react");
 
 type Components = typeof components;
 
-export class TaroComponentFactory extends ComponentFactory {
+interface Context {
+    handler: ComponentDataHandler
+}
+
+export let TaroComponentFactory: ComponentFactory = (componentData: ComponentData, context?: Context) => {
+    return React.createElement("div", {
+        ref: (e) => {
+            if (!e) return;
+            let render = new TaroComponentRender();
+            render.renderDesignTimeComponent(componentData, e, context);
+        }
+    })
+}
+
+export class TaroComponentRender {
     private pageView: PageView;
 
     renderDesignTimeComponent(componentData: ComponentData, element: HTMLElement, context: Context) {

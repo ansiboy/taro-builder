@@ -43,6 +43,7 @@ export default class PageEdit extends React.Component<Props, State> {
         let record: PageRecord = {
             id: guid(),
             pageData: {
+                type: "PageVIew",
                 children: [],
                 props: { id: guid() }
             } as ComponentData,
