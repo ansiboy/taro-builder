@@ -1,4 +1,4 @@
-import { start as startTaroBuilder, } from "taro-builder";
+import { start as startTaroBuilder, } from "../..//out/index";
 import config from "./config";
 import path = require("path");
 

@@ -17,7 +17,7 @@
         "react": "^16.13.0",
         "react-dom": "^16.13.0",
         "requirejs": "^2.3.6",
-        "taro-builder": "file:../web"
+        "taro-builder": "file:../"
     },
     "devDependencies": {
         "@types/node": "^13.7.7"
