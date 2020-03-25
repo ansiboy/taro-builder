@@ -1,11 +1,12 @@
 import Nerv from "nervjs";
-import { Component, } from "@tarojs/taro";
+import { Component, ComponentClass, } from "@tarojs/taro";
 import { View, Text } from '@tarojs/components';
-import { ComponentData, ComponentFactory, PageDesigner, ComponentDataHandler } from "maishu-jueying";
+import { ComponentData, ComponentFactory, ComponentDataHandler } from "maishu-jueying";
 import * as components from "../components/index";
 import { errors } from "../../errors";
 import { Callbacks } from "maishu-chitu-service";
 import React = require("react");
+import { services } from "../services/services";
 
 type Components = typeof components;
 
@@ -15,9 +16,11 @@ interface Context {
 
 export let TaroComponentFactory: ComponentFactory = (componentData: ComponentData, context?: Context) => {
     return React.createElement("div", {
-        ref: (e) => {
+        ref: async (e) => {
             if (!e) return;
             let render = new TaroComponentRender();
+            // loadComponents(componentData);
+            // debugger;
             render.renderDesignTimeComponent(componentData, e, context);
         }
     })
@@ -148,6 +151,9 @@ export class TaroComponentRender {
     }
 }
 
+// let componentTypes: { [name: string]: ComponentClass } = {};
+
+
 interface PageViewProps {
     pageData: ComponentData,
 }
@@ -157,31 +163,21 @@ class PageView extends Component<PageViewProps> {
     wrapper: HTMLElement;
     componentCreated = Callbacks<PageView, HTMLElement, ComponentData>();
 
-    componentDidMount() {
-
-    }
-
     createComponentElement(componentData: ComponentData) {
         const Carousel: keyof Components = "Carousel";
         const HtmlEditor: keyof Components = "HtmlEditor";
 
-        let r: JSX.Element;
-        switch (componentData.type) {
-            case Carousel:
-                r = Nerv.createElement(components.Carousel, componentData.props);
-                break;
-            case HtmlEditor:
-                r = Nerv.createElement(components.HtmlEditor, componentData.props);
-                break;
-            default:
-                r = <View>
-                    <Text>Unspported:</Text>
-                    <View>
-                        <Text>{JSON.stringify(componentData)}</Text>
-                    </View>
-                </View>;
+        let componentType = ComponentLoader.componentTypes[componentData.type];
+        if (!componentType) {
+            return <View>
+                <Text>Unspported:</Text>
+                <View>
+                    <Text>{JSON.stringify(componentData)}</Text>
+                </View>
+            </View>;
         }
 
+        let r: JSX.Element = Nerv.createElement(componentType, componentData.props);
         return r;
     }
 
@@ -199,7 +195,7 @@ class PageView extends Component<PageViewProps> {
                             if (!e) return;
                             this.componentCreated.fire(this, e, o);
                         }}>
-                            {this.createComponentElement(o)}
+                            <ComponentLoader key={o.id} componentData={o} />
                         </li>
                     )
                 }
@@ -207,3 +203,107 @@ class PageView extends Component<PageViewProps> {
         </div>
     }
 }
+
+interface ComponentLoaderProps {
+    componentData: ComponentData
+}
+
+interface ComponentLoaderState {
+    status: "loading" | "success" | "fail",
+    componentType?: ComponentClass,
+    error?: Error
+}
+
+class ComponentLoader extends Component<ComponentLoaderProps, ComponentLoaderState> {
+
+    static componentTypes: { [name: string]: ComponentClass } = {
+        PageView: PageView
+    };
+
+    constructor(props: ComponentLoaderProps) {
+        super(props);
+
+        let typesToLoad: string[] = [];
+        let stack: ComponentData[] = [props.componentData];
+        while (stack.length > 0) {
+            let item = stack.pop();
+            if (ComponentLoader.componentTypes[item.type] == null && typesToLoad.indexOf(item.type) < 0) {
+                typesToLoad.push(item.type);
+            }
+
+            (item.children || []).forEach(c => {
+                if (typeof c == "string")
+                    return;
+
+                stack.push(c);
+            })
+        }
+
+        this.state = {
+            status: typesToLoad.length == 0 ? "success" : "loading",
+            componentType: ComponentLoader.componentTypes[this.props.componentData.type]
+        };
+
+        if (typesToLoad.length > 0) {
+            this.loadComponentTypes(typesToLoad).then(() => {
+                this.setState({ status: "success", componentType: ComponentLoader.componentTypes[this.props.componentData.type] });
+            }).catch(err => {
+                this.setState({ status: "fail", error: err });
+            })
+        }
+
+    }
+
+    loadComponentTypes(componentTypes: string[]) {
+        let ps: Promise<any>[] = [];
+        for (let i = 0; i < componentTypes.length; i++) {
+            ps.push(this.loadComponentType(componentTypes[i]));
+        }
+
+        return Promise.all(ps);
+    }
+
+    async loadComponentType(typeName: string) {
+        let componentInfos = await services.local.componentInfos();
+        let componentInfo = componentInfos.filter(o => o.type == typeName)[0];
+        if (componentInfo == null) {
+            throw errors.canntFindComponentInfo(typeName);
+        }
+
+        let path = componentInfo.path;
+        console.assert(path.startsWith("static/"));
+        console.assert(path.endsWith("tsx"));
+        path = path.substr("static/".length, path.length - "static/".length - "tsx".length);
+        path = path + "tarots";
+        return new Promise((resolve, reject) => {
+            requirejs([`noext!${path}`], (mod) => {
+                if (mod[typeName] == null)
+                    throw errors.moduleNotExport(path, typeName);
+
+                ComponentLoader.componentTypes[typeName] = mod[typeName];
+                resolve(mod[typeName]);
+
+            }, err => {
+                reject(err);
+            })
+        })
+    }
+
+
+    render() {
+        let { status, componentType, error } = this.state;
+        if (status == "loading")
+            return <View>组件正在加载中...</View>
+
+        if (status == "fail")
+            return <View>
+                <View>组件加载失败</View>
+                <View>{error.message}</View>
+            </View>
+
+        let e = Nerv.createElement(componentType, this.props.componentData.props);
+        return e;
+    }
+}
+
+// componentTypes["PageView"] = PageView;

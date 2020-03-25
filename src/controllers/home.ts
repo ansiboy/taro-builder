@@ -6,9 +6,8 @@ import fs = require("fs");
 
 @controller("/")
 export class HomeController extends Controller {
-    @action("tarots/*.js")
+    @action("app/*.js")
     tarotsToJS(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
-
         let filePath = data["_"];
         let tsxFileVirtualPath = filePath + ".tsx";
 
@@ -22,7 +21,8 @@ export class HomeController extends Controller {
         let buffer = fs.readFileSync(filePhysicalPath);
         let tsCode = buffer.toString();
 
-        return tarotsToJS(tsCode);
+        let r = tarotsToJS(tsCode);
+        return r.outputText;
     }
 }
 
@@ -31,7 +31,7 @@ export function tarotsToJS(tsCode: string) {
     let result = ts.transpileModule(tsCode, {
         compilerOptions: {
             "jsx": ts.JsxEmit.React,
-            "jsxFactory": "React.createElement",
+            "jsxFactory": "Nerv.createElement",
             "module": ts.ModuleKind.AMD,
             "target": ts.ScriptTarget.ES2016,
             "experimentalDecorators": true,

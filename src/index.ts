@@ -6,18 +6,18 @@ import { getClientComponentInfos } from "./component-helper";
 import { VirtualDirectory } from "maishu-node-mvc";
 
 export type Settings = AdminSettings & {
-    componentsPhysicalPath: string
+    appSourcePhysicalPath: string
     rootPhysicalPath: string
 };
 
-const ComponentsDirectoryName = "components";
+const AppirectoryName = "app";
 export async function start(settings: Settings) {
 
     if (!settings.db) {
         throw errors.settingFieldNull("db");
     }
-    if (!settings.componentsPhysicalPath)
-        throw errors.settingFieldNull<Settings>("componentsPhysicalPath");
+    if (!settings.appSourcePhysicalPath)
+        throw errors.settingFieldNull<Settings>("appSourcePhysicalPath");
 
     let rootPhysicalPaths = [__dirname, path.join(__dirname, "../src")];
     if (settings.rootPhysicalPath)
@@ -41,7 +41,7 @@ export async function start(settings: Settings) {
     console.assert(staticDirectory != null);
     serverContextData.staticRoot = staticDirectory;
 
-    let componentsDirectory = staticDirectory.addVirtualDirectory(ComponentsDirectoryName, settings.componentsPhysicalPath, "replace");
+    let componentsDirectory = staticDirectory.addVirtualDirectory(AppirectoryName, settings.appSourcePhysicalPath, "replace");
     let items = getClientComponentInfos(componentsDirectory);
     componentInfos.push(...items);
 
