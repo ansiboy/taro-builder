@@ -30,9 +30,8 @@ class App extends Component {
   config: Config = {
     pages: [
 
- 
-      "modules/user/receipt-list",
-      "modules/user/receipt-edit",
+      "modules/temp",
+      "modules/shopping/product-list",
 
       "modules/account-security/index",
       "modules/account-security/login-password",
@@ -46,8 +45,8 @@ class App extends Component {
       "modules/user/favor",
 
       "modules/user/index",
-      // "/modules/user/receipt-edit",
-      // "modules/user/receipt-list",
+      "modules/user/receipt-edit",
+      "modules/user/receipt-list",
       "modules/index",
     ],
     window: {

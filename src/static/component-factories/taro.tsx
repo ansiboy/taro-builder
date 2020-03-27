@@ -272,11 +272,9 @@ class ComponentLoader extends Component<ComponentLoaderProps, ComponentLoaderSta
 
         let path = componentInfo.path;
         console.assert(path.startsWith("static/"));
-        console.assert(path.endsWith("tsx"));
-        path = path.substr("static/".length, path.length - "static/".length - "tsx".length);
-        path = path + "tarots";
+        path = path.substr("static/".length);
         return new Promise((resolve, reject) => {
-            requirejs([`noext!${path}`], (mod) => {
+            requirejs([`${path}`], (mod) => {
                 if (mod[typeName] == null)
                     throw errors.moduleNotExport(path, typeName);
 

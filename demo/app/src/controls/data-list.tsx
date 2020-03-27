@@ -4,7 +4,7 @@ import { services, ShoppingService } from "../services";
 import { AtList, AtListItem, AtDivider } from "taro-ui";
 import { Component, ComponentClass } from "react";
 import { AtListItemProps } from "taro-ui/types/list";
-import { DataSource } from "maishu-wuzhui";
+import { DataSource } from "maishu-toolkit";
 import { View } from "@tarojs/components";
 import { guid } from "maishu-toolkit";
 import { tempDataItems } from "../services/temp-data-items";

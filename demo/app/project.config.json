@@ -1,13 +1,16 @@
 {
-  "miniprogramRoot": "./dist",
-  "projectname": "taro-sammple-app",
-  "description": "",
-  "appid": "wxb6238f6a8f843b2e",
-  "setting": {
-    "urlCheck": false,
-    "es6": true,
-    "postcss": false,
-    "minified": false
-  },
-  "compileType": "miniprogram"
+	"miniprogramRoot": "dist/",
+	"projectname": "app2",
+	"description": "",
+	"appid": "wxb6238f6a8f843b2e",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false
+	},
+	"compileType": "miniprogram",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"condition": {}
 }

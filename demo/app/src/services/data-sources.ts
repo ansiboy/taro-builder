@@ -1,5 +1,5 @@
-import { DataSource } from "maishu-wuzhui";
-import { services } from ".";
+import { DataSource } from "maishu-toolkit";
+import { services } from "./index";
 
 export let dataSources = {
     receiptInfo: new DataSource<ReceiptInfo>({

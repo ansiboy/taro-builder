@@ -2,7 +2,7 @@ import { start as startTaroBuilder, } from "../out/index";
 import config from "./config";
 import path = require("path");
 
-let componentsPhysicalPath = path.join(__dirname, "./app/src");
+let componentsPhysicalPath = path.join(__dirname, "./app/.temp");
 startTaroBuilder({
     port: config.port,
     rootPhysicalPath: path.join(__dirname),

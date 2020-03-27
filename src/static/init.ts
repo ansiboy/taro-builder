@@ -5,10 +5,14 @@ export default async function (args: InitArguments) {
 
     Less.renderByRequireJS("devices", {});
     Less.renderByRequireJS("site.less", {});
+    window["h5"] = "weapp";
+    requirejs(["taro-bundle", "taro-ui"], function (mod, taroUI) {
 
-    requirejs(["taro-bundle"], function (mod) {
+        window["Nerv"] = window["Taro"] = mod.nervjs;
 
-        window["Nerv"] = mod.nervjs;
+        define("taro-ui", function () {
+            return taroUI.default;
+        })
 
         define("nervjs", function () {
             let r = { ...mod.nervjs };

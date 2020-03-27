@@ -1,7 +1,7 @@
 import Taro, { useContext } from '@tarojs/taro';
 import { LoadingContext } from '../../controls/loading';
 import { View, Text, Switch, } from '@tarojs/components';
-import { DataSourceSelectResult } from 'maishu-wuzhui';
+import { DataSourceSelectResult } from 'maishu-toolkit';
 import { AtList, AtListItem, AtButton } from 'taro-ui';
 
 

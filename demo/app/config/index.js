@@ -1,6 +1,6 @@
 const config = {
-  projectName: 'taro-sammple-app',
-  date: '2020-3-11',
+  projectName: 'app2',
+  date: '2020-3-26',
   designWidth: 750,
   deviceRatio: {
     '640': 2.34 / 2,
@@ -76,8 +76,7 @@ const config = {
           generateScopedName: '[name]__[local]___[hash:base64:5]'
         }
       }
-    },
-    esnextModules: ['taro-ui']
+    }
   }
 }
 
@@ -85,7 +84,7 @@ module.exports = function (merge) {
 
   const path = require("path");
   config.outputRoot = path.join("dist", process.env.TARO_ENV);
-
+  
   if (process.env.NODE_ENV === 'development') {
     return merge({}, config, require('./dev'))
   }

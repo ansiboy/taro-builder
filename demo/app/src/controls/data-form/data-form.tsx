@@ -1,7 +1,7 @@
 import { AtForm } from "taro-ui";
 import Taro, { Component } from "@tarojs/taro";
 import { InputControl } from "./input-control";
-import { DataSource } from "maishu-wuzhui";
+import { DataSource } from "maishu-toolkit";
 
 
 export interface DataFormContextValue<T> {

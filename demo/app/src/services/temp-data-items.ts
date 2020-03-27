@@ -1,1 +1,0 @@
-export let tempDataItems: { [key: string]: any } = {};

@@ -5,9 +5,12 @@ let websiteConfig = {
     requirejs: {
         paths: {
             "maishu-jueying": "node_modules/maishu-jueying/dist/index",
+            "maishu-jueying-core/decorators": "node_modules/maishu-jueying-core/decorators",
+            "maishu-jueying-core": "node_modules/maishu-jueying-core/dist/index",
             "jquery-ui": "lib/jquery-ui-1.12.1/jquery-ui",
             "devices": "lib/devices.css-1.2/assets/devices.min.css",
             "taro-bundle": "lib/taro-bundle",
+            "taro-ui": "lib/taro-ui",
             "tslib": "node_modules/tslib/tslib",
             "maishu-chitu-admin/static": "node_modules/maishu-chitu-admin/static",
             "htmlparser2": "node_modules/htmlparser2/"

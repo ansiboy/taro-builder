@@ -1,5 +1,5 @@
 {
-  "name": "taro-sammple-app",
+  "name": "app2",
   "version": "1.0.0",
   "private": true,
   "description": "",
@@ -29,6 +29,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.9.2",
     "@tarojs/components": "2.0.6",
     "@tarojs/components-qa": "2.0.6",
     "@tarojs/router": "2.0.6",
@@ -41,11 +42,14 @@
     "@tarojs/taro-swan": "2.0.6",
     "@tarojs/taro-tt": "2.0.6",
     "@tarojs/taro-weapp": "2.0.6",
-    "maishu-chitu-service": "^1.17.0",
-    "maishu-wuzhui": "^1.15.0",
+    "jquery": "^3.4.1",
+    "maishu-chitu-service": "^1.18.0",
+    "maishu-jueying-core": "^1.1.9",
+    "maishu-toolkit": "^1.2.2",
     "nerv-devtools": "^1.5.5",
     "nervjs": "^1.5.5",
-    "taro-ui": "^2.3.0"
+    "react": "^16.13.1",
+    "taro-ui": "^2.3.1"
   },
   "devDependencies": {
     "@tarojs/mini-runner": "2.0.6",

@@ -1,7 +1,7 @@
-import Taro = require("@tarojs/taro");
-import { component } from "maishu-jueying";
+import Taro from "@tarojs/taro";
+import { component } from "maishu-jueying-core";
 import { Loading } from "../controls/loading";
-import { services } from "../services";
+import { services } from "../services/index";
 
 export interface Props {
     /** 商品来源 */

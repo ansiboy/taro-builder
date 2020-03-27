@@ -1,6 +1,6 @@
-import Taro = require("@tarojs/taro");
+import Taro from "@tarojs/taro";
 import { View, Swiper, SwiperItem } from "@tarojs/components";
-import { component } from "maishu-jueying";
+import { component } from "maishu-jueying-core";
 
 @component({ displayName: "轮播", icon: "icon-list-alt", introduce: "多张图片轮流播放" })
 export class Carousel extends Taro.Component {
