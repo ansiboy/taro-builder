@@ -3,7 +3,6 @@ import { ServerContextData } from "./common";
 import { errors } from "./errors";
 import path = require("path");
 import { getClientComponentInfos } from "./component-helper";
-import { VirtualDirectory } from "maishu-node-mvc";
 import websiteConfig from "./website-config";
 
 export type Settings = AdminSettings & {
@@ -32,9 +31,7 @@ export async function start(settings: Settings) {
     } as Settings);
 
     settings.virtualPaths = Object.assign({
-        // node_modules: path.join(__dirname, "../node_modules"),
         lib: path.join(__dirname, "../lib"),
-        "text.js": path.join(__dirname, "../node_modules/maishu-requirejs-plugins/lib/text.js"),
     } as Settings["virtualPaths"], settings.virtualPaths || {});
 
     settings.websiteConfig = Object.assign(websiteConfig, settings.websiteConfig || {});

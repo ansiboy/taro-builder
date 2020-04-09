@@ -1,8 +1,6 @@
 const webpack = require('webpack');
 const path = require("path");
-let pkg = require("./package.json");
 
-// process.env.TARO_ENV = "h5";
 module.exports = {
     entry: {
         "taro-bundle": path.join(__dirname, "lib/taro/taro-bundle.js"),
