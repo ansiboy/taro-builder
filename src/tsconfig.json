@@ -8,7 +8,7 @@
         "jsx": "preserve",
         "allowUnusedLabels": true,
         "allowUmdGlobalAccess": true,
-   
+        "esModuleInterop": true,
     },
     "exclude": [
         "sample-app"

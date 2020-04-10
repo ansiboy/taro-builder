@@ -1,51 +1,35 @@
-import Nerv from "nervjs";
-import { Component, ComponentClass, } from "@tarojs/taro";
 import { View, Text } from '@tarojs/components';
 import { ComponentData, ComponentFactory, ComponentDataHandler } from "maishu-jueying";
-import * as components from "../components/index";
 import { errors } from "../../errors";
 import { Callbacks } from "maishu-chitu-service";
 import React = require("react");
 import { services } from "../services/services";
-
-type Components = typeof components;
-
+import { Page } from 'maishu-chitu-react';
+debugger
 interface Context {
     handler: ComponentDataHandler
 }
 
 export let TaroComponentFactory: ComponentFactory = (componentData: ComponentData, context?: Context) => {
-    return React.createElement("div", {
-        ref: async (e) => {
-            if (!e) return;
-            let render = new TaroComponentRender();
-            // loadComponents(componentData);
-            // debugger;
-            render.renderDesignTimeComponent(componentData, e, context);
-        }
-    })
+    let render = new TaroComponentRender();
+    return render.renderDesignTimeComponent(componentData, context);;
 }
 
 export class TaroComponentRender {
     private pageView: PageView;
 
-    renderDesignTimeComponent(componentData: ComponentData, element: HTMLElement, context: Context) {
+    renderDesignTimeComponent(componentData: ComponentData, context: Context) {
         if (componentData == null) throw errors.argumentNull("compentData");
-        if (element == null) throw errors.argumentNull("element");
         if (context == null) throw errors.argumentNull("context");
 
         console.assert(context != null && context.handler != null);
-        let e = Nerv.createElement(PageView, {
-            pageData: componentData,
-            designer: context.handler,
-            ref: (e: PageView) => {
+        return <PageView pageData={componentData}
+            ref={e => {
                 if (!e || this.pageView == e) return;
                 this.pageView = e;
                 this.onPageViewCreated(context)
-            }
-        }, <View>{componentData.type}</View>)
-
-        Nerv.render(e, element);
+            }}>
+        </PageView>;
     }
 
     renderRunTimeComponent(compentData: ComponentData, element: HTMLElement, context: Context): void {
@@ -53,18 +37,12 @@ export class TaroComponentRender {
     }
 
     private onPageViewCreated(context: Context) {
-        let componentDidMount = this.pageView.componentDidMount;
-        this.pageView.componentDidMount = () => {
-            if (componentDidMount != null)
-                componentDidMount.apply(this.pageView);
-
-            this.enableDrapDrop(this.pageView, context.handler);
-            this.pageView.wrapper.onkeydown = (ev) => {
-                const DELETE_KEY_CODE = 46;
-                if (ev.keyCode == DELETE_KEY_CODE) {
-                    let ids = context.handler.selectedComponents.map(c => c.id || c.id);
-                    context.handler.removeComponents(ids);
-                }
+        this.enableDrapDrop(this.pageView, context.handler);
+        this.pageView.wrapper.onkeydown = (ev) => {
+            const DELETE_KEY_CODE = 46;
+            if (ev.keyCode == DELETE_KEY_CODE) {
+                let ids = context.handler.selectedComponents.map(c => c.id || c.id);
+                context.handler.removeComponents(ids);
             }
         }
 
@@ -77,7 +55,7 @@ export class TaroComponentRender {
     }
 
     private enableDrapDrop(pageView: PageView, designer: ComponentDataHandler) {
-
+        debugger
         if (pageView.element.className.indexOf("ui-sortable") >= 0)
             return;
 
@@ -151,22 +129,16 @@ export class TaroComponentRender {
     }
 }
 
-// let componentTypes: { [name: string]: ComponentClass } = {};
-
-
 interface PageViewProps {
     pageData: ComponentData,
 }
 
-class PageView extends Component<PageViewProps> {
+class PageView extends React.Component<PageViewProps> {
     element: HTMLElement;
     wrapper: HTMLElement;
     componentCreated = Callbacks<PageView, HTMLElement, ComponentData>();
 
     createComponentElement(componentData: ComponentData) {
-        const Carousel: keyof Components = "Carousel";
-        const HtmlEditor: keyof Components = "HtmlEditor";
-
         let componentType = ComponentLoader.componentTypes[componentData.type];
         if (!componentType) {
             return <View>
@@ -177,7 +149,7 @@ class PageView extends Component<PageViewProps> {
             </View>;
         }
 
-        let r: JSX.Element = Nerv.createElement(componentType, componentData.props);
+        let r: JSX.Element = React.createElement(componentType, componentData.props);
         return r;
     }
 
@@ -191,7 +163,7 @@ class PageView extends Component<PageViewProps> {
                         <h4>请拖放组件到此处</h4>
                     </li> :
                     children.map(o =>
-                        <li ref={e => {
+                        <li key={o.id} ref={e => {
                             if (!e) return;
                             this.componentCreated.fire(this, e, o);
                         }}>
@@ -210,13 +182,13 @@ interface ComponentLoaderProps {
 
 interface ComponentLoaderState {
     status: "loading" | "success" | "fail",
-    componentType?: ComponentClass,
+    componentType?: React.ComponentClass,
     error?: Error
 }
 
-class ComponentLoader extends Component<ComponentLoaderProps, ComponentLoaderState> {
+class ComponentLoader extends React.Component<ComponentLoaderProps, ComponentLoaderState> {
 
-    static componentTypes: { [name: string]: ComponentClass } = {
+    static componentTypes: { [name: string]: React.ComponentClass } = {
         PageView: PageView
     };
 
@@ -271,6 +243,9 @@ class ComponentLoader extends Component<ComponentLoaderProps, ComponentLoaderSta
         }
 
         let path = componentInfo.path;
+        if (path.endsWith(".jsx")) {
+            path = path.substr(0, path.length - 4);
+        }
         console.assert(path.startsWith("static/"));
         path = path.substr("static/".length);
         return new Promise((resolve, reject) => {
@@ -299,9 +274,8 @@ class ComponentLoader extends Component<ComponentLoaderProps, ComponentLoaderSta
                 <View>{error.message}</View>
             </View>
 
-        let e = Nerv.createElement(componentType, this.props.componentData.props);
+        let e = React.createElement(componentType, this.props.componentData.props);
         return e;
     }
 }
 
-// componentTypes["PageView"] = PageView;

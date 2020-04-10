@@ -1,5 +1,5 @@
 import React = require("react");
-import { ComponentData, ComponentDefine, EditorPanel, PageDesigner, ComponentFactory, PropertyEditorInfo, ComponentDataHandler, ComponentInfo } from "maishu-jueying";
+import { ComponentData, ComponentDefine, EditorPanel, PageDesigner, PropertyEditorInfo, ComponentDataHandler, ComponentInfo } from "maishu-jueying";
 import "jquery-ui"
 import { ComponentPanel } from "./component-panel";
 import { Application } from "maishu-chitu-react";
@@ -112,7 +112,6 @@ export class DesignView extends React.Component<Props, State> {
 
         //==========================================================================================
         // 设置组件工具栏
-
         let componentInfos: ComponentInfo[] = await this.localService.componentInfos(); //getComponentInfos(this.props.app);
         console.assert(componentInfos != null);
         componentInfos = componentInfos.filter(o => o.displayName != null);

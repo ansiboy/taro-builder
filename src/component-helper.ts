@@ -31,8 +31,7 @@ export function getClientComponentInfos(componentsDirectory: VirtualDirectory): 
         }
     }
 
-    files = files.filter(o => o.physicalPath.endsWith(".js") || o.physicalPath.endsWith(".jsx") ||
-        o.physicalPath.endsWith(".tsx"));
+    files = files.filter(o => o.physicalPath.endsWith(".js") || o.physicalPath.endsWith(".jsx") || o.physicalPath.endsWith(".tsx"));debugger
     files.forEach(item => {
         let tsSourceFile = ts.createSourceFile(
             item.physicalPath, fs.readFileSync(item.physicalPath).toString(),
@@ -45,7 +44,6 @@ export function getClientComponentInfos(componentsDirectory: VirtualDirectory): 
         let c = getFileComponentInfos(tsSourceFile, componentPath);
         componentInfos.push(...c);
     })
-
 
     function getFileComponentInfos(sourceFile: ts.SourceFile, filePath: string): ComponentInfo[] {
         let componentInfos: ComponentInfo[] = [];

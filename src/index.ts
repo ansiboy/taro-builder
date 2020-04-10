@@ -40,7 +40,7 @@ export async function start(settings: Settings) {
     let staticDirectory = r.rootDirectory.getDirectory("static");
     console.assert(staticDirectory != null);
     serverContextData.staticRoot = staticDirectory;
-
+debugger
     let componentsDirectory = staticDirectory.addVirtualDirectory(AppirectoryName, settings.appSourcePhysicalPath, "replace");
     let items = getClientComponentInfos(componentsDirectory);
     componentInfos.push(...items);

@@ -8,7 +8,6 @@ import { guid } from "maishu-toolkit";
 import { ComponentData, ComponentDataHandler } from "maishu-jueying";
 
 interface State {
-    // componentDataHandler: ComponentDataHandler
 }
 
 interface Props extends PageProps {
@@ -69,7 +68,6 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     render() {
-        // let { componentDataHandler } = this.state;
         return <DesignView {...this.props} componentDataHandler={this.componentDataHandler}>
             <ul style={{ height: 32, margin: 0, padding: 0 }}>
                 <li className="pull-right">

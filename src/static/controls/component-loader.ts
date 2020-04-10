@@ -8,7 +8,7 @@ let localService = new LocalService(err => errorHandle)
 export class ComponentLoader {
 
     /** 加载全部组件 */
-    static async  loadAllComponents() {
+    static async loadAllComponents() {
         let componentInfos = await localService.componentInfos();
         let r = componentInfos.map(componentInfo => {
             return new Promise((resolve, reject) => {

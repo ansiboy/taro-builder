@@ -1,5 +1,6 @@
 import { start } from "./index";
 import path = require("path");
+import websiteConfig from "./website-config";
 
 let componentsPhysicalPath = path.join(__dirname, "../../sample/app/src");//path.join(__dirname, "static/components");//path.join(__dirname, "../../sampleap/p/.temp/components");
 start({
@@ -16,5 +17,6 @@ start({
     virtualPaths: {
         "node_modules": path.join(__dirname, "../node_modules"),
         // "maishu-chitu-admin/static": null
-    }
+    },
+    websiteConfig: websiteConfig
 })
