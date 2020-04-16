@@ -5,30 +5,35 @@ import { buttonOnClick } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../services/local-service";
 import { guid } from "maishu-toolkit";
-import { ComponentData, ComponentDataHandler } from "maishu-jueying";
+import { ComponentData } from "maishu-jueying";
+import websiteConfig from "json!websiteConfig";
+
+requirejs([websiteConfig.componentEditorsPath], function () {
+    debugger
+})
 
 interface State {
+    pageData: ComponentData | undefined,
 }
 
 interface Props extends PageProps {
-    data: { id?: string }
+    data: { id?: string },
 }
 
 export default class PageEdit extends React.Component<Props, State> {
 
     private localService: LocalService;
-    private componentDataHandler: ComponentDataHandler;
 
     constructor(props) {
         super(props);
 
-        this.componentDataHandler = this.emptyComponentDataHandler();
-        this.state = {};
+        // this.componentDataHandler = this.emptyComponentDataHandler();
+        this.state = { pageData: undefined };
         this.localService = this.props.createService(LocalService);
     }
 
     async save(): Promise<any> {
-        let pageData = this.componentDataHandler.pageData;
+        let pageData = this.state.pageData;
         let recored = { id: this.props.data.id, pageData, } as PageRecord;
         if (this.props.data.id) {
             await this.localService.updatePageRecord(recored);
@@ -38,28 +43,34 @@ export default class PageEdit extends React.Component<Props, State> {
         }
     }
 
-    private emptyComponentDataHandler(): ComponentDataHandler {
-        let record: PageRecord = {
+    private emptyComponentDataHandler(): PageRecord {
+        let pageData: ComponentData = {
             id: guid(),
-            pageData: {
-                type: "PageView",
-                children: [],
-                props: { id: guid() }
-            } as ComponentData,
+            type: "PageView",
+            children: [],
+            props: {}
+        };
+        let record: PageRecord = {
+            id: pageData.id,
+            pageData,
             name: "",
             type: "page",
             createDateTime: new Date()
         };
-
-        return new ComponentDataHandler(record.pageData);
+        return record;
     }
 
     componentDidMount() {
         let s = this.props.createService(LocalService);
         if (this.props.data.id) {
             s.getPageData(this.props.data.id as string).then(d => {
-                this.componentDataHandler.pageData = d.pageData;
+                // this.componentDataHandler.pageData = d.pageData;
+                this.setState({ pageData: d.pageData })
             })
+        }
+        else {
+            let r = this.emptyComponentDataHandler();
+            this.setState({ pageData: r.pageData });
         }
     }
 
@@ -68,7 +79,12 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     render() {
-        return <DesignView {...this.props} componentDataHandler={this.componentDataHandler}>
+        let pageData = this.state.pageData;
+        if (pageData == undefined)
+            return <div className="empty">
+                数据加载中...
+            </div>
+        return <DesignView {...this.props} pageData={pageData}>
             <ul style={{ height: 32, margin: 0, padding: 0 }}>
                 <li className="pull-right">
                     <button className="btn btn-sm btn-primary">

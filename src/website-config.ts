@@ -2,9 +2,8 @@ import { WebsiteConfig } from "maishu-chitu-admin";
 
 export type MyWebsiteConfig = {
     contextName: string;
+    componentEditorsPath?: string;
 };
-
-
 
 let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
     contextName: "taro-builder",
@@ -15,7 +14,7 @@ let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
             "jquery-ui": "lib/jquery-ui-1.12.1/jquery-ui",
             "devices": "lib/devices.css-1.2/assets/devices.min.css",
             // "taro-bundle": "lib/taro-bundle",
-            // "taro-ui": "lib/taro-ui",
+            "taro-ui": "lib/taro-ui",
             // "taro-components": "lib/taro-components",
             "@tarojs/components": "lib/taro-components",
             "@tarojs/taro-h5": "lib/taro-h5",

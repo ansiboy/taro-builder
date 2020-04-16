@@ -4,24 +4,41 @@ import { ServerContextData } from "../common";
 import { StatusCode } from "maishu-chitu-service";
 import fs = require("fs");
 import babel = require("@babel/core")
+import sass = require("node-sass");
+import path = require("path");
+import { errors } from "../errors";
 
 @controller("/")
 export class HomeController extends Controller {
-    @action("*.tarots")
-    tarotsToJS(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
+    @action("*.tsx.js")
+    tsxToJS(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
         let filePath = data["_"];
         let tsxFileVirtualPath = filePath + ".tsx";
-        let tsFileVirtualPath = filePath + ".ts";
+        console.assert(context.data.staticRoot != null);
+        let filePhysicalPath = context.data.staticRoot.getFile(tsxFileVirtualPath);
+        if (filePhysicalPath == null) {
+            throw errors.fileNotExists(filePhysicalPath);
+        }
+
+        return this.typescriptToJS(filePhysicalPath);
+    }
+
+    @action("*.ts.js")
+    tsToJS(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
+        let filePath = data["_"];
+        let tsxFileVirtualPath = filePath + ".ts";
 
         console.assert(context.data.staticRoot != null);
         let filePhysicalPath = context.data.staticRoot.getFile(tsxFileVirtualPath);
-        if (filePhysicalPath == null)
-            filePhysicalPath = context.data.staticRoot.getFile(tsFileVirtualPath);
 
         if (filePhysicalPath == null) {
-            return this.content(`File '${tsxFileVirtualPath}' or '${tsFileVirtualPath}' not found.`, StatusCode.NotFound);
+            throw errors.fileNotExists(filePhysicalPath);
         }
 
+        return this.typescriptToJS(filePhysicalPath);
+    }
+
+    private typescriptToJS(filePhysicalPath: string) {
         let buffer = fs.readFileSync(filePhysicalPath);
         let tsCode = buffer.toString();
 
@@ -45,24 +62,49 @@ export class HomeController extends Controller {
                 source = d.source;
             }
 
-            if (source != null) {
-                let path = source.value;
-                let arr = path.split("/");
-                let ext: string = null;
-                if (arr[arr.length - 1] != null) {
-                    let tt = arr[arr.length - 1].split(".");
-                    if (tt.length > 1)
-                        ext = tt[tt.length - 1];
+            if (source == null) {
+                continue;
+            }
+
+            if (source.value == "react") {
+                source.value = "react-default";
+                continue;
+            }
+
+            let refFilePath = source.value;
+            let arr = refFilePath.split("/");
+            let ext: string = null;
+            if (arr[arr.length - 1] != null) {
+                let tt = arr[arr.length - 1].split(".");
+                if (tt.length > 1)
+                    ext = tt[tt.length - 1];
+            }
+
+            if (ext == null && refFilePath.startsWith("./") || refFilePath.startsWith("../")) {
+                let p = path.join(path.dirname(filePhysicalPath), refFilePath);
+                if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
+                    p = path.join(p, "index");
+                    refFilePath = refFilePath + "/index";
                 }
 
-                if (ext == null && path.startsWith("./") || path.startsWith("../")) {
-                    path = `noext!${path}.tarots`;
-                    source.value = path;
+                let tsxPath = `${p}.tsx`;
+                let tsPath = `${p}.ts`;
+                if (fs.existsSync(tsxPath)) {
+                    refFilePath = `${refFilePath}.tsx`;
                 }
-                else if (ext == "less") {
-                    path = `less!${path}`;
-                    source.value = path;
+                else if (fs.existsSync(tsPath)) {
+                    refFilePath = `${refFilePath}.ts`;
                 }
+
+                source.value = refFilePath;
+            }
+            else if (ext == "less") {
+                refFilePath = `less!${refFilePath}`;
+                source.value = refFilePath;
+            }
+            else if (ext == "scss") {
+                refFilePath = `css!${refFilePath}`;
+                source.value = refFilePath;
             }
         }
 
@@ -72,13 +114,31 @@ export class HomeController extends Controller {
                 ["@babel/plugin-proposal-decorators", { "legacy": true }],
                 ["@babel/transform-modules-amd", { noInterop: true }],
                 ["@babel/transform-react-jsx", {
-                    "pragma": "Nerv.createElement",
-                    "pragmaFrag": "Nerv.Fragment"
+                    "pragma": "React.createElement",
+                    "pragmaFrag": "React.Fragment"
                 }]
             ]
         })
 
-        return r.code;
+        let code = `/** Taro builder transform tsx file to javascript amd file, source file is ${filePhysicalPath}. */ \r\n` + r.code;
+        return code;
+    }
+
+    @action("*.scss.css")
+    scssToCSS(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
+        let filePath = data["_"];
+        let scssFileVirtualPath = filePath + ".scss";
+
+        console.assert(context.data.staticRoot != null);
+        let filePhysicalPath = context.data.staticRoot.getFile(scssFileVirtualPath);
+
+        if (filePhysicalPath == null) {
+            return this.content(`File '${scssFileVirtualPath}' not found.`, StatusCode.NotFound);
+        }
+
+        filePhysicalPath = filePhysicalPath.replace(/\\+|\/+/g, "/");
+        let r = sass.renderSync({ data: `$hd : 1; @import \"${filePhysicalPath}\"` });
+        return this.content(r.css.toString(), "text/css");
     }
 }
 

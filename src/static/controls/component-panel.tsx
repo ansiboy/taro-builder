@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PageDesigner, ComponentDefine, classNames } from "maishu-jueying";
+import { ComponentDefine, classNames } from "maishu-jueying";
 
 interface ComponentToolbarProps extends React.Props<ComponentPanel> {
     style?: React.CSSProperties,
@@ -41,7 +41,7 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
         $(this.element).find("li").draggable("option", "connectToSortable", this.targetElements);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
     }
 
     render() {

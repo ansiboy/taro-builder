@@ -14,6 +14,10 @@ class MyErrors extends Errors {
         let msg = `Module '${modulePath}' has not export member '${memberName}'.`;
         return new Error(msg);
     }
+    fileNotExists(filePath: string) {
+        let msg = `File '${filePath}' is not exists.`;
+        return new Error(msg);
+    }
 }
 
 export let errors = new MyErrors();

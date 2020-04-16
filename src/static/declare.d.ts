@@ -4,11 +4,6 @@ declare module "json!websiteConfig" {
     export = a;
 }
 
-// declare module "entities" {
-//     let Entities: typeof import("../entities");
-//     export = Entities;
-// }
-
 type RequireConfig = {
     context: string,
     baseUrl?: string

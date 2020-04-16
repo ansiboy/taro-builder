@@ -1,5 +1,5 @@
 import React = require("react");
-import { ComponentData, ComponentDefine, EditorPanel, PageDesigner, PropertyEditorInfo, ComponentDataHandler, ComponentInfo } from "maishu-jueying";
+import { ComponentData, ComponentDefine, EditorPanel, PageDesigner, PropertyEditorInfo, ComponentDataHandler, ComponentInfo, DesignerContext } from "maishu-jueying";
 import "jquery-ui"
 import { ComponentPanel } from "./component-panel";
 import { Application } from "maishu-chitu-react";
@@ -8,23 +8,19 @@ import { LocalService } from "../services/local-service";
 import { contextName } from "json!websiteConfig";
 import { loadingElement } from "../common";
 import * as ui from "maishu-ui-toolkit";
-import { TaroComponentFactory } from "../component-factories/taro";
-import "../component-editors/carousel";
-import "../component-editors/html-editor";
+import { TaroComponentFactory } from "./taro-factory";
 import { componentRenders } from "../component-renders/index";
 
 interface Props {
     app: Application,
-    // pageRecord: PageRecord,
-    componentDataHandler: ComponentDataHandler,
+    pageData: ComponentData,
     hideToolbar?: boolean,
     hideEditorPanel?: boolean,
     hidePageSettingPanel?: boolean,
 }
 
 interface State {
-    // pageData: ComponentData,
-    componentDataHandler: ComponentDataHandler,
+    pageData: ComponentData,
     componentLoaded: boolean,
 }
 
@@ -38,18 +34,17 @@ export class DesignView extends React.Component<Props, State> {
     private static initComponents = false;
 
     private editorPanel: EditorPanel;
-    // private componentFacotry: ComponentFactory;
-    private designer: PageDesigner;
     private mobilePageElement: HTMLElement;
 
     constructor(props: Props) {
         super(props)
 
         this.state = {
-            componentDataHandler: this.props.componentDataHandler, componentLoaded: true
+            // componentDataHandler: this.props.componentDataHandler, 
+            pageData: props.pageData,
+            componentLoaded: true
         };
 
-        // this.componentFacotry = TaroComponentFactory;
         this.localService = this.props.app.createService(LocalService as any) as any;
         if (!DesignView.initComponents) {
             DesignView.initComponents = true;
@@ -59,12 +54,11 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     static getDerivedStateFromProps(nextProps: Props) {
-        return { componentDataHandler: nextProps.componentDataHandler } as State;
+        return { pageData: nextProps.pageData } as State;
     }
 
     preivew() {
-        let { componentDataHandler } = this.props;
-        let pageData: ComponentData = componentDataHandler.pageData;
+        let { pageData } = this.props;
         console.assert(pageData != null);
 
         let hasChanged = false;
@@ -107,20 +101,18 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     async onComponentCreated() {
-        if (this.designer == null || this.componentPanel == null || this.editorPanel == null)
+        if (this.componentPanel == null || this.editorPanel == null)
             return;
 
         //==========================================================================================
         // 设置组件工具栏
-        let componentInfos: ComponentInfo[] = await this.localService.componentInfos(); //getComponentInfos(this.props.app);
+        let componentInfos: ComponentInfo[] = await this.localService.componentInfos();
         console.assert(componentInfos != null);
         componentInfos = componentInfos.filter(o => o.displayName != null);
         let components = componentInfos.map(o => ({
             componentData: {
                 type: o.type,
-                props: {
-                    attr: { movable: false, container: false, showHandler: false, resize: false }
-                },
+                props: {},
             },
             displayName: o.displayName,
             icon: o.icon,
@@ -136,13 +128,13 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     render() {
-        let { componentDataHandler, componentLoaded } = this.state;
+        let { pageData, componentLoaded } = this.state;
         if (!componentLoaded) {
             return loadingElement;
         }
 
         let { hidePageSettingPanel } = this.props;
-        return <React.Fragment>
+        return <PageDesigner pageData={pageData}>
             <div className="marvel-device iphone8 black pull-left">
                 <div className="top-bar"></div>
                 <div className="sleep"></div>
@@ -151,18 +143,11 @@ export class DesignView extends React.Component<Props, State> {
                 <div className="sensor"></div>
                 <div className="speaker"></div>
                 <div className="screen mobile-page" ref={e => this.mobilePageElement = this.mobilePageElement || e}>
-                    <PageDesigner context={{ app: this.props.app }}
-                        componentFactory={(pageData) => TaroComponentFactory(pageData, { handler: componentDataHandler })}
-                        handler={componentDataHandler}
-                        ref={e => {
-                            if (this.designer != null || e == null)
-                                return;
-
-                            this.designer = e;
-                            this.onComponentCreated();
-                        }}>
-
-                    </PageDesigner>
+                    <DesignerContext.Consumer>
+                        {args => {
+                            return TaroComponentFactory(pageData, { handler: args.designer });
+                        }}
+                    </DesignerContext.Consumer>
                 </div>
 
                 <div className="home"></div>
@@ -181,7 +166,7 @@ export class DesignView extends React.Component<Props, State> {
                                         显示导航菜单</div>
                                     <label className="switch">
                                         <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                            checked={this.hasMenu(componentDataHandler.pageData)}
+                                            checked={this.hasMenu(pageData)}
                                             onChange={() => this.setMenu()} />
                                         <span className="lbl middle"></span>
                                     </label>
@@ -191,7 +176,7 @@ export class DesignView extends React.Component<Props, State> {
                                         显示购物车结算栏</div>
                                     <label className="switch">
                                         <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                            checked={this.hasSettleBar(componentDataHandler.pageData)}
+                                            checked={this.hasSettleBar(pageData)}
                                             onChange={() => this.setSettleBar()} />
                                         <span className="lbl middle"></span>
                                     </label>
@@ -211,7 +196,7 @@ export class DesignView extends React.Component<Props, State> {
                             }} />
                         </>}
                         {this.props.hideEditorPanel ? null :
-                            <EditorPanel designer={componentDataHandler} className="well" customRender={(a, b) => this.customRender(a, b)}
+                            <EditorPanel className="well" customRender={(a, b) => this.customRender(a, b)}
                                 ref={e => {
                                     if (this.editorPanel != null || e == null)
                                         return;
@@ -223,7 +208,7 @@ export class DesignView extends React.Component<Props, State> {
                     </div>
                 </div>
             </div>
-        </React.Fragment>
+        </PageDesigner>
     }
 
 }
