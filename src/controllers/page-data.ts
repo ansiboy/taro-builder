@@ -4,7 +4,7 @@ import { PageRecord } from "../entities";
 import { errors } from "../errors";
 import { currentAppId, connection, ServerContextData } from "../common";
 import { guid } from "maishu-toolkit";
-import { ComponentInfo } from "maishu-jueying";
+import { ComponentInfo } from "taro-builder-core";
 
 @controller("page-data")
 export class PageDataController {

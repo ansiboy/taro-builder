@@ -20,7 +20,7 @@ export class HomeController extends Controller {
             throw errors.fileNotExists(filePhysicalPath);
         }
 
-        return this.typescriptToJS(filePhysicalPath);
+        return this.typescriptToJS(filePhysicalPath, true);
     }
 
     @action("*.ts.js")
@@ -35,16 +35,16 @@ export class HomeController extends Controller {
             throw errors.fileNotExists(filePhysicalPath);
         }
 
-        return this.typescriptToJS(filePhysicalPath);
+        return this.typescriptToJS(filePhysicalPath, false);
     }
 
-    private typescriptToJS(filePhysicalPath: string) {
+    private typescriptToJS(filePhysicalPath: string, isTSX: boolean) {
         let buffer = fs.readFileSync(filePhysicalPath);
         let tsCode = buffer.toString();
 
         let ast = babel.parseSync(tsCode, {
             plugins: [
-                ["@babel/plugin-transform-typescript", { isTSX: true }],
+                ["@babel/plugin-transform-typescript", { isTSX }],
                 ["@babel/plugin-proposal-decorators", { "legacy": true }]
             ]
         }) as babel.types.File;

@@ -12,7 +12,6 @@ interface ComponentToolbarState {
 }
 
 export class ComponentPanel extends React.Component<ComponentToolbarProps, ComponentToolbarState> {
-    // designer: {};
     private toolbarElement: HTMLElement;
     private COMPONENT_DATA = "component-data";
     private targetElements: Element[] = [];

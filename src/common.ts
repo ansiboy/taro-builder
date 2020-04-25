@@ -2,7 +2,7 @@ import { createParameterDecorator, ServerContext, VirtualDirectory } from "maish
 import { ConnectionConfig } from "mysql";
 import { createConnection, getConnection, ConnectionOptions, getConnectionManager } from "maishu-node-data";
 import path = require("path");
-import { ComponentInfo } from "maishu-jueying";
+import { ComponentInfo } from "taro-builder-core";
 
 export type ServerContextData = { db: ConnectionConfig, componentInfos: ComponentInfo[], staticRoot?: VirtualDirectory };
 

@@ -1,7 +1,7 @@
 import { LocalService } from "../services/local-service";
 import { errorHandle } from "maishu-chitu-admin/static";
 import { contextName } from "json!websiteConfig";
-import { Component, ComponentData } from "maishu-jueying";
+import { ComponentData, registerComponent } from "taro-builder-core";
 import { errors } from "../../errors";
 
 let localService = new LocalService(err => errorHandle)
@@ -17,7 +17,7 @@ export class ComponentLoader {
 
                         console.assert(componentInfo.type != null);
                         console.assert(typeof mod[componentInfo.type] == "function");
-                        Component.register(componentInfo.type, mod[componentInfo.type]);
+                        registerComponent(componentInfo.type, mod[componentInfo.type]);
 
                         resolve();
                     },
@@ -46,7 +46,7 @@ export class ComponentLoader {
 
                         console.assert(componentInfo.type != null);
                         console.assert(typeof mod[componentInfo.type] == "function");
-                        Component.register(componentInfo.type, mod[componentInfo.type]);
+                        registerComponent(componentInfo.type, mod[componentInfo.type]);
 
                         resolve();
                     },
@@ -74,7 +74,7 @@ export class ComponentLoader {
 
                     console.assert(componentToLoad.type != null);
                     console.assert(typeof mod[componentToLoad.type] == "function");
-                    Component.register(componentToLoad.type, mod[componentToLoad.type]);
+                    registerComponent(componentToLoad.type, mod[componentToLoad.type]);
 
                     resolve();
                 },

@@ -11,6 +11,7 @@ let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
         paths: {
             "maishu-jueying": "node_modules/maishu-jueying/dist/index",
             "maishu-jueying-core": "node_modules/maishu-jueying-core/dist/index",
+            "taro-builder-core": "node_modules/taro-builder-core/dist/index",
             "jquery-ui": "lib/jquery-ui-1.12.1/jquery-ui",
             "devices": "lib/devices.css-1.2/assets/devices.min.css",
             // "taro-bundle": "lib/taro-bundle",

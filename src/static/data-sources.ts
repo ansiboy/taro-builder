@@ -1,31 +1,24 @@
-import { DataSource, DataSourceSelectResult, DataSourceArguments, DataSourceSelectArguments } from "maishu-wuzhui";
-import { Service } from "maishu-chitu-admin/static";
-import { PageRecord as WebPage } from "../entities";
-
-class LocalService extends Service {
-    webPageList(args: DataSourceSelectArguments) {
-        // DataHelper
-        return this.getByJson<DataSourceSelectResult<WebPage>>("page-data/list", { args });
-    }
-    removeWebPage(id: string) {
-        return this.postByJson("page-data/remove", { id });
-    }
-}
+import { DataSource } from "maishu-wuzhui";
+import { PageRecord } from "../entities";
+import { LocalService } from "./services/local-service";
 
 let localService = new LocalService();
-
-
-
-let pageDataDataSource = new DataSource<WebPage>({
+let pageDataDataSource = new DataSource<PageRecord>({
     primaryKeys: ["id"],
     select: async (args) => {
-        return localService.webPageList(args);
+        return localService.pageRecordList(args);
     },
     delete: async (item) => {
-        return localService.removeWebPage(item.id);
+        return localService.removePageRecord(item.id);
+    },
+    insert: async (item) => {
+        return localService.addPageRecord(item);
+    },
+    update: async (item) => {
+        return localService.updatePageRecord(item);
     }
 })
 
 export let dataSources = {
-    webPage: pageDataDataSource
+    pageRecords: pageDataDataSource
 }

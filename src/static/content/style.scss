@@ -1,2 +1,31 @@
 $hd : 1;
 @import "../../../node_modules/taro-ui/dist/style/index.scss";
+
+
+.page-view {
+
+    width : 100%;
+    height: 100%;
+
+    .body {
+        height    : 100%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+
+        &::-webkit-scrollbar-track-piece {
+            background-color: #fff;
+        }
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #999;
+        }
+
+        li {
+            list-style: none;
+        }
+    }
+}

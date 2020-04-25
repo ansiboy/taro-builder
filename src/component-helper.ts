@@ -4,7 +4,7 @@ import ts = require("typescript");
 import { ClassDeclaration, CallExpression, ObjectLiteralExpression, PropertyAssignment, StringLiteral, ArrayLiteralExpression, PropertyAccessExpression } from "typescript";
 import path = require("path");
 import { errors } from "./errors";
-import { ComponentInfo } from "maishu-jueying";
+import { ComponentInfo } from "taro-builder-core";
 
 export let currentAppId = createParameterDecorator(async (req) => {
     let appId = req.headers["application-id"];

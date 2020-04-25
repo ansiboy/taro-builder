@@ -8,8 +8,9 @@ import websiteConfig from "./website-config";
 export type Settings = AdminSettings & {
     /** Taro app 源码物理路径，例如：D:\projects\taro-builder-demo\app\src */
     appSourcePhysicalPath: string
-    /** 组件编辑器的虚拟路径，例如：component-editors */
-    editorVirutalPath: string
+    /** 组件编辑器的脚本路径，例如：component-editors/index */
+    editorsPath: string
+    /** 项目根目录 */
     rootPhysicalPath: string
 };
 
@@ -37,7 +38,7 @@ export async function start(settings: Settings) {
         lib: path.join(__dirname, "../lib"),
     } as Settings["virtualPaths"], settings.virtualPaths || {});
 
-    websiteConfig.componentEditorsPath = path.join(settings.editorVirutalPath, "index");
+    websiteConfig.componentEditorsPath = settings.editorsPath;
     settings.websiteConfig = Object.assign(websiteConfig, settings.websiteConfig || {});
 
     let r = await startAdmin(settings);

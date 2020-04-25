@@ -1,61 +1,159 @@
 import { View, Text } from '@tarojs/components';
-import { ComponentData, ComponentFactory, PageDesigner } from "maishu-jueying";
+import { ComponentData, PageDesigner } from "maishu-jueying";
 import { errors } from "../../errors";
 import { Callbacks } from "maishu-chitu-service";
 import React = require("react");
 import { services } from "../services/services";
+import { ComponentPanel } from "./component-panel";
 
-
-interface Context {
-    handler: PageDesigner
-}
 
 /** 将 ComponentData 渲染为 Taro 组件 */
-export let TaroComponentFactory: ComponentFactory = function (componentData: ComponentData, context: Context) {
-    let render = new TaroComponentRender();
-    return render.renderComponent(componentData, context);;
+// export let TaroComponentFactory = function (componentData: ComponentData, context: Context) {
+//     let render = new TaroComponentRender();
+//     return render.renderComponent(componentData, context);;
+// }
+
+// export class TaroComponentRender {
+//     private pageView: PageView;
+
+//     renderComponent(componentData: ComponentData, context: Context) {
+//         if (componentData == null) throw errors.argumentNull("compentData");
+//         if (context == null) throw errors.argumentNull("context");
+
+//         console.assert(context != null && context.handler != null);
+//         return <PageView pageData={componentData} designer={context.handler}
+//             ref={e => {
+//                 if (!e || this.pageView == e) return;
+//                 this.pageView = e;
+//                 this.onPageViewCreated(context)
+//             }}>
+//         </PageView>;
+//     }
+
+//     private onPageViewCreated(context: Context) {
+//         this.enableDrapDrop(this.pageView, context.handler);
+//         this.pageView.wrapper.onkeydown = (ev) => {
+//             const DELETE_KEY_CODE = 46;
+//             if (ev.keyCode == DELETE_KEY_CODE) {
+//                 let ids = context.handler.selectedComponents.map(c => c.id || c.id);
+//                 context.handler.removeComponent(...ids);
+//             }
+//         }
+
+//         this.pageView.componentCreated.add((sender, element, componentData) => {
+//             element.onclick = () => {
+//                 context.handler.selectComponent(componentData.id);
+//                 this.pageView.wrapper.focus();
+//             }
+//         })
+//     }
+
+//     private enableDrapDrop(pageView: PageView, designer: PageDesigner) {
+//         if (pageView.element.className.indexOf("ui-sortable") >= 0)
+//             return;
+
+//         $(pageView.element).sortable({
+//             axis: "y",
+//             stop: () => {
+
+//                 let pageData = pageView.props.pageData;
+//                 //==============================================================================================
+//                 // 对组件进行排序
+//                 console.assert(pageData.children != null);
+
+//                 let childComponentDatas: ComponentData[] = [];
+//                 let elements = pageView.element.querySelectorAll("li");
+//                 for (let i = 0; i < elements.length; i++) {
+
+//                     let childId = elements[i].getAttribute("data-component-id");
+//                     if (!childId)
+//                         continue;
+
+//                     console.assert(childId != null);
+
+//                     let child = pageData.children.filter((o: ComponentData) => o.id == childId)[0] as ComponentData;
+//                     console.assert(child != null);
+
+//                     childComponentDatas.push(child);
+//                 }
+
+//                 let childIds = childComponentDatas.map(o => o.id);
+//                 pageData.children = pageData.children.filter((o: ComponentData) => childIds.indexOf(o.id) < 0);
+
+//                 pageData.children.push(...childComponentDatas);
+//                 //==============================================================================================
+
+//             },
+//             receive: (event, ui) => {
+//                 let pageData = pageView.props.pageData;
+//                 let componentData: ComponentData = JSON.parse(ui.helper.attr("component-data"));
+//                 console.assert(pageData.id);
+//                 componentData.parentId = pageData.id;
+//                 let elementIndex: number = 0;
+//                 ui.helper.parent().children().each((index, element) => {
+//                     if (element == ui.helper[0]) {
+//                         elementIndex = index;
+//                         return false;
+//                     }
+//                 })
+
+
+//                 let isFirst = elementIndex == 0;
+//                 let isLatest = elementIndex == ui.helper.parent().children().length - 1;
+
+//                 if (isFirst) {
+//                     designer.appendComponent(pageData.id, componentData, 0);
+//                 }
+//                 else if (isLatest) {
+//                     designer.appendComponent(pageData.id, componentData);
+//                 }
+//                 else {
+//                     let nextComponentDataId = ui.helper.parent().children()[elementIndex].getAttribute("data-component-id");
+//                     let componentIds = pageData.children.map((o: ComponentData) => o.id);
+//                     let nextComponentDataIndex = componentIds.indexOf(nextComponentDataId);
+//                     console.assert(nextComponentDataId != null);
+//                     designer.appendComponent(pageData.id, componentData, nextComponentDataIndex);
+//                 }
+
+
+//                 ui.helper.remove();
+//             }
+//         })
+//     }
+// }
+
+interface PageViewProps {
+    pageData: ComponentData,
+    designer: PageDesigner,
 }
 
-export class TaroComponentRender {
-    private pageView: PageView;
+export class PageView extends React.Component<PageViewProps> {
+    private element: HTMLElement;
+    private bodyContainer: HTMLElement;
+    componentCreated = Callbacks<PageView, HTMLElement, ComponentData>();
 
-    renderComponent(componentData: ComponentData, context: Context) {
-        if (componentData == null) throw errors.argumentNull("compentData");
-        if (context == null) throw errors.argumentNull("context");
-
-        console.assert(context != null && context.handler != null);
-        return <PageView pageData={componentData}
-            ref={e => {
-                if (!e || this.pageView == e) return;
-                this.pageView = e;
-                this.onPageViewCreated(context)
-            }}>
-        </PageView>;
-    }
-
-    private onPageViewCreated(context: Context) {
-        this.enableDrapDrop(this.pageView, context.handler);
-        this.pageView.wrapper.onkeydown = (ev) => {
-            const DELETE_KEY_CODE = 46;
-            if (ev.keyCode == DELETE_KEY_CODE) {
-                let ids = context.handler.selectedComponents.map(c => c.id || c.id);
-                context.handler.removeComponent(...ids);
-            }
+    createComponentElement(componentData: ComponentData) {
+        let componentType = ComponentLoader.componentTypes[componentData.type];
+        if (!componentType) {
+            return <View>
+                <Text>Unspported:</Text>
+                <View>
+                    <Text>{JSON.stringify(componentData)}</Text>
+                </View>
+            </View>;
         }
 
-        this.pageView.componentCreated.add((sender, element, componentData) => {
-            element.onclick = () => {
-                context.handler.selectComponent(componentData.id);
-                this.pageView.wrapper.focus();
-            }
-        })
+        let r: JSX.Element = React.createElement(componentType, componentData.props);
+        return r;
+    }
+
+    setComponentPanel(componentPanel: ComponentPanel) {
+        componentPanel.addDropTarget(this.bodyContainer);
     }
 
     private enableDrapDrop(pageView: PageView, designer: PageDesigner) {
-        if (pageView.element.className.indexOf("ui-sortable") >= 0)
-            return;
-
-        $(pageView.element).sortable({
+        let bodyElement = this.element.querySelector("section > ul");
+        $(bodyElement).sortable({
             axis: "y",
             stop: () => {
 
@@ -123,51 +221,42 @@ export class TaroComponentRender {
             }
         })
     }
-}
 
-interface PageViewProps {
-    pageData: ComponentData,
-}
-
-class PageView extends React.Component<PageViewProps> {
-    element: HTMLElement;
-    wrapper: HTMLElement;
-    componentCreated = Callbacks<PageView, HTMLElement, ComponentData>();
-
-    createComponentElement(componentData: ComponentData) {
-        let componentType = ComponentLoader.componentTypes[componentData.type];
-        if (!componentType) {
-            return <View>
-                <Text>Unspported:</Text>
-                <View>
-                    <Text>{JSON.stringify(componentData)}</Text>
-                </View>
-            </View>;
-        }
-
-        let r: JSX.Element = React.createElement(componentType, componentData.props);
-        return r;
+    componentDidMount() {
+        this.enableDrapDrop(this, this.props.designer);
     }
 
     render() {
         let props: PageViewProps = this.props;
         let children = props.pageData.children as ComponentData[] || [];
-        return <div tabIndex={0} ref={e => this.wrapper = e || this.wrapper} style={{ width: "100%", height: "100%" }}>
-            <ul className="page-view" ref={e => this.element = e || this.element} style={{ width: "100%", height: "100%" }}>
-                {children.length == 0 ?
-                    <li className="text-center" style={{ paddingTop: 100 }}>
-                        <h4>请拖放组件到此处</h4>
-                    </li> :
-                    children.map(o =>
-                        <li key={o.id} ref={e => {
-                            if (!e) return;
-                            this.componentCreated.fire(this, e, o);
-                        }}>
-                            <ComponentLoader key={o.id} componentData={o} />
-                        </li>
-                    )
-                }
-            </ul>
+        return <div className="page-view" ref={e => this.element = e || this.element}
+            style={{ width: "100%", height: "100%" }}>
+            <header></header>
+            <section style={{ width: "100%", height: "100%", overflowY: "auto" }}>
+                <ul ref={e => this.bodyContainer = e || this.bodyContainer}>
+                    {children.length == 0 ?
+                        <li className="text-center" style={{ paddingTop: 100 }}>
+                            <h4>请拖放组件到此处</h4>
+                        </li> :
+                        children.map(o =>
+                            <li key={o.id} data-component-id={o.id}
+                                onClick={e => {
+                                    this.props.designer.selectComponent(o.id);
+                                    (e.target as HTMLElement).focus();
+                                }}
+                                ref={e => {
+                                    if (!e) return;
+                                    this.componentCreated.fire(this, e, o);
+                                    e.tabIndex = 0;
+                                    e.contentEditable = "true";
+                                }}>
+                                <ComponentLoader key={o.id} componentData={o} />
+                            </li>
+                        )
+                    }
+                </ul>
+            </section>
+            <footer></footer>
         </div>
     }
 }
@@ -275,4 +364,6 @@ class ComponentLoader extends React.Component<ComponentLoaderProps, ComponentLoa
         return e;
     }
 }
+
+
 

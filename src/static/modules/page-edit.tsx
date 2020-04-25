@@ -1,19 +1,21 @@
-import { DesignView } from "../controls/design-view";
+import { DesignView, DesignerViewHeader } from "../controls/design-view/index";
 import React = require("react");
 import { PageProps } from "maishu-chitu-react";
 import { buttonOnClick } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../services/local-service";
 import { guid } from "maishu-toolkit";
-import { ComponentData } from "maishu-jueying";
 import websiteConfig from "json!websiteConfig";
+import { FormValidator, rules as r } from "maishu-dilu"
+import { dataSources } from "../data-sources";
+import { ComponentData } from "maishu-jueying";
 
 requirejs([websiteConfig.componentEditorsPath], function () {
-    debugger
 })
 
 interface State {
     pageData: ComponentData | undefined,
+    name?: string
 }
 
 interface Props extends PageProps {
@@ -23,23 +25,26 @@ interface Props extends PageProps {
 export default class PageEdit extends React.Component<Props, State> {
 
     private localService: LocalService;
+    private validator: FormValidator;
 
     constructor(props) {
         super(props);
 
-        // this.componentDataHandler = this.emptyComponentDataHandler();
         this.state = { pageData: undefined };
         this.localService = this.props.createService(LocalService);
     }
 
     async save(): Promise<any> {
+        if (!this.validator.check()) {
+            return;
+        }
         let pageData = this.state.pageData;
-        let recored = { id: this.props.data.id, pageData, } as PageRecord;
+        let recored = { id: this.props.data.id, pageData, name: this.state.name, type: "page" } as PageRecord;
         if (this.props.data.id) {
-            await this.localService.updatePageRecord(recored);
+            await dataSources.pageRecords.update(recored);
         }
         else {
-            await this.localService.addPageRecord(recored);
+            await dataSources.pageRecords.insert(recored);
         }
     }
 
@@ -64,8 +69,7 @@ export default class PageEdit extends React.Component<Props, State> {
         let s = this.props.createService(LocalService);
         if (this.props.data.id) {
             s.getPageData(this.props.data.id as string).then(d => {
-                // this.componentDataHandler.pageData = d.pageData;
-                this.setState({ pageData: d.pageData })
+                this.setState({ pageData: d.pageData, name: d.name })
             })
         }
         else {
@@ -74,18 +78,34 @@ export default class PageEdit extends React.Component<Props, State> {
         }
     }
 
+    createValidator(form: HTMLElement) {
+        if (this.validator)
+            return;
+
+        this.validator = new FormValidator(form,
+            { name: "name", rules: [r.required("请输入页面名称")] }
+        );
+    }
+
     preivew() {
 
     }
 
     render() {
-        let pageData = this.state.pageData;
+        let { pageData, name } = this.state;
         if (pageData == undefined)
             return <div className="empty">
                 数据加载中...
             </div>
         return <DesignView {...this.props} pageData={pageData}>
             <ul style={{ height: 32, margin: 0, padding: 0 }}>
+                <li className="pull-left" ref={e => e ? this.createValidator(e) : null}>
+                    <input name="name" className="form-control" style={{ width: 300, marginTop: -5 }} placeholder="请输入页面名称"
+                        value={name || ""}
+                        onChange={e => {
+                            this.setState({ name: e.target.value })
+                        }} />
+                </li>
                 <li className="pull-right">
                     <button className="btn btn-sm btn-primary">
                         <i className="icon-copy"></i><span>更换模板</span>

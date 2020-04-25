@@ -1,14 +1,15 @@
 import { DataListPage } from "maishu-chitu-admin/static";
 import { PageRecord } from "../../entities";
 import { dataSources } from "../data-sources";
-import { boundField } from "maishu-wuzhui-helper";
+import { boundField, dateTimeField } from "maishu-wuzhui-helper";
 import React = require("react");
 
 export default class PageList extends DataListPage<PageRecord> {
-    dataSource = dataSources.webPage as any;
+    dataSource = dataSources.pageRecords as any;
     itemName = "页面";
     columns = [
-        boundField({ dataField: "name" })
+        boundField<PageRecord>({ dataField: "name", headerText: "名称" }),
+        dateTimeField<PageRecord>({ dataField: "createDateTime", headerText: "创建时间" })
     ] as any;
 
     protected getAddButton() {
@@ -18,7 +19,7 @@ export default class PageList extends DataListPage<PageRecord> {
             <span>添加</span>
         </button>
     }
-    
+
     protected getEditButton(dataItem: PageRecord) {
         return <button className="btn btn-minier btn-info"
             onClick={() => this.executeEdit(dataItem)}>
