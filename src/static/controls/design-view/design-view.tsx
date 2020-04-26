@@ -1,20 +1,23 @@
 import React = require("react");
-import { ComponentData, ComponentDefine, EditorPanel, PageDesigner, PropertyEditorInfo, ComponentInfo, DesignerContext } from "maishu-jueying";
+import { EditorPanel, PageDesigner, PropertyEditorInfo, DesignerContext } from "maishu-jueying";
 import "jquery-ui"
-import { ComponentPanel } from "../component-panel";
+import { ComponentPanel, ComponentDefine } from "../component-panel";
 import { Application } from "maishu-chitu-react";
 import { Less } from "maishu-ui-toolkit";
 import { LocalService } from "../../services/local-service";
 import { contextName } from "json!websiteConfig";
 import * as ui from "maishu-ui-toolkit";
 import { componentRenders } from "../../component-renders/index";
-import { parseComponentData, componentTypes, registerComponent, PageView } from "taro-builder-core";
+import {
+    parseComponentData, componentTypes, registerComponent, PageView,
+    ComponentData, ComponentInfo,
+} from "taro-builder-core";
 import { services } from "../../services/services";
 import { errors } from "../../../errors";
 import { FakeComponent } from "./fake-component";
 import { createComponentLoadFail } from "./load-fail-component";
-import { guid } from "maishu-toolkit";
-import { component } from "taro-builder-core";
+import { DesignComponentProps } from "../design-components/index";
+import "../design-components/index";
 
 interface Props {
     app: Application,
@@ -26,6 +29,7 @@ interface Props {
 
 interface State {
     pageData: ComponentData,
+    isReady: boolean,
 }
 
 export let DesignPageContext = React.createContext<{ designPage?: DesignView }>({});
@@ -49,7 +53,7 @@ export class DesignView extends React.Component<Props, State> {
 
         let pageData = this.props.pageData;
         this.processPageData(pageData);
-        this.state = { pageData };
+        this.state = { pageData, isReady: false };
 
         this.localService = this.props.app.createService(LocalService as any) as any;
         if (!DesignView.initComponents) {
@@ -63,18 +67,7 @@ export class DesignView extends React.Component<Props, State> {
             return;
         }
 
-        let body = pageData.children.filter(o => typeof o != "string" && o.type == "section")[0] as ComponentData;
-        if (body == null) {
-            let bodyChildren = pageData.children.filter(o => typeof o != "string" &&
-                o.type != "section" && o.type != "header" && o.type != "footer") as ComponentData[];
-            body = { id: guid(), type: "section", props: {}, children: bodyChildren };
-
-            pageData.children = pageData.children.filter(o => typeof o == "string" ||
-                o.type == "header" || o.type == "footer" || o.type == "section");
-            pageData.children.push(body);
-        }
-
-        let stack = [pageData];
+        let stack: ComponentData[] = [pageData];
         while (stack.length > 0) {
             let item = stack.pop();
             item.children.forEach(c => {
@@ -83,15 +76,10 @@ export class DesignView extends React.Component<Props, State> {
 
                 stack.push(c);
             })
-
-            let props: any = item.props;
-            props.id = item.id;
         }
-
     }
 
-
-    preivew() {
+    private preivew() {
         let { pageData } = this.props;
         console.assert(pageData != null);
 
@@ -134,7 +122,7 @@ export class DesignView extends React.Component<Props, State> {
 
     }
 
-    loadComponentTypes(pageData: ComponentData) {
+    private loadComponentTypes(pageData: ComponentData) {
         let stack: ComponentData[] = [pageData];
         while (stack.length > 0) {
             let item = stack.pop();
@@ -162,11 +150,10 @@ export class DesignView extends React.Component<Props, State> {
                 })
             }
         }
-        registerComponent("section", PageViewBody);
     }
 
     async onComponentCreated() {
-        if (this.componentPanel == null || this.editorPanel == null || this.pageView == null)
+        if (this.componentPanel == null || this.editorPanel == null)
             return;
 
         //==========================================================================================
@@ -174,7 +161,7 @@ export class DesignView extends React.Component<Props, State> {
         let componentInfos: ComponentInfo[] = await this.localService.componentInfos();
         console.assert(componentInfos != null);
         componentInfos = componentInfos.filter(o => o.displayName != null);
-        let components = componentInfos.map(o => ({
+        let componentDefines = componentInfos.map(o => ({
             componentData: {
                 type: o.type,
                 props: {},
@@ -183,18 +170,13 @@ export class DesignView extends React.Component<Props, State> {
             icon: o.icon,
             introduce: o.introduce
         }) as ComponentDefine)
-        this.componentPanel.setComponets(components);
+        this.componentPanel.setComponets(componentDefines);
 
         //==========================================================================================
-        // this.pageView.setComponentPanel(this.componentPanel);
-        let bodyContainer = this.mobileElement.querySelector(".page-view .body ul") as HTMLElement;
-        this.componentPanel.addDropTarget(bodyContainer);
-
-        let bodyComponentData = this.state.pageData.children.filter(o => typeof o != "string" && o.type == "section")[0] as ComponentData;
-        enableDrapDrop(bodyContainer, bodyComponentData, this.designer);
+        this.setState({ isReady: true, });
     }
 
-    pageViewRef(e) {
+    private pageViewRef(e) {
         if (this.pageView != null || e == null)
             return;
 
@@ -202,8 +184,37 @@ export class DesignView extends React.Component<Props, State> {
         this.onComponentCreated();
     }
 
+
+    private fillPageData(pageData: ComponentData) {
+        let stack: ComponentData[] = [pageData];
+        while (stack.length > 0) {
+            let item = stack.pop();
+            let designComponentProps: DesignComponentProps = {
+                designComponentProps: {
+                    designer: this.designer, componentData: item, componentPanel: this.componentPanel,
+                    selected: item.selected, id: item.id
+                }
+            }
+            item.props = Object.assign(item.props, designComponentProps);
+            if (item.children)
+                stack.push(...item.children as ComponentData[]);
+        }
+    }
+
+    private trimPageData(pageData: ComponentData) {
+        let stack: ComponentData[] = [pageData];
+        while (stack.length > 0) {
+            let item = stack.pop();
+            if (item.children)
+                stack.push(...item.children as ComponentData[]);
+
+            let key: keyof DesignComponentProps = "designComponentProps";
+            delete item.props[key]
+        }
+    }
+
     render() {
-        let { pageData } = this.state;
+        let { pageData, isReady } = this.state;
         pageData.props.ref = (e) => this.pageViewRef(e);
 
         let { hidePageSettingPanel } = this.props;
@@ -219,10 +230,15 @@ export class DesignView extends React.Component<Props, State> {
                     <div className="screen mobile-page" ref={e => this.mobileElement = this.mobileElement || e}>
                         <DesignerContext.Consumer>
                             {args => {
-                                this.loadComponentTypes(pageData);
-                                let pageView = parseComponentData(pageData);
                                 this.designer = args.designer;
-                                return pageView;
+                                if (isReady) {
+                                    this.loadComponentTypes(pageData);
+                                    this.fillPageData(pageData);
+                                    let pageView = parseComponentData(pageData);
+                                    this.trimPageData(pageData);
+                                    return pageView;
+                                }
+                                return null;
                             }}
                         </DesignerContext.Consumer>
                     </div>
@@ -287,7 +303,6 @@ export class DesignView extends React.Component<Props, State> {
             </PageDesigner>
         </>
     }
-
 }
 
 
@@ -326,102 +341,78 @@ async function loadComponentType(typeName: string) {
     })
 }
 
-function enableDrapDrop(bodyElement: HTMLElement, pageData: ComponentData, designer: PageDesigner) {
-    console.assert(bodyElement != null);
-    $(bodyElement).sortable({
-        axis: "y",
-        stop: () => {
+// function enableDrapDrop(bodyElement: HTMLElement, parentData: ComponentData, designer: PageDesigner) {
+//     console.assert(bodyElement != null);
+//     $(bodyElement).sortable({
+//         axis: "y",
+//         stop: () => {
 
-            // let pageData = pageView.props.pageData;
-            //==============================================================================================
-            // 对组件进行排序
-            console.assert(pageData.children != null);
+//             // let pageData = pageView.props.pageData;
+//             //==============================================================================================
+//             // 对组件进行排序
+//             console.assert(parentData.children != null);
 
-            let childComponentDatas: ComponentData[] = [];
-            let elements = bodyElement.querySelectorAll("li");
-            for (let i = 0; i < elements.length; i++) {
+//             let childComponentDatas: ComponentData[] = [];
+//             let elements = bodyElement.querySelectorAll("li");
+//             for (let i = 0; i < elements.length; i++) {
 
-                let childId = elements[i].getAttribute("data-component-id");
-                if (!childId)
-                    continue;
+//                 let childId = elements[i].getAttribute("data-component-id");
+//                 if (!childId)
+//                     continue;
 
-                console.assert(childId != null);
+//                 console.assert(childId != null);
 
-                let child = pageData.children.filter((o: ComponentData) => o.id == childId)[0] as ComponentData;
-                console.assert(child != null);
+//                 let child = parentData.children.filter((o: ComponentData) => o.id == childId)[0] as ComponentData;
+//                 console.assert(child != null);
 
-                childComponentDatas.push(child);
-            }
+//                 childComponentDatas.push(child);
+//             }
 
-            let childIds = childComponentDatas.map(o => o.id);
-            pageData.children = pageData.children.filter((o: ComponentData) => childIds.indexOf(o.id) < 0);
+//             let childIds = childComponentDatas.map(o => o.id);
+//             parentData.children = parentData.children.filter((o: ComponentData) => childIds.indexOf(o.id) < 0);
 
-            pageData.children.push(...childComponentDatas);
-            //==============================================================================================
+//             parentData.children.push(...childComponentDatas);
+//             //==============================================================================================
 
-        },
-        receive: (event, ui) => {
-            let componentData: ComponentData = JSON.parse(ui.helper.attr("component-data"));
-            console.assert(pageData.id);
-            componentData.parentId = pageData.id;
-            let elementIndex: number = 0;
-            ui.helper.parent().children().each((index, element) => {
-                if (element == ui.helper[0]) {
-                    elementIndex = index;
-                    return false;
-                }
-            })
-
-
-            let isFirst = elementIndex == 0;
-            let isLatest = elementIndex == ui.helper.parent().children().length - 1;
-
-            if (isFirst) {
-                designer.appendComponent(pageData.id, componentData, 0);
-            }
-            else if (isLatest) {
-                designer.appendComponent(pageData.id, componentData);
-            }
-            else {
-                let nextComponentDataId = ui.helper.parent().children()[elementIndex].getAttribute("data-component-id");
-                let componentIds = pageData.children.map((o: ComponentData) => o.id);
-                let nextComponentDataIndex = componentIds.indexOf(nextComponentDataId);
-                console.assert(nextComponentDataId != null);
-                designer.appendComponent(pageData.id, componentData, nextComponentDataIndex);
-            }
+//         },
+//         receive: (event, ui) => {
+//             let componentData: ComponentData = JSON.parse(ui.helper.attr("component-data"));
+//             componentData.id = componentData.id || guid();
+//             componentData.parentId = parentData.id;
+//             componentData.props = {
+//                 id: componentData.id
+//             }
+//             let elementIndex: number = 0;
+//             ui.helper.parent().children().each((index, element) => {
+//                 if (element == ui.helper[0]) {
+//                     elementIndex = index;
+//                     return false;
+//                 }
+//             })
 
 
-            ui.helper.remove();
-        }
-    })
-}
+//             let isFirst = elementIndex == 0;
+//             let isLatest = elementIndex == ui.helper.parent().children().length - 1;
 
-@component({ type: "section" })
-class PageViewBody extends React.Component {
-    private className = "body";
-    render() {
-        let c: JSX.Element;
-        if (!this.props.children) {
-            c = <li className="text-center" style={{ paddingTop: 100 }}>
-                <h4>请拖放组件到此处</h4>
-            </li>
-        }
-        else if (Array.isArray(this.props.children)) {
-            c = <>
-                {this.props.children.map((c: any) => {
-                    let id = c.props?.id || guid();
-                    return <li key={id} data-component-id={id}>{c}</li>
-                })}
-            </>
-        }
-        else {
-            c = <li>{this.props.children}</li>;
-        }
-        return <section className={this.className}>
-            <ul>
-                {c}
-            </ul>
-        </section>
-    }
-}
+//             if (isFirst) {
+//                 designer.appendComponent(parentData.id, componentData, 0);
+//             }
+//             else if (isLatest) {
+//                 designer.appendComponent(parentData.id, componentData);
+//             }
+//             else {
+//                 let nextComponentDataId = ui.helper.parent().children()[elementIndex + 1].getAttribute("data-component-id");
+//                 let componentIds = parentData.children.map((o: ComponentData) => o.id);
+//                 let nextComponentDataIndex = componentIds.indexOf(nextComponentDataId);
+//                 console.assert(nextComponentDataId != null);
+//                 designer.appendComponent(parentData.id, componentData, nextComponentDataIndex);
+//             }
+
+
+//             ui.helper.remove();
+//         }
+//     })
+// }
+
+
 

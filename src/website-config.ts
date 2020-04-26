@@ -22,7 +22,7 @@ let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
             "@tarojs/taro": "lib/taro-h5",
             "nervjs": "lib/nervjs",
             "tslib": "node_modules/tslib/tslib",
-            "maishu-chitu-admin/static": "node_modules/maishu-chitu-admin/static",
+            // "maishu-chitu-admin/static": "node_modules/maishu-chitu-admin/static",
             "htmlparser2": "node_modules/htmlparser2/"
         }
     },

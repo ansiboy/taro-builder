@@ -31,7 +31,7 @@ export function getClientComponentInfos(componentsDirectory: VirtualDirectory): 
         }
     }
 
-    files = files.filter(o => o.physicalPath.endsWith(".js") || o.physicalPath.endsWith(".jsx") || o.physicalPath.endsWith(".tsx"));
+    files = files.filter(o => o.physicalPath.endsWith(".tsx"));//o.physicalPath.endsWith(".js") || o.physicalPath.endsWith(".jsx") ||
     files.forEach(item => {
         let tsSourceFile = ts.createSourceFile(
             item.physicalPath, fs.readFileSync(item.physicalPath).toString(),

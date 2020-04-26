@@ -1,5 +1,6 @@
 import * as React from "react";
-import { ComponentDefine, classNames } from "maishu-jueying";
+import { classNames } from "maishu-jueying";
+import { ComponentData } from "taro-builder-core";
 
 interface ComponentToolbarProps extends React.Props<ComponentPanel> {
     style?: React.CSSProperties,
@@ -10,6 +11,12 @@ interface ComponentToolbarProps extends React.Props<ComponentPanel> {
 interface ComponentToolbarState {
     components: ComponentDefine[],
 }
+
+export interface ComponentDefine {
+    componentData: ComponentData,
+    displayName: string, icon: string, introduce: string,
+}
+
 
 export class ComponentPanel extends React.Component<ComponentToolbarProps, ComponentToolbarState> {
     private toolbarElement: HTMLElement;

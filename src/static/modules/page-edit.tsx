@@ -1,4 +1,4 @@
-import { DesignView, DesignerViewHeader } from "../controls/design-view/index";
+import { DesignView } from "../controls/design-view/index";
 import React = require("react");
 import { PageProps } from "maishu-chitu-react";
 import { buttonOnClick } from "maishu-ui-toolkit";
@@ -8,7 +8,8 @@ import { guid } from "maishu-toolkit";
 import websiteConfig from "json!websiteConfig";
 import { FormValidator, rules as r } from "maishu-dilu"
 import { dataSources } from "../data-sources";
-import { ComponentData } from "maishu-jueying";
+import { ComponentData, PageView } from "taro-builder-core";
+import { PageViewHelper } from "../controls/page-view-helper";
 
 requirejs([websiteConfig.componentEditorsPath], function () {
 })
@@ -22,43 +23,41 @@ interface Props extends PageProps {
     data: { id?: string },
 }
 
+
 export default class PageEdit extends React.Component<Props, State> {
 
-    private localService: LocalService;
     private validator: FormValidator;
+    private record: PageRecord;
 
     constructor(props) {
         super(props);
 
         this.state = { pageData: undefined };
-        this.localService = this.props.createService(LocalService);
     }
 
     async save(): Promise<any> {
         if (!this.validator.check()) {
-            return;
+            return Promise.reject("validate fail");
         }
-        let pageData = this.state.pageData;
-        let recored = { id: this.props.data.id, pageData, name: this.state.name, type: "page" } as PageRecord;
-        if (this.props.data.id) {
-            await dataSources.pageRecords.update(recored);
+
+        let { pageData, name } = this.state;
+        if (this.record == null) {
+            this.record = { pageData, name, type: "page" } as PageRecord;
+            await dataSources.pageRecords.insert(this.record);
         }
         else {
-            await dataSources.pageRecords.insert(recored);
+            this.record.pageData = pageData;
+            this.record.name = name;
+            await dataSources.pageRecords.update(this.record);
         }
+
     }
 
-    private emptyComponentDataHandler(): PageRecord {
-        let pageData: ComponentData = {
-            id: guid(),
-            type: "PageView",
-            children: [],
-            props: {}
-        };
-        let record: PageRecord = {
+    private emptyRecord(): Partial<PageRecord> {
+        let pageData = PageViewHelper.emptyPageData();
+        let record: Partial<PageRecord> = {
             id: pageData.id,
             pageData,
-            name: "",
             type: "page",
             createDateTime: new Date()
         };
@@ -69,11 +68,12 @@ export default class PageEdit extends React.Component<Props, State> {
         let s = this.props.createService(LocalService);
         if (this.props.data.id) {
             s.getPageData(this.props.data.id as string).then(d => {
+                this.record = d;
                 this.setState({ pageData: d.pageData, name: d.name })
             })
         }
         else {
-            let r = this.emptyComponentDataHandler();
+            let r = this.emptyRecord();
             this.setState({ pageData: r.pageData });
         }
     }
@@ -107,24 +107,6 @@ export default class PageEdit extends React.Component<Props, State> {
                         }} />
                 </li>
                 <li className="pull-right">
-                    <button className="btn btn-sm btn-primary">
-                        <i className="icon-copy"></i><span>更换模板</span>
-                    </button>
-                    <div className="btn-group">
-                        <button className="btn btn-sm btn-primary dropdown-toggle">
-                            <i className="icon-camera"></i>
-                            <span>存为快照</span>
-                        </button>
-                        <button type="button" className="btn btn-sm btn-primary dropdown-toggle"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i className="icon-caret-down"></i>
-                        </button>
-                        <ul className="dropdown-menu">
-                            <li style={{ padding: "6px 0px" }}>
-                                <a className="btn-link">查看快照<span className="badge pull-right">2</span></a>
-                            </li>
-                        </ul>
-                    </div>
                     <button className="btn btn-sm btn-primary" onClick={() => this.preivew()}>
                         <i className="icon-eye-open"></i><span>预览</span>
                     </button>

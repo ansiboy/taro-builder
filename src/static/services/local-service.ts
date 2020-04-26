@@ -1,8 +1,8 @@
 import { Service } from "maishu-chitu-admin/static";
-import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui";
+import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 import { PageRecord } from "../../entities";
 import { contextName } from "json!websiteConfig";
-import { ComponentInfo } from "maishu-jueying";
+import { ComponentInfo } from "taro-builder-core";
 
 const existsPageDataRecordIds: string[] = [];
 
@@ -23,14 +23,16 @@ export class LocalService extends Service {
     removePageRecord(id: string) {
         return this.postByJson("page-data/remove", { id });
     }
-    async addPageRecord(item: Partial<PageRecord>){
-       let r = await this.postByJson(this.url("page-data/add"), { item });
-       return r;
+    async addPageRecord(item: Partial<PageRecord>) {
+        let r = await this.postByJson(this.url("page-data/add"), { item });
+        Object.assign(item, r);
+        return item;
     }
-    async updatePageRecord(item: Partial<PageRecord>){
+    async updatePageRecord(item: Partial<PageRecord>) {
         let r = await this.postByJson(this.url("page-data/update"), { item });
-        return r;
-     }
+        Object.assign(item, r);
+        return item;
+    }
     async getPageData(id: string): Promise<PageRecord> {
         let r = await this.getByJson<PageRecord>(this.url("page-data/item"), { id });
         return r;
