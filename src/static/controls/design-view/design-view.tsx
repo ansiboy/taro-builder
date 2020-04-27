@@ -106,6 +106,11 @@ export class DesignView extends React.Component<Props, State> {
     //     open(url, '_blank');
     // }
 
+    bodyVisible(pageData: PageData): boolean {
+        let r = PageViewHelper.findBody(pageData);
+        return r != null && r.props.visible == true;
+    }
+
     headerVisible(pageData: PageData): boolean {
         let r = PageViewHelper.findHeader(pageData);
         return r != null && r.props.visible == true;
@@ -124,6 +129,13 @@ export class DesignView extends React.Component<Props, State> {
             return null;
 
         return componentCustomRender(items);
+    }
+
+    async showBody(pageData: PageData, visible: boolean) {
+        let c = PageViewHelper.findBody(pageData);
+        console.assert(c != null);
+        c.props.visible = visible;
+        this.setState({ pageData });
     }
 
     async showHeader(pageData: PageData, visible: boolean) {
@@ -172,20 +184,21 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     private renderPageData(pageData: PageData, designer: PageDesigner, componentPanel: ComponentPanel) {
-        pageData.props.ref = (pageView: DesignPage) => {
-            if (this.pageView != null || pageView == null)
-                return;
+        // pageData.props.ref = (pageView: DesignPage) => {
+        //     if (this.pageView != null || pageView == null)
+        //         return;
 
-            this.pageView = pageView;
-            let bodyElement = this.pageView.element.querySelector(`.${PageBody.className}`);
-            console.assert(bodyElement != null)
-            setTimeout(() => {
-                this.componentPanel.addDropTarget(bodyElement);
-            })
-        }
+        //     this.pageView = pageView;
+        //     let bodyElement = this.pageView.element.querySelector(`.${PageBody.className}`);
+        //     console.assert(bodyElement != null)
+        //     setTimeout(() => {
+        //         this.componentPanel.addDropTarget(bodyElement);
+        //     })
+        // }
         this.loadComponentTypes(pageData);
-        let element = parseComponentData(pageData);
-        return element;
+        // let element = parseComponentData(pageData);
+        // return element;
+        return <DesignPage pageData={pageData} componentPanel={componentPanel} />
     }
 
     componentDidMount() {
@@ -249,6 +262,16 @@ export class DesignView extends React.Component<Props, State> {
                                     <div className="pull-right">
                                         <input className="form-control input-sm" style={{ width: 140 }} />
                                     </div>
+                                </li>
+                                <li className="list-group-item clearfix">
+                                    <div className="pull-left">
+                                        显示主页</div>
+                                    <label className="switch pull-right">
+                                        <input type="checkbox" className="ace ace-switch ace-switch-5"
+                                            checked={this.bodyVisible(pageData)}
+                                            onChange={e => this.showBody(pageData, e.target.checked)} />
+                                        <span className="lbl middle"></span>
+                                    </label>
                                 </li>
                                 <li className="list-group-item clearfix">
                                     <div className="pull-left">

@@ -1,28 +1,28 @@
 import { Page, component, parseComponentData, ComponentData, PageData } from "taro-builder-core";
-import { DesignerContext } from "maishu-jueying";
+import { DesignerContext, PageDesigner } from "maishu-jueying";
 import * as React from "react";
+import { ComponentPanel } from "../component-panel";
 
+type T = { page: DesignPage, designer: PageDesigner, pageData: PageData, componentPanel: ComponentPanel };
+export let DesignPageContext = React.createContext<T>({ page: null, designer: null, pageData: null, componentPanel: null });
 
 @component({ type: Page.typeName })
-export class DesignPage extends Page {
+export class DesignPage extends React.Component<{ pageData: PageData, componentPanel: ComponentPanel }> {
     element: HTMLElement;
 
-
     render() {
-        return <ErrorBoundary><DesignerContext.Consumer>
+        return <DesignerContext.Consumer>
             {args => {
-                let pageData = args.designer.pageData as PageData;
-                let children = pageData.children.filter(o => o.parentId == pageData.id) as ComponentData[];
-                return <div className={"page-view"} ref={e => this.element = e || this.element}>
-                    {children.map(o => <React.Fragment key={o.id}>
-                        {parseComponentData(o)}
-                    </React.Fragment>)}
-                </div>
+                let value: T = {
+                    page: this, designer: args.designer, pageData: this.props.pageData,
+                    componentPanel: this.props.componentPanel
+                };
+                return <DesignPageContext.Provider value={value}>
+                    <Page {...{ pageData: this.props.pageData }} />
+                </DesignPageContext.Provider>
             }}
         </DesignerContext.Consumer>
-        </ErrorBoundary>
     }
-
 }
 
 DesignPage.contextType = DesignerContext;

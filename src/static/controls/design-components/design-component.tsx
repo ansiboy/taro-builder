@@ -13,7 +13,7 @@ export interface DesignComponentProps {
     }
 }
 
-export function enableDrapDrop(bodyElement: HTMLElement, parentData: PageData, designer: PageDesigner) {
+function enableDrapDrop(bodyElement: HTMLElement, parentData: PageData, designer: PageDesigner) {
     console.assert(bodyElement != null);
     $(bodyElement).sortable({
         axis: "y",
