@@ -1,5 +1,5 @@
 import { PageDesigner } from "maishu-jueying";
-import { ComponentData, component } from "taro-builder-core";
+import { ComponentData, component, PageData } from "taro-builder-core";
 import { guid } from "maishu-toolkit";
 import { ComponentPanel } from "../component-panel";
 
@@ -13,7 +13,7 @@ export interface DesignComponentProps {
     }
 }
 
-export function enableDrapDrop(bodyElement: HTMLElement, parentData: ComponentData, designer: PageDesigner) {
+export function enableDrapDrop(bodyElement: HTMLElement, parentData: PageData, designer: PageDesigner) {
     console.assert(bodyElement != null);
     $(bodyElement).sortable({
         axis: "y",
@@ -85,3 +85,5 @@ export function enableDrapDrop(bodyElement: HTMLElement, parentData: ComponentDa
         }
     })
 }
+
+// export type PageData = ComponentData

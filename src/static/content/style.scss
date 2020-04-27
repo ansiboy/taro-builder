@@ -33,3 +33,11 @@ $hd : 1;
         }
     }
 }
+
+.component-panel {
+    .empty {
+        text-align: center;
+        width     : 100%;
+        border    : solid 1px #cccccc;
+    }
+}

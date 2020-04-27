@@ -3,7 +3,6 @@ import { PageRecord } from "../../entities";
 import { dataSources } from "../data-sources";
 import { boundField, dateTimeField } from "maishu-wuzhui-helper";
 import React = require("react");
-import * as ui from "maishu-ui-toolkit";
 
 export default class PageList extends DataListPage<PageRecord> {
     dataSource = dataSources.pageRecords;

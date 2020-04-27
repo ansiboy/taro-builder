@@ -1,6 +1,6 @@
 {
     "name": "taro-builder",
-    "version": "1.0.48",
+    "version": "1.0.52",
     "main": "./out/index",
     "scripts": {
         "build": "grunt build"
@@ -47,15 +47,22 @@
         "maishu-chitu-admin": "^2.116.60",
         "maishu-chitu-react": "^1.27.0",
         "maishu-dilu": "^1.6.10",
-        "maishu-jueying": "^3.0.19",
+        "maishu-jueying": "^3.0.20",
+        "maishu-jueying-core": "^1.1.22",
         "maishu-node-mvc": "^1.97.0",
-        "maishu-wuzhui-helper": "file:../wuzhui-helper",
+        "maishu-wuzhui-helper": "^1.8.30",
         "nervjs": "^1.5.6",
         "remove": "^0.1.5",
         "requirejs": "^2.3.6",
-        "taro-builder-core": "file:../taro-builder-core",
+        "taro-builder-core": "^1.0.17",
         "taro-ui": "^3.0.0-alpha.0",
         "typescript": "^3.8.3",
         "vue": "^2.6.11"
-    }
+    },
+    "files": [
+        "dist",
+        "lib",
+        "out",
+        "src"
+    ]
 }

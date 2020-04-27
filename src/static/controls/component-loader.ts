@@ -1,7 +1,7 @@
 import { LocalService } from "../services/local-service";
 import { errorHandle } from "maishu-chitu-admin/static";
 import { contextName } from "json!websiteConfig";
-import { ComponentData, registerComponent } from "taro-builder-core";
+import { ComponentData, registerComponent, PageData } from "taro-builder-core";
 import { errors } from "../../errors";
 
 let localService = new LocalService(err => errorHandle)
@@ -32,7 +32,7 @@ export class ComponentLoader {
     }
 
     /** 加载页面的组件 */
-    static async loadPageCompontents(pageData: ComponentData) {
+    static async loadPageCompontents(pageData: PageData) {
         if (pageData == null) throw errors.argumentNull("pageData");
 
         let componentInfos = await localService.componentInfos();

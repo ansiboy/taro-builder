@@ -6,31 +6,41 @@ import { Application } from "maishu-chitu-react";
 import { Less } from "maishu-ui-toolkit";
 import { LocalService } from "../../services/local-service";
 import { contextName } from "json!websiteConfig";
-import * as ui from "maishu-ui-toolkit";
 import { componentRenders } from "../../component-renders/index";
 import {
-    parseComponentData, componentTypes, registerComponent, PageView,
-    ComponentData, ComponentInfo,
+    parseComponentData, componentTypes, registerComponent, Page as PageView,
+    ComponentData, ComponentInfo, ComponentTarget, PageHeader as PageViewHeader, PageFooter as PageViewFooter, PageData, PageBody,
 } from "taro-builder-core";
 import { services } from "../../services/services";
 import { errors } from "../../../errors";
 import { FakeComponent } from "./fake-component";
 import { createComponentLoadFail } from "./load-fail-component";
-import { DesignComponentProps } from "../design-components/index";
+import { DesignComponentProps, DesignPage } from "../design-components/index";
 import "../design-components/index";
+import { PageViewHelper } from "../page-view-helper";
 
 interface Props {
-    app: Application,
-    pageData: ComponentData,
+    // app: Application,
+    pageData: PageData,
+    pageName: string,
+    componentInfos: ComponentInfo[],
     hideToolbar?: boolean,
     hideEditorPanel?: boolean,
     hidePageSettingPanel?: boolean,
+    toolbarButtons?: JSX.Element[],
 }
 
 interface State {
-    pageData: ComponentData,
+    pageData: PageData,
     isReady: boolean,
+    componentTarget: ComponentTarget,
+    pageName: string,
 }
+
+let compoenntTargets: ComponentTarget[] = ["body", "header", "footer"];
+let compoenntTargetTexts: { [key: string]: string } = {
+    body: "主页面", header: "页眉", footer: "页脚"
+};
 
 export let DesignPageContext = React.createContext<{ designPage?: DesignView }>({});
 
@@ -39,69 +49,71 @@ export let DesignerViewHeader = React.createContext({});
 export class DesignView extends React.Component<Props, State> {
 
     private componentPanel: ComponentPanel;
-    private localService: LocalService;
-
-    private static initComponents = false;
+    // private localService: LocalService;
 
     private editorPanel: EditorPanel;
-    private pageView: PageView;
+    private pageView: DesignPage;
     private mobileElement: HTMLElement;
     private designer: PageDesigner;
 
     constructor(props: Props) {
         super(props)
 
+        if (props.toolbarButtons) {
+            props.toolbarButtons.reverse();
+        }
         let pageData = this.props.pageData;
-        this.processPageData(pageData);
-        this.state = { pageData, isReady: false };
+        this.state = {
+            pageData, isReady: false, componentTarget: "body",
+            pageName: props.pageName
+        };
 
-        this.localService = this.props.app.createService(LocalService as any) as any;
-        if (!DesignView.initComponents) {
-            DesignView.initComponents = true;
-            loadLessFiles(this.localService);
-        }
+        // this.localService = this.props.app.createService(LocalService as any) as any;
+        // if (!DesignView.initComponents) {
+        //     DesignView.initComponents = true;
+        // }
     }
 
-    processPageData(pageData: ComponentData) {
-        if (!pageData.children) {
-            return;
-        }
+    // processPageData(pageData: PageData) {
+    //     if (!pageData.children) {
+    //         return;
+    //     }
 
-        let stack: ComponentData[] = [pageData];
-        while (stack.length > 0) {
-            let item = stack.pop();
-            item.children.forEach(c => {
-                if (typeof c == "string")
-                    return;
+    //     let stack: ComponentData[] = [pageData];
+    //     while (stack.length > 0) {
+    //         let item = stack.pop();
+    //         item.children.forEach(c => {
+    //             if (typeof c == "string")
+    //                 return;
 
-                stack.push(c);
-            })
-        }
+    //             stack.push(c);
+    //         })
+    //     }
+    // }
+
+    // private preivew() {
+    //     let { pageData } = this.props;
+    //     console.assert(pageData != null);
+
+    //     let hasChanged = false;
+    //     if (hasChanged || !pageData.id) {
+    //         ui.alert({ title: '提示', message: `预览前必须先保存页面, 请点击"保存"按钮保存页面` });
+    //         return;
+    //     }
+
+    //     let mobilePath = this.localService.url("mobile");
+    //     let url = `${mobilePath}?appKey=${this.localService.applicationId}#page?id=${this.props.app.currentPage.data.id}`;
+    //     open(url, '_blank');
+    // }
+
+    headerVisible(pageData: PageData): boolean {
+        let r = PageViewHelper.findHeader(pageData);
+        return r != null && r.props.visible == true;
     }
 
-    private preivew() {
-        let { pageData } = this.props;
-        console.assert(pageData != null);
-
-        let hasChanged = false;
-        if (hasChanged || !pageData.id) {
-            ui.alert({ title: '提示', message: `预览前必须先保存页面, 请点击"保存"按钮保存页面` });
-            return;
-        }
-
-        let mobilePath = this.localService.url("mobile");
-        let url = `${mobilePath}?appKey=${this.localService.applicationId}#page?id=${this.props.app.currentPage.data.id}`;
-        open(url, '_blank');
-    }
-
-    hasMenu(pageData: ComponentData) {
-        let r = pageData.children.filter((o: ComponentData) => o.type == "Menu").length > 0;
-        return r;
-    }
-
-    hasSettleBar(pageData: ComponentData) {
-        let r = pageData.children.filter((o: ComponentData) => o.type == "ShoppingCartBar").length > 0;
-        return r;
+    footerVisible(pageData: PageData) {
+        let r = PageViewHelper.findFooter(pageData);
+        return r != null && r.props.visible == true;
     }
 
     private customRender(editComponents: ComponentData[], items: PropertyEditorInfo[]) {
@@ -114,29 +126,22 @@ export class DesignView extends React.Component<Props, State> {
         return componentCustomRender(items);
     }
 
-    async setMenu() {
-
+    async showHeader(pageData: PageData, visible: boolean) {
+        let c = PageViewHelper.findHeader(pageData, true);
+        c.props.visible = visible;
+        this.setState({ pageData });
     }
 
-    async setSettleBar() {
-
+    async showFooter(pageData: PageData, visible: boolean) {
+        let c = PageViewHelper.findFooter(pageData, true);
+        c.props.visible = visible;
+        this.setState({ pageData });
     }
 
-    private loadComponentTypes(pageData: ComponentData) {
-        let stack: ComponentData[] = [pageData];
-        while (stack.length > 0) {
-            let item = stack.pop();
-            if (!item.children) {
-                continue;
-            }
+    private loadComponentTypes(pageData: PageData) {
 
-            item.children.forEach(c => {
-                if (typeof c == "string")
-                    return;
-
-                stack.push(c);
-            })
-
+        for (let i = 0; i < pageData.children.length; i++) {
+            let item = pageData.children[i];
             let componentType = componentTypes[item.type] as any;
             if (componentType == null || componentType.typeName == "ComponentLoadFail") {
                 registerComponent(item.type, FakeComponent);
@@ -150,30 +155,12 @@ export class DesignView extends React.Component<Props, State> {
                 })
             }
         }
+
     }
 
     async onComponentCreated() {
         if (this.componentPanel == null || this.editorPanel == null)
             return;
-
-        //==========================================================================================
-        // 设置组件工具栏
-        let componentInfos: ComponentInfo[] = await this.localService.componentInfos();
-        console.assert(componentInfos != null);
-        componentInfos = componentInfos.filter(o => o.displayName != null);
-        let componentDefines = componentInfos.map(o => ({
-            componentData: {
-                type: o.type,
-                props: {},
-            },
-            displayName: o.displayName,
-            icon: o.icon,
-            introduce: o.introduce
-        }) as ComponentDefine)
-        this.componentPanel.setComponets(componentDefines);
-
-        //==========================================================================================
-        this.setState({ isReady: true, });
     }
 
     private pageViewRef(e) {
@@ -184,124 +171,133 @@ export class DesignView extends React.Component<Props, State> {
         this.onComponentCreated();
     }
 
+    private renderPageData(pageData: PageData, designer: PageDesigner, componentPanel: ComponentPanel) {
+        pageData.props.ref = (pageView: DesignPage) => {
+            if (this.pageView != null || pageView == null)
+                return;
 
-    private fillPageData(pageData: ComponentData) {
-        let stack: ComponentData[] = [pageData];
-        while (stack.length > 0) {
-            let item = stack.pop();
-            let designComponentProps: DesignComponentProps = {
-                designComponentProps: {
-                    designer: this.designer, componentData: item, componentPanel: this.componentPanel,
-                    selected: item.selected, id: item.id
-                }
-            }
-            item.props = Object.assign(item.props, designComponentProps);
-            if (item.children)
-                stack.push(...item.children as ComponentData[]);
+            this.pageView = pageView;
+            let bodyElement = this.pageView.element.querySelector(`.${PageBody.className}`);
+            console.assert(bodyElement != null)
+            setTimeout(() => {
+                this.componentPanel.addDropTarget(bodyElement);
+            })
         }
+        this.loadComponentTypes(pageData);
+        let element = parseComponentData(pageData);
+        return element;
     }
 
-    private trimPageData(pageData: ComponentData) {
-        let stack: ComponentData[] = [pageData];
-        while (stack.length > 0) {
-            let item = stack.pop();
-            if (item.children)
-                stack.push(...item.children as ComponentData[]);
+    componentDidMount() {
+        //==========================================================================================
+        // 设置组件工具栏
+        let componentDefines = this.props.componentInfos.map(o => ({
+            componentData: {
+                type: o.type,
+                props: {},
+            },
+            displayName: o.displayName,
+            icon: o.icon,
+            introduce: o.introduce
+        }) as ComponentDefine)
 
-            let key: keyof DesignComponentProps = "designComponentProps";
-            delete item.props[key]
-        }
+        this.componentPanel.setComponets(componentDefines);
+        //==========================================================================================
+        // this.designer.findComponetsByTypeName()
+        this.setState({ isReady: true, });
     }
 
     render() {
-        let { pageData, isReady } = this.state;
+        let { pageData, isReady, componentTarget } = this.state;
         pageData.props.ref = (e) => this.pageViewRef(e);
-
-        let { hidePageSettingPanel } = this.props;
-        return <>
-            <PageDesigner pageData={pageData}>
-                <div className="marvel-device iphone8 black pull-left">
-                    <div className="top-bar"></div>
-                    <div className="sleep"></div>
-                    <div className="volume"></div>
-                    <div className="camera"></div>
-                    <div className="sensor"></div>
-                    <div className="speaker"></div>
-                    <div className="screen mobile-page" ref={e => this.mobileElement = this.mobileElement || e}>
-                        <DesignerContext.Consumer>
-                            {args => {
-                                this.designer = args.designer;
-                                if (isReady) {
-                                    this.loadComponentTypes(pageData);
-                                    this.fillPageData(pageData);
-                                    let pageView = parseComponentData(pageData);
-                                    this.trimPageData(pageData);
-                                    return pageView;
-                                }
-                                return null;
-                            }}
-                        </DesignerContext.Consumer>
-                    </div>
-
-                    <div className="home"></div>
-                    <div className="bottom-bar"></div>
+        let { hidePageSettingPanel, toolbarButtons } = this.props;
+        return <PageDesigner pageData={pageData} ref={e => this.designer = e || this.designer}>
+            <div className="marvel-device iphone8 black pull-left">
+                <div className="top-bar"></div>
+                <div className="sleep"></div>
+                <div className="volume"></div>
+                <div className="camera"></div>
+                <div className="sensor"></div>
+                <div className="speaker"></div>
+                <div className="screen mobile-page" ref={e => this.mobileElement = this.mobileElement || e}>
+                    <DesignerContext.Consumer>
+                        {args => isReady ? this.renderPageData(pageData, args.designer, this.componentPanel) : null}
+                    </DesignerContext.Consumer>
                 </div>
-                <div style={{ marginLeft: 440 }}>
-                    {this.props.children}
-                    <hr style={{ margin: 0, marginTop: -2 }} />
-                    <div>
-                        {hidePageSettingPanel ? null : <div className="pull-right" style={{ width: 240 }}>
-                            <div className="panel panel-default">
-                                <div className="panel-heading">页面设置</div>
-                                <ul className="list-group">
-                                    <li className="list-group-item">
-                                        <div className="pull-left" style={{ width: "calc(100% - 60px)" }}>
-                                            显示导航菜单</div>
-                                        <label className="switch">
-                                            <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                                checked={this.hasMenu(pageData)}
-                                                onChange={() => this.setMenu()} />
-                                            <span className="lbl middle"></span>
-                                        </label>
-                                    </li>
-                                    <li className="list-group-item">
-                                        <div className="pull-left" style={{ width: "calc(100% - 60px)" }}>
-                                            显示购物车结算栏</div>
-                                        <label className="switch">
-                                            <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                                checked={this.hasSettleBar(pageData)}
-                                                onChange={() => this.setSettleBar()} />
-                                            <span className="lbl middle"></span>
-                                        </label>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>}
-                        <div style={{ marginRight: hidePageSettingPanel ? null : 260 }}>
-                            {this.props.hideToolbar ? null : <div>
-                                <ComponentPanel ref={e => {
-                                    if (this.componentPanel != null || e == null)
+
+                <div className="home"></div>
+                <div className="bottom-bar"></div>
+            </div>
+            <div style={{ marginLeft: 440 }}>
+                <ul className="nav nav-tabs" style={{ height: 32, margin: 0, padding: 0 }}>
+                    {compoenntTargets.map(o => <li key={o} className={o == componentTarget ? "active" : null} style={{ marginTop: -2 }}
+                        onClick={e => {
+                            this.setState({ componentTarget: o })
+                        }}>
+                        <a>{compoenntTargetTexts[o]}</a>
+                    </li>)}
+                    {toolbarButtons.map((o, i) => <li key={i} className="pull-right">{o}</li>)}
+                </ul>
+                <div>
+                    {hidePageSettingPanel ? null : <div className="pull-right" style={{ width: 240 }}>
+                        <div className="panel panel-default">
+                            <div className="panel-heading">页面设置</div>
+                            <ul className="list-group">
+                                <li className="list-group-item clearfix">
+                                    <div className="pull-left">
+                                        页面名称</div>
+                                    <div className="pull-right">
+                                        <input className="form-control input-sm" style={{ width: 140 }} />
+                                    </div>
+                                </li>
+                                <li className="list-group-item clearfix">
+                                    <div className="pull-left">
+                                        显示页眉</div>
+                                    <label className="switch pull-right">
+                                        <input type="checkbox" className="ace ace-switch ace-switch-5"
+                                            checked={this.headerVisible(pageData)}
+                                            onChange={e => this.showHeader(pageData, e.target.checked)} />
+                                        <span className="lbl middle"></span>
+                                    </label>
+                                </li>
+                                <li className="list-group-item clearfix">
+                                    <div className="pull-left">
+                                        显示页脚</div>
+                                    <label className="switch pull-right">
+                                        <input type="checkbox" className="ace ace-switch ace-switch-5"
+                                            checked={this.footerVisible(pageData)}
+                                            onChange={e => this.showFooter(pageData, e.target.checked)} />
+                                        <span className="lbl middle"></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>}
+                    <div style={{ marginRight: hidePageSettingPanel ? null : 260 }}>
+                        {this.props.hideToolbar ? null : <>
+                            <ComponentPanel ref={e => {
+                                if (this.componentPanel != null || e == null)
+                                    return;
+
+                                this.componentPanel = e;
+                                this.onComponentCreated();
+                            }} />
+
+                        </>}
+                        {this.props.hideEditorPanel ? null :
+                            <EditorPanel className="well" customRender={(a, b) => this.customRender(a as ComponentData[], b)}
+                                ref={e => {
+                                    if (this.editorPanel != null || e == null)
                                         return;
 
-                                    this.componentPanel = e;
+                                    this.editorPanel = this.editorPanel || e;
                                     this.onComponentCreated();
                                 }} />
-                            </div>}
-                            {this.props.hideEditorPanel ? null :
-                                <EditorPanel className="well" customRender={(a, b) => this.customRender(a, b)}
-                                    ref={e => {
-                                        if (this.editorPanel != null || e == null)
-                                            return;
-
-                                        this.editorPanel = this.editorPanel || e;
-                                        this.onComponentCreated();
-                                    }} />
-                            }
-                        </div>
+                        }
                     </div>
                 </div>
-            </PageDesigner>
-        </>
+            </div>
+        </PageDesigner>
     }
 }
 
