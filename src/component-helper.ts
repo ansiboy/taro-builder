@@ -31,7 +31,7 @@ export function getClientComponentInfos(componentsDirectory: VirtualDirectory): 
         }
     }
 
-    files = files.filter(o => o.physicalPath.endsWith(".tsx"));//o.physicalPath.endsWith(".js") || o.physicalPath.endsWith(".jsx") ||
+    files = files.filter(o => o.physicalPath.endsWith(".tsx"));
     files.forEach(item => {
         let tsSourceFile = ts.createSourceFile(
             item.physicalPath, fs.readFileSync(item.physicalPath).toString(),
@@ -69,42 +69,28 @@ export function getClientComponentInfos(componentsDirectory: VirtualDirectory): 
                     if (decorator == null)
                         break;
 
-                    let componentInfo = {} as ComponentInfo;
 
-                    componentInfo.type = classDeclaration.name.text;
-                    componentInfo.path = filePath;
 
                     var expr = decorator.expression as CallExpression;
                     let arg0 = expr.arguments[0] as ObjectLiteralExpression;
-                    if (arg0 != null) {
-                        let properties = arg0.properties.filter(o => o.kind == ts.SyntaxKind.PropertyAssignment) as PropertyAssignment[];
-                        for (let i = 0; i < propNames.length; i++) {
-                            let propName = propNames[i];
-                            let prop = properties.filter(o => o.name.kind == ts.SyntaxKind.Identifier && (<ts.Identifier>o.name).text == propName)[0];
-                            if (prop) {
-                                componentInfo[propName] = (prop.initializer as ts.StringLiteral).text;
-                            }
-                        }
+                    if (arg0 == null) {
+                        break;
                     }
+
+                    let componentInfo = getObject(arg0) as ComponentInfo;
+                    componentInfo.path = filePath;
+                    componentInfo.type = componentInfo.type || classDeclaration.name.text;
                     componentInfos.push(componentInfo);
                 }
                 break;
             case ts.SyntaxKind.CallExpression:
                 let callExpression = node as CallExpression;
                 if (callExpression.expression.kind == ts.SyntaxKind.Identifier) {
-
-                    // __decorate([component({ displayName: "轮播", icon: "icon-list-alt", introduce: "多张图片轮流播放" })], Carousel);
-                    // __decorate([
-                    //     component_1.component({ displayName: "轮播", icon: "icon-list-alt", introduce: "多张图片轮流播放" })
-                    // ], Carousel);
                     if ((callExpression.expression as ts.Identifier).text == "__decorate") {
                         let args = callExpression.arguments;
                         if (args[0] != null && args[0].kind == ts.SyntaxKind.ArrayLiteralExpression &&
                             args[1] != null && args[1].kind == ts.SyntaxKind.Identifier) {
                             let arg0 = callExpression.arguments[0] as ArrayLiteralExpression;
-
-                            // arg0 = [component({ displayName: "轮播", icon: "icon-list-alt", introduce: "多张图片轮流播放" })]
-                            // arg0 = [component_1.component({ displayName: "轮播", icon: "icon-list-alt", introduce: "多张图片轮流播放" })]
                             if (arg0.elements[0].kind == ts.SyntaxKind.CallExpression) {
                                 let componentNode = arg0.elements[0] as CallExpression;
                                 let componentInfo: ComponentInfo = getComponentInfo(componentNode);

@@ -26,10 +26,6 @@ $hd : 1;
 
         li {
             list-style: none;
-
-            &.selected {
-                border: solid 1px blue;
-            }
         }
 
         .empty {
@@ -47,6 +43,11 @@ $hd : 1;
         position: absolute;
         bottom  : 0px;
         width   : 100%;
+        margin  : 0;
+    }
+
+    li.selected {
+        border: solid 1px blue;
     }
 }
 

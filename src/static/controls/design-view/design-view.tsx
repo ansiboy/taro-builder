@@ -1,21 +1,16 @@
 import React = require("react");
 import { EditorPanel, PageDesigner, PropertyEditorInfo, DesignerContext } from "maishu-jueying";
 import "jquery-ui"
-import { ComponentPanel, ComponentDefine } from "../component-panel";
-import { Application } from "maishu-chitu-react";
-import { Less } from "maishu-ui-toolkit";
-import { LocalService } from "../../services/local-service";
-import { contextName } from "json!websiteConfig";
+import { ComponentPanel, ComponentDefine, commonGroup } from "../component-panel";
 import { componentRenders } from "../../component-renders/index";
 import {
-    parseComponentData, componentTypes, registerComponent, Page as PageView,
-    ComponentData, ComponentInfo, ComponentTarget, PageHeader as PageViewHeader, PageFooter as PageViewFooter, PageData, PageBody,
+    componentTypes, registerComponent, ComponentData, ComponentInfo, PageData,
 } from "taro-builder-core";
 import { services } from "../../services/services";
 import { errors } from "../../../errors";
 import { FakeComponent } from "./fake-component";
 import { createComponentLoadFail } from "./load-fail-component";
-import { DesignComponentProps, DesignPage } from "../design-components/index";
+import { DesignPage } from "../design-components/index";
 import "../design-components/index";
 import { PageViewHelper } from "../page-view-helper";
 
@@ -33,13 +28,13 @@ interface Props {
 interface State {
     pageData: PageData,
     isReady: boolean,
-    componentTarget: ComponentTarget,
+    group: string,
     pageName: string,
 }
 
-let compoenntTargets: ComponentTarget[] = ["body", "header", "footer"];
-let compoenntTargetTexts: { [key: string]: string } = {
-    body: "主页面", header: "页眉", footer: "页脚"
+let groups: string[] = ["common", "navigation"];
+let groupTexts = {
+    common: "常用", navigation: "导航"
 };
 
 export let DesignPageContext = React.createContext<{ designPage?: DesignView }>({});
@@ -49,8 +44,6 @@ export let DesignerViewHeader = React.createContext({});
 export class DesignView extends React.Component<Props, State> {
 
     private componentPanel: ComponentPanel;
-    // private localService: LocalService;
-
     private editorPanel: EditorPanel;
     private pageView: DesignPage;
     private mobileElement: HTMLElement;
@@ -64,47 +57,10 @@ export class DesignView extends React.Component<Props, State> {
         }
         let pageData = this.props.pageData;
         this.state = {
-            pageData, isReady: false, componentTarget: "body",
+            pageData, isReady: false, group: commonGroup,
             pageName: props.pageName
         };
-
-        // this.localService = this.props.app.createService(LocalService as any) as any;
-        // if (!DesignView.initComponents) {
-        //     DesignView.initComponents = true;
-        // }
     }
-
-    // processPageData(pageData: PageData) {
-    //     if (!pageData.children) {
-    //         return;
-    //     }
-
-    //     let stack: ComponentData[] = [pageData];
-    //     while (stack.length > 0) {
-    //         let item = stack.pop();
-    //         item.children.forEach(c => {
-    //             if (typeof c == "string")
-    //                 return;
-
-    //             stack.push(c);
-    //         })
-    //     }
-    // }
-
-    // private preivew() {
-    //     let { pageData } = this.props;
-    //     console.assert(pageData != null);
-
-    //     let hasChanged = false;
-    //     if (hasChanged || !pageData.id) {
-    //         ui.alert({ title: '提示', message: `预览前必须先保存页面, 请点击"保存"按钮保存页面` });
-    //         return;
-    //     }
-
-    //     let mobilePath = this.localService.url("mobile");
-    //     let url = `${mobilePath}?appKey=${this.localService.applicationId}#page?id=${this.props.app.currentPage.data.id}`;
-    //     open(url, '_blank');
-    // }
 
     bodyVisible(pageData: PageData): boolean {
         let r = PageViewHelper.findBody(pageData);
@@ -116,9 +72,28 @@ export class DesignView extends React.Component<Props, State> {
         return r != null && r.props.visible == true;
     }
 
+    headerHeight(pageData: PageData, value?: number) {
+        let r = PageViewHelper.findHeader(pageData, true);
+        if (value == null) {
+            return r.props.height;
+        }
+        r.props.height = value;
+        this.setState({ pageData });
+    }
+
     footerVisible(pageData: PageData) {
         let r = PageViewHelper.findFooter(pageData);
         return r != null && r.props.visible == true;
+    }
+
+    footerHeight(pageData: PageData, value?: number) {
+        let r = PageViewHelper.findFooter(pageData, true);
+        if (value == null) {
+            return r.props.height;
+        }
+
+        r.props.height = value;
+        this.setState({ pageData });
     }
 
     private customRender(editComponents: ComponentData[], items: PropertyEditorInfo[]) {
@@ -151,17 +126,20 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     private loadComponentTypes(pageData: PageData) {
-
         for (let i = 0; i < pageData.children.length; i++) {
             let item = pageData.children[i];
             let componentType = componentTypes[item.type] as any;
-            if (componentType == null || componentType.typeName == "ComponentLoadFail") {
+            if (componentType == null) {
                 registerComponent(item.type, FakeComponent);
                 loadComponentType(item.type).then(c => {
                     registerComponent(item.type, c as any);
                     this.setState({ pageData });
                 }).catch(err => {
-                    let componentType = createComponentLoadFail(err);
+                    console.error(err);
+                    let componentType = createComponentLoadFail(err, () => {
+                        delete componentTypes[item.type];
+                        this.setState({ pageData })
+                    });
                     registerComponent(item.type, componentType);
                     this.setState({ pageData });
                 })
@@ -183,45 +161,28 @@ export class DesignView extends React.Component<Props, State> {
         this.onComponentCreated();
     }
 
-    private renderPageData(pageData: PageData, designer: PageDesigner, componentPanel: ComponentPanel) {
-        // pageData.props.ref = (pageView: DesignPage) => {
-        //     if (this.pageView != null || pageView == null)
-        //         return;
-
-        //     this.pageView = pageView;
-        //     let bodyElement = this.pageView.element.querySelector(`.${PageBody.className}`);
-        //     console.assert(bodyElement != null)
-        //     setTimeout(() => {
-        //         this.componentPanel.addDropTarget(bodyElement);
-        //     })
-        // }
+    private renderPageData(pageData: PageData, componentPanel: ComponentPanel) {
         this.loadComponentTypes(pageData);
-        // let element = parseComponentData(pageData);
-        // return element;
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
     }
 
     componentDidMount() {
         //==========================================================================================
         // 设置组件工具栏
-        let componentDefines = this.props.componentInfos.map(o => ({
+        let componentDefines = this.props.componentInfos.map(o => Object.assign({
             componentData: {
                 type: o.type,
                 props: {},
-            },
-            displayName: o.displayName,
-            icon: o.icon,
-            introduce: o.introduce
-        }) as ComponentDefine)
+            }
+        }, o) as ComponentDefine)
 
         this.componentPanel.setComponets(componentDefines);
         //==========================================================================================
-        // this.designer.findComponetsByTypeName()
         this.setState({ isReady: true, });
     }
 
     render() {
-        let { pageData, isReady, componentTarget } = this.state;
+        let { pageData, isReady, group, pageName } = this.state;
         pageData.props.ref = (e) => this.pageViewRef(e);
         let { hidePageSettingPanel, toolbarButtons } = this.props;
         return <PageDesigner pageData={pageData} ref={e => this.designer = e || this.designer}>
@@ -234,7 +195,7 @@ export class DesignView extends React.Component<Props, State> {
                 <div className="speaker"></div>
                 <div className="screen mobile-page" ref={e => this.mobileElement = this.mobileElement || e}>
                     <DesignerContext.Consumer>
-                        {args => isReady ? this.renderPageData(pageData, args.designer, this.componentPanel) : null}
+                        {() => isReady ? this.renderPageData(pageData, this.componentPanel) : null}
                     </DesignerContext.Consumer>
                 </div>
 
@@ -243,11 +204,12 @@ export class DesignView extends React.Component<Props, State> {
             </div>
             <div style={{ marginLeft: 440 }}>
                 <ul className="nav nav-tabs" style={{ height: 32, margin: 0, padding: 0 }}>
-                    {compoenntTargets.map(o => <li key={o} className={o == componentTarget ? "active" : null} style={{ marginTop: -2 }}
-                        onClick={e => {
-                            this.setState({ componentTarget: o })
+                    {groups.map(o => <li key={o} className={o == group ? "active" : null} style={{ marginTop: -2 }}
+                        onClick={() => {
+                            this.setState({ group: o });
+                            this.componentPanel.setState({ group: o })
                         }}>
-                        <a>{compoenntTargetTexts[o]}</a>
+                        <a>{groupTexts[o]}</a>
                     </li>)}
                     {toolbarButtons.map((o, i) => <li key={i} className="pull-right">{o}</li>)}
                 </ul>
@@ -260,7 +222,7 @@ export class DesignView extends React.Component<Props, State> {
                                     <div className="pull-left">
                                         页面名称</div>
                                     <div className="pull-right">
-                                        <input className="form-control input-sm" style={{ width: 140 }} />
+                                        <input className="form-control input-sm" style={{ width: 140 }} value={pageName} />
                                     </div>
                                 </li>
                                 <li className="list-group-item clearfix">
@@ -283,6 +245,23 @@ export class DesignView extends React.Component<Props, State> {
                                         <span className="lbl middle"></span>
                                     </label>
                                 </li>
+                                <li className="list-group-item clearfix" style={{ display: this.headerVisible(pageData) ? "" : "none" }}>
+                                    <div className="pull-left">
+                                        页眉高度</div>
+                                    <div className="pull-right">
+                                        <input className="form-control input-sm" value={this.headerHeight(pageData)}
+                                            style={{ width: 60, textAlign: "right", display: this.footerVisible(pageData) ? "" : "none" }}
+                                            onChange={e => {
+                                                try {
+                                                    let value = Number.parseInt(e.target.value);
+                                                    this.headerHeight(pageData, value);
+                                                }
+                                                catch{
+
+                                                }
+                                            }} />
+                                    </div>
+                                </li>
                                 <li className="list-group-item clearfix">
                                     <div className="pull-left">
                                         显示页脚</div>
@@ -292,6 +271,23 @@ export class DesignView extends React.Component<Props, State> {
                                             onChange={e => this.showFooter(pageData, e.target.checked)} />
                                         <span className="lbl middle"></span>
                                     </label>
+                                </li>
+                                <li className="list-group-item clearfix" style={{ display: this.footerVisible(pageData) ? "" : "none" }}>
+                                    <div className="pull-left">
+                                        页脚高度</div>
+                                    <div className="pull-right">
+                                        <input className="form-control input-sm" style={{ width: 60, textAlign: "right" }}
+                                            value={this.footerHeight(pageData)}
+                                            onChange={e => {
+                                                try {
+                                                    let value = Number.parseInt(e.target.value);
+                                                    this.footerHeight(pageData, value);
+                                                }
+                                                catch{
+
+                                                }
+                                            }} />
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -325,13 +321,6 @@ export class DesignView extends React.Component<Props, State> {
 }
 
 
-async function loadLessFiles(localService: LocalService) {
-    let files = await localService.clientFiles();
-    let editorLessFiles = files.filter(o => o.startsWith("components") && o.endsWith("editor.less"));
-    editorLessFiles.forEach(path => {
-        Less.renderByRequireJS(path, { contextName });
-    })
-}
 
 async function loadComponentType(typeName: string) {
     let componentInfos = await services.local.componentInfos();
@@ -359,79 +348,6 @@ async function loadComponentType(typeName: string) {
         })
     })
 }
-
-// function enableDrapDrop(bodyElement: HTMLElement, parentData: ComponentData, designer: PageDesigner) {
-//     console.assert(bodyElement != null);
-//     $(bodyElement).sortable({
-//         axis: "y",
-//         stop: () => {
-
-//             // let pageData = pageView.props.pageData;
-//             //==============================================================================================
-//             // 对组件进行排序
-//             console.assert(parentData.children != null);
-
-//             let childComponentDatas: ComponentData[] = [];
-//             let elements = bodyElement.querySelectorAll("li");
-//             for (let i = 0; i < elements.length; i++) {
-
-//                 let childId = elements[i].getAttribute("data-component-id");
-//                 if (!childId)
-//                     continue;
-
-//                 console.assert(childId != null);
-
-//                 let child = parentData.children.filter((o: ComponentData) => o.id == childId)[0] as ComponentData;
-//                 console.assert(child != null);
-
-//                 childComponentDatas.push(child);
-//             }
-
-//             let childIds = childComponentDatas.map(o => o.id);
-//             parentData.children = parentData.children.filter((o: ComponentData) => childIds.indexOf(o.id) < 0);
-
-//             parentData.children.push(...childComponentDatas);
-//             //==============================================================================================
-
-//         },
-//         receive: (event, ui) => {
-//             let componentData: ComponentData = JSON.parse(ui.helper.attr("component-data"));
-//             componentData.id = componentData.id || guid();
-//             componentData.parentId = parentData.id;
-//             componentData.props = {
-//                 id: componentData.id
-//             }
-//             let elementIndex: number = 0;
-//             ui.helper.parent().children().each((index, element) => {
-//                 if (element == ui.helper[0]) {
-//                     elementIndex = index;
-//                     return false;
-//                 }
-//             })
-
-
-//             let isFirst = elementIndex == 0;
-//             let isLatest = elementIndex == ui.helper.parent().children().length - 1;
-
-//             if (isFirst) {
-//                 designer.appendComponent(parentData.id, componentData, 0);
-//             }
-//             else if (isLatest) {
-//                 designer.appendComponent(parentData.id, componentData);
-//             }
-//             else {
-//                 let nextComponentDataId = ui.helper.parent().children()[elementIndex + 1].getAttribute("data-component-id");
-//                 let componentIds = parentData.children.map((o: ComponentData) => o.id);
-//                 let nextComponentDataIndex = componentIds.indexOf(nextComponentDataId);
-//                 console.assert(nextComponentDataId != null);
-//                 designer.appendComponent(parentData.id, componentData, nextComponentDataIndex);
-//             }
-
-
-//             ui.helper.remove();
-//         }
-//     })
-// }
 
 
 

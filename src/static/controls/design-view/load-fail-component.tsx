@@ -1,14 +1,11 @@
 import React = require("react");
 
-export function createComponentLoadFail(error: any) {
+export function createComponentLoadFail(error: any, reload: () => void) {
     return class ComponentLoadFail extends React.Component {
-
-        static typeName = "ComponentLoadFail"
-
         render() {
             let msg = typeof error == "string" ? error : error.message;
             return <div>
-                <div>组件加载错误</div>
+                <div onClick={e => reload()}>组件加载错误, 点击重新加载</div>
                 <div>{msg}</div>
             </div>
         }

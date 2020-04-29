@@ -29,7 +29,6 @@ export class PageViewHelper {
         let c = pageData.children.filter(o => typeof o != "string" && o.type == PageHeader.typeName)[0];
         if (c == null && createIfNotExists) {
             let d = PageHeader.defaultProps;
-            // let props: PageHeaderProps = { id: guid(), height: d.height, visible: d.visible };
             c = {
                 id: d.id, type: PageHeader.typeName,
                 props: d, parentId: pageData.id,
@@ -38,11 +37,10 @@ export class PageViewHelper {
         }
         return c;
     }
-    static findFooter(pageData: PageData, createIfNotExists: boolean = false): FooterComponentData {
+    static findFooter(pageData: PageData, createIfNotExists: boolean = false): FooterComponentData | null {
         let c = pageData.children.filter(o => typeof o != "string" && o.type == PageFooter.typeName)[0] as FooterComponentData;
         if (c == null && createIfNotExists) {
             let d = PageFooter.defaultProps;
-            // let props: PageFooterProps = { id: guid(), height: d.height, visible: d.visible };
             c = {
                 id: d.id, type: PageFooter.typeName, props: d,
                 parentId: pageData.id

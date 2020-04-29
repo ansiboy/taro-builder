@@ -1,6 +1,6 @@
 import * as React from "react";
 import { classNames } from "maishu-jueying";
-import { ComponentData } from "taro-builder-core";
+import { ComponentData, ComponentInfo } from "taro-builder-core";
 
 interface ComponentToolbarProps extends React.Props<ComponentPanel> {
     style?: React.CSSProperties,
@@ -10,14 +10,14 @@ interface ComponentToolbarProps extends React.Props<ComponentPanel> {
 
 interface ComponentToolbarState {
     components: ComponentDefine[],
+    group: string,
 }
 
-export interface ComponentDefine {
+export type ComponentDefine = ComponentInfo & {
     componentData: ComponentData,
-    displayName: string, icon: string, introduce: string,
 }
 
-
+export let commonGroup = "common";
 export class ComponentPanel extends React.Component<ComponentToolbarProps, ComponentToolbarState> {
     private toolbarElement: HTMLElement;
     private COMPONENT_DATA = "component-data";
@@ -25,7 +25,7 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
 
     constructor(props) {
         super(props)
-        this.state = { components: [] }
+        this.state = { components: [], group: commonGroup }
     }
 
     get element() {
@@ -35,7 +35,6 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
     setComponets(componets: ComponentDefine[]) {
         this.setState({ components: componets }, () => {
             $(this.element).find("li").draggable({
-                // connectToSortable: $(".user-page"),
                 helper: "clone",
                 revert: "invalid"
             })
@@ -53,10 +52,11 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
     render() {
         let empty = this.props.empty || <div className="empty">暂无可用组件</div>
         let props: ComponentToolbarProps = Object.assign({}, this.props);
-        let componets = this.state.components || [];
+        let { components, group } = this.state;
+        components = components.filter(o => (o.group || commonGroup) == group);
         return <ul {...props as any} className={`${classNames.componentPanel}`}
             ref={(e: HTMLElement) => this.toolbarElement = this.toolbarElement || e}>
-            {componets.length == 0 ? empty : componets.map((c, i) => {
+            {components.length == 0 ? empty : components.map((c, i) => {
                 let props = { key: i };
                 props[this.COMPONENT_DATA] = JSON.stringify(c.componentData);
                 return <li {...props}>

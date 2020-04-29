@@ -1,4 +1,4 @@
-import { component, PageBody, PageBodyProps, PageHeader, PageProps, PageHeaderProps, PageFooter, PageFooterProps } from "taro-builder-core";
+import { component, PageBody, PageBodyProps, PageHeader, PageHeaderProps, PageFooter, PageFooterProps } from "taro-builder-core";
 import * as React from "react";
 import { ComponentContainer } from "./component-container";
 import { DesignPageContext } from "./design-page";
@@ -18,7 +18,6 @@ export class DesignPageBody extends React.Component<PageBodyProps> {
                 }
                 if (footer != null && (footer.props as PageFooterProps).visible) {
                     let p = footer.props as PageHeaderProps;
-                    // style.paddingBottom = p.height;
                     style.height = `calc(100% - ${(style.marginTop as number) + p.height}px)`;
                 }
 
