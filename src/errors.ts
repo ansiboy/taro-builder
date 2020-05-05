@@ -18,6 +18,10 @@ class MyErrors extends Errors {
         let msg = `File '${filePath}' is not exists.`;
         return new Error(msg);
     }
+    pageNameCanntEmpty() {
+        let msg = `Page name can not be null or empty.`;
+        return new Error(msg);
+    }
 }
 
 export let errors = new MyErrors();

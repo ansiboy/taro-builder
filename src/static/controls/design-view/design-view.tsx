@@ -4,15 +4,12 @@ import "jquery-ui"
 import { ComponentPanel, ComponentDefine, commonGroup } from "../component-panel";
 import { componentRenders } from "../../component-renders/index";
 import {
-    componentTypes, registerComponent, ComponentData, ComponentInfo, PageData,
+    ComponentData, ComponentInfo, PageData,
 } from "taro-builder-core";
-import { services } from "../../services/services";
-import { errors } from "../../../errors";
-import { FakeComponent } from "./fake-component";
-import { createComponentLoadFail } from "./load-fail-component";
 import { DesignPage } from "../design-components/index";
 import "../design-components/index";
-import { PageViewHelper } from "../page-view-helper";
+import { PageHelper } from "../page-helper";
+import { ComponentLoader } from "../component-loader";
 
 interface Props {
     // app: Application,
@@ -63,17 +60,17 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     bodyVisible(pageData: PageData): boolean {
-        let r = PageViewHelper.findBody(pageData);
+        let r = PageHelper.findBody(pageData);
         return r != null && r.props.visible == true;
     }
 
     headerVisible(pageData: PageData): boolean {
-        let r = PageViewHelper.findHeader(pageData);
+        let r = PageHelper.findHeader(pageData);
         return r != null && r.props.visible == true;
     }
 
     headerHeight(pageData: PageData, value?: number) {
-        let r = PageViewHelper.findHeader(pageData, true);
+        let r = PageHelper.findHeader(pageData, true);
         if (value == null) {
             return r.props.height;
         }
@@ -82,12 +79,12 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     footerVisible(pageData: PageData) {
-        let r = PageViewHelper.findFooter(pageData);
+        let r = PageHelper.findFooter(pageData);
         return r != null && r.props.visible == true;
     }
 
     footerHeight(pageData: PageData, value?: number) {
-        let r = PageViewHelper.findFooter(pageData, true);
+        let r = PageHelper.findFooter(pageData, true);
         if (value == null) {
             return r.props.height;
         }
@@ -107,45 +104,22 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     async showBody(pageData: PageData, visible: boolean) {
-        let c = PageViewHelper.findBody(pageData);
+        let c = PageHelper.findBody(pageData);
         console.assert(c != null);
         c.props.visible = visible;
         this.setState({ pageData });
     }
 
     async showHeader(pageData: PageData, visible: boolean) {
-        let c = PageViewHelper.findHeader(pageData, true);
+        let c = PageHelper.findHeader(pageData, true);
         c.props.visible = visible;
         this.setState({ pageData });
     }
 
     async showFooter(pageData: PageData, visible: boolean) {
-        let c = PageViewHelper.findFooter(pageData, true);
+        let c = PageHelper.findFooter(pageData, true);
         c.props.visible = visible;
         this.setState({ pageData });
-    }
-
-    private loadComponentTypes(pageData: PageData) {
-        for (let i = 0; i < pageData.children.length; i++) {
-            let item = pageData.children[i];
-            let componentType = componentTypes[item.type] as any;
-            if (componentType == null) {
-                registerComponent(item.type, FakeComponent);
-                loadComponentType(item.type).then(c => {
-                    registerComponent(item.type, c as any);
-                    this.setState({ pageData });
-                }).catch(err => {
-                    console.error(err);
-                    let componentType = createComponentLoadFail(err, () => {
-                        delete componentTypes[item.type];
-                        this.setState({ pageData })
-                    });
-                    registerComponent(item.type, componentType);
-                    this.setState({ pageData });
-                })
-            }
-        }
-
     }
 
     async onComponentCreated() {
@@ -162,7 +136,6 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     private renderPageData(pageData: PageData, componentPanel: ComponentPanel) {
-        this.loadComponentTypes(pageData);
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
     }
 
@@ -178,6 +151,10 @@ export class DesignView extends React.Component<Props, State> {
 
         this.componentPanel.setComponets(componentDefines);
         //==========================================================================================
+        let pageData = this.state.pageData;
+        ComponentLoader.loadComponentTypes(pageData, () => {
+            this.setState({ pageData });
+        })
         this.setState({ isReady: true, });
     }
 
@@ -222,7 +199,11 @@ export class DesignView extends React.Component<Props, State> {
                                     <div className="pull-left">
                                         页面名称</div>
                                     <div className="pull-right">
-                                        <input className="form-control input-sm" style={{ width: 140 }} value={pageName} />
+                                        <input className="form-control input-sm" style={{ width: 140 }} value={pageName}
+                                            onChange={e => {
+                                                pageName = e.target.value;
+                                                this.setState({ pageName });
+                                            }} />
                                     </div>
                                 </li>
                                 <li className="list-group-item clearfix">
@@ -321,33 +302,6 @@ export class DesignView extends React.Component<Props, State> {
 }
 
 
-
-async function loadComponentType(typeName: string) {
-    let componentInfos = await services.local.componentInfos();
-    let componentInfo = componentInfos.filter(o => o.type == typeName)[0];
-    if (componentInfo == null) {
-        throw errors.canntFindComponentInfo(typeName);
-    }
-
-    let path = componentInfo.path;
-    if (path.endsWith(".jsx")) {
-        path = path.substr(0, path.length - 4);
-    }
-    console.assert(path.startsWith("static/"));
-    path = path.substr("static/".length);
-    return new Promise((resolve, reject) => {
-        requirejs([`${path}`], (mod) => {
-            if (mod[typeName] == null)
-                throw errors.moduleNotExport(path, typeName);
-
-            componentTypes[typeName] = mod[typeName];
-            resolve(mod[typeName]);
-
-        }, err => {
-            reject(err);
-        })
-    })
-}
 
 
 

@@ -5,7 +5,6 @@ import { Less } from "maishu-ui-toolkit";
 import React = require("react");
 import "content/style.scss";
 
-
 window["react"] = React;
 define("react-default", function () {
     return { default: React };

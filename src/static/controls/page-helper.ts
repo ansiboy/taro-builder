@@ -4,7 +4,7 @@ import {
 } from "taro-builder-core";
 import { guid } from "maishu-toolkit";
 
-export class PageViewHelper {
+export class PageHelper {
     static emptyPageData(): PageData {
         let pageId = guid();
         let pageData: PageData = {

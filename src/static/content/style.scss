@@ -3,49 +3,6 @@ $hd : 1;
 
 
 .page-view {
-
-    width : 100%;
-    height: 100%;
-
-    .body {
-        height    : 100%;
-        overflow-y: auto;
-        overflow-x: hidden;
-
-        &::-webkit-scrollbar-track-piece {
-            background-color: #fff;
-        }
-
-        &::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: #999;
-        }
-
-        li {
-            list-style: none;
-        }
-
-        .empty {
-            padding-top: 100px;
-        }
-    }
-
-    .header {
-        position: absolute;
-        top     : 0px;
-        width   : 100%;
-    }
-
-    .footer {
-        position: absolute;
-        bottom  : 0px;
-        width   : 100%;
-        margin  : 0;
-    }
-
     li.selected {
         border: solid 1px blue;
     }

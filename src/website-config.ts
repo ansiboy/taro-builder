@@ -16,6 +16,7 @@ let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
             "devices": "lib/devices.css-1.2/assets/devices.min.css",
             // "taro-bundle": "lib/taro-bundle",
             "taro-ui": "lib/taro-ui",
+            "taro-ui/dist": "node_modules/taro-ui/dist",
             // "taro-components": "lib/taro-components",
             "@tarojs/components": "lib/taro-components",
             "@tarojs/taro-h5": "lib/taro-h5",
