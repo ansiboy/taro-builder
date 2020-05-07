@@ -31,7 +31,7 @@ export function getClientComponentInfos(componentsDirectory: VirtualDirectory): 
         }
     }
 
-    files = files.filter(o => o.physicalPath.endsWith(".tsx"));
+    files = files.filter(o => o.physicalPath.endsWith(".js"));//o.physicalPath.endsWith(".tsx") ||
     files.forEach(item => {
         let tsSourceFile = ts.createSourceFile(
             item.physicalPath, fs.readFileSync(item.physicalPath).toString(),
@@ -54,13 +54,6 @@ export function getClientComponentInfos(componentsDirectory: VirtualDirectory): 
     function delintNode(node: ts.Node, filePath: string) {
         switch (node.kind) {
             case ts.SyntaxKind.ClassDeclaration:
-
-                const DISPLAY_NAME: keyof ComponentInfo = "displayName";
-                const NAME: keyof ComponentInfo = "type";
-                const ICON: keyof ComponentInfo = "icon";
-                const INTRODUCE: keyof ComponentInfo = "introduce";
-                let propNames = [NAME, DISPLAY_NAME, ICON, INTRODUCE];
-
                 let classDeclaration = node as any as ClassDeclaration;
                 if (classDeclaration.decorators) {
                     var decorator = classDeclaration.decorators.filter(o => o.expression != null && (o.expression as CallExpression).expression != null
@@ -95,7 +88,7 @@ export function getClientComponentInfos(componentsDirectory: VirtualDirectory): 
                                 let componentNode = arg0.elements[0] as CallExpression;
                                 let componentInfo: ComponentInfo = getComponentInfo(componentNode);
                                 if (componentInfo != null) {
-                                    componentInfo.type = (args[1] as StringLiteral).text;
+                                    componentInfo.type = componentInfo.type || (args[1] as StringLiteral).text;
                                     componentInfo.path = filePath;
                                     componentInfos.push(componentInfo);
                                 }

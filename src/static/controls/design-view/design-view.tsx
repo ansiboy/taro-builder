@@ -136,6 +136,9 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     private renderPageData(pageData: PageData, componentPanel: ComponentPanel) {
+        ComponentLoader.loadComponentTypes(pageData, () => {
+            this.setState({});
+        })
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
     }
 
@@ -151,10 +154,6 @@ export class DesignView extends React.Component<Props, State> {
 
         this.componentPanel.setComponets(componentDefines);
         //==========================================================================================
-        let pageData = this.state.pageData;
-        ComponentLoader.loadComponentTypes(pageData, () => {
-            this.setState({ pageData });
-        })
         this.setState({ isReady: true, });
     }
 

@@ -2,7 +2,7 @@ import { start } from "./index";
 import path = require("path");
 import websiteConfig from "./website-config";
 
-let componentsPhysicalPath = "D:/projects/taro-builder-demo/app/src";//path.join(__dirname, "D:/projects/taro-builder-demo/app/src");//path.join(__dirname, "static/components");//path.join(__dirname, "../../sampleap/p/.temp/components");
+let componentsPhysicalPath = "D:/projects/taro-builder-demo/app/out";//path.join(__dirname, "D:/projects/taro-builder-demo/app/src");//path.join(__dirname, "static/components");//path.join(__dirname, "../../sampleap/p/.temp/components");
 start({
     port: 5216,
     rootPhysicalPath: __dirname,

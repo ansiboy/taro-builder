@@ -127,11 +127,12 @@ async function loadComponentType(typeName: string) {
     path = path.substr("static/".length);
     return new Promise((resolve, reject) => {
         requirejs([`${path}`], (mod) => {
-            if (mod[typeName] == null)
+            let compoenntType = mod[typeName] || mod["default"];
+            if (compoenntType == null)
                 throw errors.moduleNotExport(path, typeName);
 
-            componentTypes[typeName] = mod[typeName];
-            resolve(mod[typeName]);
+            componentTypes[typeName] = compoenntType;
+            resolve(compoenntType);
 
         }, err => {
             reject(err);

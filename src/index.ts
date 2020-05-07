@@ -46,9 +46,20 @@ export async function start(settings: Settings) {
     console.assert(staticDirectory != null);
     serverContextData.staticRoot = staticDirectory;
 
-    let componentsDirectory = staticDirectory.addVirtualDirectory(AppirectoryName, settings.appSourcePhysicalPath, "replace");
-    let items = getClientComponentInfos(componentsDirectory);
-    componentInfos.push(...items);
+    let runtimeComponentsDirectory = staticDirectory.addVirtualDirectory(AppirectoryName, settings.appSourcePhysicalPath, "replace");
+    let items = getClientComponentInfos(runtimeComponentsDirectory);
+    let designtimeComponentsDirectory = staticDirectory.getDirectory("design-components");
+    if (designtimeComponentsDirectory) {
+        let designtimeItems = getClientComponentInfos(designtimeComponentsDirectory);
+        for (let i = 0; i < items.length; i++) {
+            let desingtimeItem = designtimeItems.filter(o => o.type == items[i].type)[0];
+            if (desingtimeItem) {
+                debugger
+                items[i].path = desingtimeItem.path;
+            }
+        }
+    }
 
+    componentInfos.push(...items);
     return { rootDirectory: r.rootDirectory };
 }
