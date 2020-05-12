@@ -4,7 +4,6 @@ import { PageRecord } from "../../entities";
 import { contextName } from "json!websiteConfig";
 import { ComponentInfo } from "taro-builder-core";
 
-const existsPageDataRecordIds: string[] = [];
 
 export class LocalService extends Service {
 

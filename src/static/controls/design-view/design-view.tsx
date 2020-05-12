@@ -29,9 +29,9 @@ interface State {
     pageName: string,
 }
 
-let groups: string[] = ["common", "navigation"];
+let groups: string[] = ["common", "navigation", "others"];
 let groupTexts = {
-    common: "常用", navigation: "导航"
+    common: "常用", navigation: "导航", others: "其它"
 };
 
 export let DesignPageContext = React.createContext<{ designPage?: DesignView }>({});

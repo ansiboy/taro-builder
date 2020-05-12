@@ -4,6 +4,7 @@ import { errors } from "./errors";
 import path = require("path");
 import { getClientComponentInfos } from "./component-helper";
 import websiteConfig from "./website-config";
+import assign from "object-assign-deep";
 
 export type Settings = AdminSettings & {
     /** Taro app 源码物理路径，例如：D:\projects\taro-builder-demo\app\src */
@@ -39,7 +40,7 @@ export async function start(settings: Settings) {
     } as Settings["virtualPaths"], settings.virtualPaths || {});
 
     websiteConfig.componentEditorsPath = settings.editorsPath;
-    settings.websiteConfig = Object.assign(websiteConfig, settings.websiteConfig || {});
+    settings.websiteConfig = assign(websiteConfig, settings.websiteConfig || {});
 
     let r = await startAdmin(settings);
     let staticDirectory = r.rootDirectory.getDirectory("static");
@@ -54,7 +55,6 @@ export async function start(settings: Settings) {
         for (let i = 0; i < items.length; i++) {
             let desingtimeItem = designtimeItems.filter(o => o.type == items[i].type)[0];
             if (desingtimeItem) {
-                debugger
                 items[i].path = desingtimeItem.path;
             }
         }
