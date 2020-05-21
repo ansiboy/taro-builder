@@ -3,7 +3,7 @@ import fs = require("fs");
 import ts = require("typescript");
 import { ClassDeclaration, CallExpression, ObjectLiteralExpression, PropertyAssignment, StringLiteral, ArrayLiteralExpression, PropertyAccessExpression } from "typescript";
 import path = require("path");
-import { errors } from "./errors";
+import { errors } from "./static/asset/errors";
 import { ComponentInfo } from "taro-builder-core";
 
 export let currentAppId = createParameterDecorator(async (req) => {

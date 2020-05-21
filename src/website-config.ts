@@ -1,13 +1,12 @@
 import { WebsiteConfig } from "maishu-chitu-admin";
 
 export type MyWebsiteConfig = {
-    contextName: string;
     componentEditorsPath?: string;
 };
 
 let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
-    contextName: "taro-builder",
     requirejs: {
+        // context: "taro-builder",
         paths: {
             "maishu-jueying": "node_modules/maishu-jueying/dist/index",
             "maishu-jueying-core": "node_modules/maishu-jueying-core/dist/index",

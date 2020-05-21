@@ -16,13 +16,13 @@ export default class PageList extends DataListPage<PageRecord> {
 
     protected addButton() {
         return <button key="btnAdd" className="btn btn-primary"
-            onClick={() => this.props.app.redirect("#page-edit")}>
+            onClick={() => this.props.app.redirect("page-edit")}>
             <i className="icon-plus"></i>
             <span>添加</span>
         </button>
     }
 
     protected executeEdit(dataItem: PageRecord) {
-        this.props.app.redirect("#page-edit", { id: dataItem.id });
+        this.props.app.redirect("page-edit", { id: dataItem.id });
     }
 }

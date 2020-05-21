@@ -1,6 +1,6 @@
 {
     "name": "taro-builder",
-    "version": "1.0.56",
+    "version": "1.0.59",
     "main": "./out/index",
     "scripts": {
         "build": "grunt build"
@@ -45,7 +45,7 @@
         "@tarojs/taro-h5": "^3.0.0-beta.3",
         "@types/jqueryui": "^1.12.10",
         "less": "^3.11.1",
-        "maishu-chitu-admin": "^2.116.92",
+        "maishu-chitu-admin": "^2.116.154",
         "maishu-chitu-react": "^1.27.0",
         "maishu-chitu-service": "^1.20.0",
         "maishu-dilu": "^1.6.10",
@@ -58,7 +58,7 @@
         "object-assign-deep": "^0.4.0",
         "remove": "^0.1.5",
         "requirejs": "^2.3.6",
-        "taro-builder-core": "file:../taro-builder-core",
+        "taro-builder-core": "^1.1.17",
         "taro-ui": "^3.0.0-alpha.0",
         "typescript": "^3.8.3",
         "vue": "^2.6.11"

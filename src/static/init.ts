@@ -4,6 +4,7 @@ import { InitArguments } from "maishu-chitu-admin/static";
 import { Less } from "maishu-ui-toolkit";
 import React = require("react");
 import "content/style.scss";
+import websiteConfig from "json!websiteConfig";
 
 window["react"] = React;
 define("react-default", function () {
@@ -26,11 +27,9 @@ export default async function (args: InitArguments) {
     window["requirePlugin"] = function () {
 
     }
-    define("@tarojs/taro-h5", function () {
-    })
     //================================================================================
 
-    Less.renderByRequireJS("devices", {});
-    Less.renderByRequireJS("site.less", {});
+    Less.renderByRequireJS("devices", { contextName: websiteConfig.requirejs.context });
+    Less.renderByRequireJS("site.less", { contextName: websiteConfig.requirejs.context });
 
 }

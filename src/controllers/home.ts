@@ -6,7 +6,7 @@ import fs = require("fs");
 import babel = require("@babel/core")
 import sass = require("node-sass");
 import path = require("path");
-import { errors } from "../errors";
+import { errors } from "../static/asset/errors";
 
 @controller("/")
 export class HomeController extends Controller {

@@ -10,10 +10,11 @@ import { dataSources } from "../asset/data-sources";
 import { ComponentTarget, ComponentInfo, PageData } from "taro-builder-core";
 import { PageHelper } from "../asset/controls/page-helper";
 import { Less } from "maishu-ui-toolkit";
-import { contextName } from "json!websiteConfig";
-import { errors } from "../../errors";
+import { errors } from "../asset/errors";
 
-requirejs([websiteConfig.componentEditorsPath], function () {
+let contextName = websiteConfig.requirejs.context;
+let req = requirejs({ context: contextName })
+req([websiteConfig.componentEditorsPath], function () {
 })
 
 interface State {

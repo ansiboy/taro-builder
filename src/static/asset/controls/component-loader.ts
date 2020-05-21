@@ -3,6 +3,8 @@ import { errors } from "../errors";
 import { FakeComponent } from "./design-view/fake-component";
 import { services } from "../services/index";
 import { createComponentLoadFail } from "./design-view/load-fail-component";
+import websiteConfig from "json!websiteConfig";
+let contextName = websiteConfig.requirejs.context;
 
 export class ComponentLoader {
     static loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, isSuccess: boolean) => void) {
@@ -43,7 +45,8 @@ async function loadComponentType(typeName: string) {
     console.assert(path.startsWith("static/"));
     path = path.substr("static/".length);
     return new Promise((resolve, reject) => {
-        requirejs([`${path}`], (mod) => {
+        let req = requirejs({ context: contextName });
+        req([`${path}`], (mod) => {
             let compoenntType = mod[typeName] || mod["default"];
             if (compoenntType == null)
                 throw errors.moduleNotExport(path, typeName);

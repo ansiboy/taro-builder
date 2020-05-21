@@ -1,6 +1,6 @@
 import { start as startAdmin, Settings as AdminSettings } from "maishu-chitu-admin";
 import { ServerContextData } from "./common";
-import { errors } from "./errors";
+import { errors } from "./static/asset/errors";
 import path = require("path");
 import { getClientComponentInfos } from "./component-helper";
 import websiteConfig from "./website-config";

@@ -1,10 +1,10 @@
 import { Service } from "maishu-chitu-admin/static";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 import { PageRecord } from "../../../entities";
-import { contextName } from "json!websiteConfig";
+import websiteConfig from "json!websiteConfig";
 import { ComponentInfo } from "taro-builder-core";
 
-
+let contextName = websiteConfig.requirejs.context;
 export class LocalService extends Service {
 
     url(path: string): string {
@@ -17,10 +17,12 @@ export class LocalService extends Service {
     }
 
     pageRecordList(args: DataSourceSelectArguments) {
-        return this.getByJson<DataSourceSelectResult<PageRecord>>("page-data/list", { args });
+        let url = this.url("page-data/list");
+        return this.getByJson<DataSourceSelectResult<PageRecord>>(url, { args });
     }
     removePageRecord(id: string) {
-        return this.postByJson("page-data/remove", { id });
+        let url = this.url("page-data/remove");
+        return this.postByJson(url, { id });
     }
     async addPageRecord(item: Partial<PageRecord>) {
         let r = await this.postByJson(this.url("page-data/add"), { item });

@@ -1,7 +1,6 @@
 let node_modules = "node_modules";
 let lib = "lib";
 requirejs.config({
-    // context: contextName,
     shim: {
         fetch: {
             exports: 'fetch'
@@ -73,8 +72,6 @@ requirejs(["react"], function (react) {
     window["requirePlugin"] = function () {
 
     }
-    define("@tarojs/taro-h5", function () {
-    })
     //================================================================================
 
     requirejs(['mobile/user-application'],

@@ -1,7 +1,7 @@
 import { controller, action, routeData, serverContext, ServerContext } from "maishu-node-mvc";
 import { Connection, DataHelper, SelectArguments } from "maishu-node-data";
 import { PageRecord } from "../entities";
-import { errors } from "../errors";
+import { errors } from "../static/asset/errors";
 import { currentAppId, connection, ServerContextData } from "../common";
 import { guid } from "maishu-toolkit";
 import { ComponentInfo } from "taro-builder-core";

@@ -17,7 +17,12 @@ start({
     },
     virtualPaths: {
         "node_modules": path.join(__dirname, "../node_modules"),
+        "text.js": path.join("node_modules/maishu-requirejs-plugins/lib/text.js")
         // "maishu-chitu-admin/static": null
     },
-    websiteConfig: websiteConfig
+    websiteConfig: websiteConfig,
+    station: {
+        gateway: "127.0.0.1:2858",
+        path: "shop3"
+    }
 })

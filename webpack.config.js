@@ -4,7 +4,7 @@ const path = require("path");
 module.exports = {
     entry: {
         "taro-components": path.join(__dirname, "lib/taro/taro-components.js"),
-        "taro-ui": path.join(__dirname, "lib/taro/taro-ui"),
+        // "taro-ui": path.join(__dirname, "lib/taro/taro-ui"),
         "taro-h5": path.join(__dirname, "lib/taro/taro-h5")
     },
     output: {

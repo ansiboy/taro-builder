@@ -14,6 +14,7 @@ type RequireContext = {
 }
 
 declare let requirejs: {
+    (config: RequireConfig);
     (config: RequireConfig, modules: string[], callback?: Function, err?: Function);
     (modules: string[], callback?: Function, err?: Function);
     config: Function;
