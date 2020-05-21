@@ -21,8 +21,8 @@ start({
         // "maishu-chitu-admin/static": null
     },
     websiteConfig: websiteConfig,
-    station: {
-        gateway: "127.0.0.1:2858",
-        path: "shop3"
-    }
+    // station: {
+    //     gateway: "127.0.0.1:2858",
+    //     path: "shop3"
+    // }
 })
