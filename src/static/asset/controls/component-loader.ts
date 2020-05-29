@@ -42,8 +42,12 @@ async function loadComponentType(typeName: string) {
     if (path.endsWith(".jsx")) {
         path = path.substr(0, path.length - 4);
     }
-    console.assert(path.startsWith("static/"));
-    path = path.substr("static/".length);
+
+    if (path[0] != "/")
+        path = "/" + path;
+
+    console.assert(path.startsWith("/static/"));
+    path = path.substr("/static/".length);
     return new Promise((resolve, reject) => {
         let req = requirejs({ context: contextName });
         req([`${path}`], (mod) => {

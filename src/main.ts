@@ -21,6 +21,7 @@ start({
         // "maishu-chitu-admin/static": null
     },
     websiteConfig: websiteConfig,
+    commonjsToAmd: ["\\S+app/out/\\S+.js"]
     // station: {
     //     gateway: "127.0.0.1:2858",
     //     path: "shop3"

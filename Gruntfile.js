@@ -67,6 +67,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask("build", ["shell", "webpack"]);
+    grunt.registerTask("build", ["shell"]);
     grunt.registerTask("start", ["open"])
 }
