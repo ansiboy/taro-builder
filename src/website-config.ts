@@ -1,8 +1,11 @@
 import { WebsiteConfig } from "maishu-chitu-admin";
+import { pathContact } from "maishu-toolkit";
 
 export type MyWebsiteConfig = {
     componentEditorsPath?: string;
 };
+
+export let libVirtualPath = "asset/lib";
 
 let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
     requirejs: {
@@ -11,16 +14,16 @@ let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
             "maishu-jueying": "node_modules/maishu-jueying/dist/index",
             "maishu-jueying-core": "node_modules/maishu-jueying-core/dist/index",
             "taro-builder-core": "node_modules/taro-builder-core/dist/index",
-            "jquery-ui": "lib/jquery-ui-1.12.1/jquery-ui",
-            "devices": "lib/devices.css-1.2/assets/devices.min.css",
+            "jquery-ui": pathContact(libVirtualPath, "jquery-ui-1.12.1/jquery-ui"),
+            "devices": pathContact(libVirtualPath, "devices.css-1.2/assets/devices.min.css"),
             // "taro-bundle": "lib/taro-bundle",
-            "taro-ui": "lib/taro-ui",
+            "taro-ui": pathContact(libVirtualPath, "taro-ui"),
             "taro-ui/dist": "node_modules/taro-ui/dist",
             // "taro-components": "lib/taro-components",
-            "@tarojs/components": "lib/taro-components",
-            "@tarojs/taro-h5": "lib/taro-h5",
-            "@tarojs/taro": "lib/taro-h5",
-            "nervjs": "lib/nervjs",
+            "@tarojs/components": pathContact(libVirtualPath, "taro-components"),
+            "@tarojs/taro-h5": pathContact(libVirtualPath, "taro-h5"),
+            "@tarojs/taro": pathContact(libVirtualPath, "taro-h5"),
+            "nervjs": pathContact(libVirtualPath, "nervjs"),
             "tslib": "node_modules/tslib/tslib",
             // "maishu-chitu-admin/static": "node_modules/maishu-chitu-admin/static",
             "htmlparser2": "node_modules/htmlparser2/"

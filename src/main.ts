@@ -6,7 +6,7 @@ let componentsPhysicalPath = "D:/projects/taro-builder-demo/app/out";//path.join
 start({
     port: 5216,
     rootPhysicalPath: __dirname,
-    appSourcePhysicalPath: componentsPhysicalPath,
+    appPhysicalPath: componentsPhysicalPath,
     editorsPath: "",
     db: {
         host: "127.0.0.1",
@@ -21,7 +21,7 @@ start({
         // "maishu-chitu-admin/static": null
     },
     websiteConfig: websiteConfig,
-    commonjsToAmd: ["\\S+app/out/\\S+.js"]
+    // commonjsToAmd: ["\\S+app/out/\\S+.js"]
     // station: {
     //     gateway: "127.0.0.1:2858",
     //     path: "shop3"
