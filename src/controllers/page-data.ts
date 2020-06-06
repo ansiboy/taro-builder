@@ -3,7 +3,7 @@ import { Connection, DataHelper, SelectArguments } from "maishu-node-data";
 import { PageRecord } from "../entities";
 import { errors } from "../static/asset/errors";
 import { currentAppId, connection, ServerContextData } from "../common";
-import { guid } from "maishu-toolkit";
+import { guid, Errors } from "maishu-toolkit";
 import { ComponentInfo } from "taro-builder-core";
 
 @controller("page-data")
@@ -68,6 +68,22 @@ export class PageDataController {
         }
 
         return item;
+    }
+
+    /**
+     * 通过 id 获取多个 PageRecord
+     */
+    @action()
+    async items(@connection conn: Connection, @routeData { ids }: { ids: string[] }, @currentAppId appId): Promise<PageRecord[]> {
+        if (ids == null)
+            throw errors.routeDataFieldNull("ids");
+
+        if (ids.length == 0)
+            return [];
+
+        let repository = conn.getRepository(PageRecord);
+        let r = await repository.findByIds(ids);
+        return r;
     }
 
     /** 获取用户端组件信息 */
