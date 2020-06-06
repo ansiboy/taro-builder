@@ -121,6 +121,7 @@ function getComponentInfo(componentNode: CallExpression): ComponentInfo | null {
             let componentInfo: ComponentInfo = getObject(objNode);
             return componentInfo;
         }
+        return {} as ComponentInfo;
     }
     return null;
 }

@@ -1,7 +1,7 @@
 import { DesignView } from "../asset/controls/design-view/index";
 import React = require("react");
 import { PageProps } from "maishu-chitu-react";
-import { buttonOnClick } from "maishu-ui-toolkit";
+import { buttonOnClick, Less } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../asset/services/local-service";
 import websiteConfig from "json!websiteConfig";
@@ -9,13 +9,12 @@ import { FormValidator, rules as r } from "maishu-dilu"
 import { dataSources } from "../asset/data-sources";
 import { ComponentTarget, ComponentInfo, PageData } from "taro-builder-core";
 import { PageHelper } from "../asset/controls/page-helper";
-import { Less } from "maishu-ui-toolkit";
 import { errors } from "../asset/errors";
+import { EditorPanelProps } from "maishu-jueying";
 
 let contextName = websiteConfig.requirejs.context;
 let req = requirejs({ context: contextName })
-req([websiteConfig.componentEditorsPath], function () {
-})
+req([websiteConfig.componentEditorsPath], function () { })
 
 interface State {
     pageData: PageData | undefined,
@@ -25,6 +24,8 @@ interface State {
 }
 
 interface Props extends PageProps {
+    pageData?: PageData,
+    customRender?: EditorPanelProps["customRender"],
     data: { id?: string },
 }
 
@@ -38,7 +39,7 @@ export default class PageEdit extends React.Component<Props, State> {
     constructor(props) {
         super(props);
 
-        this.state = { pageData: undefined, componentTarget: "body" };
+        this.state = { pageData: this.props.pageData, componentTarget: "body" };
 
         //==========================================================================================
         // 设置组件工具栏
@@ -125,7 +126,7 @@ export default class PageEdit extends React.Component<Props, State> {
             return <div className="empty">
                 数据加载中...
             </div>
-        return <DesignView {...{ pageData, pageName: pageName, componentInfos }}
+        return <DesignView {...{ pageData, pageName: pageName, componentInfos, customRender: this.props.customRender }}
             ref={e => this.designView = e || this.designView}
             toolbarButtons={[
                 <button className="btn btn-sm btn-primary" onClick={() => this.preivew()}>
@@ -146,9 +147,3 @@ export default class PageEdit extends React.Component<Props, State> {
         </DesignView>
     }
 }
-
-{/* <input name="name" className="form-control" style={{ width: 300, marginTop: -5 }} placeholder="请输入页面名称"
-                        value={name || ""}
-                        onChange={e => {
-                            this.setState({ name: e.target.value })
-                        }} /> */}

@@ -5,7 +5,8 @@ module.exports = {
     entry: {
         "taro-components": path.join(__dirname, "lib/taro/taro-components.js"),
         "taro-ui": path.join(__dirname, "lib/taro/taro-ui"),
-        "taro-h5": path.join(__dirname, "lib/taro/taro-h5")
+        "taro-h5": path.join(__dirname, "lib/taro/taro-h5"),
+        "static": path.join(__dirname, "out/static/index")
     },
     output: {
         path: path.join(__dirname, "/lib"), //打包后的文件存放的地方
@@ -20,7 +21,9 @@ module.exports = {
         })
     ],
     externals: [
-        "react", "react-dom", "@tarojs/components", "@tarojs/taro-h5"
+        "react", "react-dom", "@tarojs/components", "@tarojs/taro-h5",
+        "maishu-chitu-react", "maishu-dilu", "maishu-ui-toolkit", "taro-builder-core",
+        "json!websiteConfig", "jquery-ui", "maishu-chitu-admin/static"
     ],
     resolve: {
         alias: {

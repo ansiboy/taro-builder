@@ -8,12 +8,14 @@ let contextName = websiteConfig.requirejs.context;
 export class LocalService extends Service {
 
     url(path: string): string {
-        let contexts = requirejs.exec("contexts");
-        let context: RequireContext = contexts[contextName];
-        if (context != null && context.config != null && context.config.baseUrl != null) {
-            return `${context.config.baseUrl}${path}`;
-        }
-        return `${path}`;
+        // let contexts = requirejs.exec("contexts");
+        // let context: RequireContext = contexts[contextName];
+        // if (context != null && context.config != null && context.config.baseUrl != null) {
+        //     return `${context.config.baseUrl}${path}`;
+        // }
+        // return `${path}`;
+        let u = this.localServiceUrl(path);
+        return u;
     }
 
     pageRecordList(args: DataSourceSelectArguments) {

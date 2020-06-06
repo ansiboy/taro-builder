@@ -1,5 +1,5 @@
 import React = require("react");
-import { EditorPanel, PageDesigner, PropertyEditorInfo, DesignerContext } from "maishu-jueying";
+import { EditorPanel, PageDesigner, PropertyEditorInfo, DesignerContext, EditorPanelProps } from "maishu-jueying";
 import "jquery-ui"
 import { ComponentPanel, ComponentDefine, commonGroup } from "../component-panel";
 import { componentRenders } from "../../component-renders/index";
@@ -20,6 +20,7 @@ interface Props {
     hideEditorPanel?: boolean,
     hidePageSettingPanel?: boolean,
     toolbarButtons?: JSX.Element[],
+    customRender?: EditorPanelProps["customRender"],
 }
 
 interface State {
@@ -284,7 +285,7 @@ export class DesignView extends React.Component<Props, State> {
 
                         </>}
                         {this.props.hideEditorPanel ? null :
-                            <EditorPanel className="well" customRender={(a, b) => this.customRender(a as ComponentData[], b)}
+                            <EditorPanel className="well" customRender={this.props.customRender}
                                 ref={e => {
                                     if (this.editorPanel != null || e == null)
                                         return;
