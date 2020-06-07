@@ -1,3 +1,4 @@
+// site.less
 .component-panel {
     display      : flex;
     margin-bottom: 10px;
@@ -13,9 +14,15 @@
     }
 }
 
-button.btn,
-button.close {
-    width: unset;
+.modal-dialog {
+    .modal-content {
+        .modal-footer {
+            button.btn,
+            button.close {
+                width: unset;
+            }
+        }
+    }
 }
 
 //=====================================================
