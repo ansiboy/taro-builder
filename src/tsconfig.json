@@ -5,7 +5,7 @@
         "module": "commonjs",
         "outDir": "../out",
         "declaration": true,
-        "jsx": "preserve",
+        "jsx": "react",
         "allowUnusedLabels": true,
         "allowUmdGlobalAccess": true,
         "esModuleInterop": true,

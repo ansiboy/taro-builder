@@ -17,15 +17,12 @@ let req = requirejs({ context: contextName })
 req([websiteConfig.componentEditorsPath], function () { })
 
 interface State {
-    // pageData: PageData | undefined,
     pageRecord?: PageRecord,
-    // pageName?: string,
     componentTarget: ComponentTarget,
     componentInfos?: ComponentInfo[],
 }
 
 interface Props extends PageProps {
-    // pageData?: PageRecord,
     pageRecord?: PageRecord,
     customRender?: EditorPanelProps["customRender"],
     data: { id?: string },
@@ -70,15 +67,6 @@ export default class PageEdit extends React.Component<Props, State> {
         if (!pageName)
             throw errors.pageNameCanntEmpty();
 
-        // if (this.record == null) {
-        //     this.record = { pageData, name: pageName, type: "page" } as PageRecord;
-        //     await dataSources.pageRecords.insert(this.record);
-        // }
-        // else {
-        //     this.record.pageData = pageData;
-        //     this.record.name = pageName;
-        //     await dataSources.pageRecords.update(this.record);
-        // }
         let record = this.state.pageRecord;
         record.name = pageName;
         if (record.id == null) {
@@ -103,15 +91,16 @@ export default class PageEdit extends React.Component<Props, State> {
 
     componentDidMount() {
         let s = this.props.createService(LocalService);
-        if (this.props.data.id) {
-            s.getPageData(this.props.data.id as string).then(d => {
-                // this.record = d;
-                this.setState({ pageRecord: d })
-            })
-        }
-        else {
-            let r = this.emptyRecord() as PageRecord;
-            this.setState({ pageRecord: r });
+        if (this.state.pageRecord == null) {
+            if (this.props.data.id) {
+                s.getPageData(this.props.data.id as string).then(d => {
+                    this.setState({ pageRecord: d })
+                })
+            }
+            else {
+                let r = this.emptyRecord() as PageRecord;
+                this.setState({ pageRecord: r });
+            }
         }
     }
 

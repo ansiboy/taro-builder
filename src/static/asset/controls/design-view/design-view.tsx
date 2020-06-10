@@ -71,10 +71,11 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     headerHeight(pageData: PageData, value?: number) {
-        let r = PageHelper.findHeader(pageData, true);
         if (value == null) {
-            return r.props.height;
+            let r = PageHelper.findHeader(pageData);
+            return r?.props.height;
         }
+        let r = PageHelper.findHeader(pageData, true);
         r.props.height = value;
         this.setState({ pageData });
     }
@@ -85,10 +86,12 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     footerHeight(pageData: PageData, value?: number) {
-        let r = PageHelper.findFooter(pageData, true);
         if (value == null) {
-            return r.props.height;
+            let r = PageHelper.findFooter(pageData);
+            return r?.props.height;
         }
+
+        let r = PageHelper.findFooter(pageData, true);
 
         r.props.height = value;
         this.setState({ pageData });
@@ -230,7 +233,7 @@ export class DesignView extends React.Component<Props, State> {
                                     <div className="pull-left">
                                         页眉高度</div>
                                     <div className="pull-right">
-                                        <input className="form-control input-sm" value={this.headerHeight(pageData)}
+                                        <input className="form-control input-sm" value={this.headerHeight(pageData) || ""}
                                             style={{ width: 60, textAlign: "right", display: this.footerVisible(pageData) ? "" : "none" }}
                                             onChange={e => {
                                                 try {
@@ -258,7 +261,7 @@ export class DesignView extends React.Component<Props, State> {
                                         页脚高度</div>
                                     <div className="pull-right">
                                         <input className="form-control input-sm" style={{ width: 60, textAlign: "right" }}
-                                            value={this.footerHeight(pageData)}
+                                            value={this.footerHeight(pageData) || ""}
                                             onChange={e => {
                                                 try {
                                                     let value = Number.parseInt(e.target.value);
