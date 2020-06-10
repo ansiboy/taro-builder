@@ -59,7 +59,7 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
             {components.length == 0 ? empty : components.map((c, i) => {
                 let props = { key: i };
                 props[this.COMPONENT_DATA] = JSON.stringify(c.componentData);
-                return <li {...props}>
+                return <li {...props} title={c.introduce}>
                     <div className="btn-link">
                         <i className={c.icon} style={{ fontSize: 44, color: 'black' }}
                             ref={e => {

@@ -17,14 +17,16 @@ let req = requirejs({ context: contextName })
 req([websiteConfig.componentEditorsPath], function () { })
 
 interface State {
-    pageData: PageData | undefined,
-    pageName?: string,
+    // pageData: PageData | undefined,
+    pageRecord?: PageRecord,
+    // pageName?: string,
     componentTarget: ComponentTarget,
     componentInfos?: ComponentInfo[],
 }
 
 interface Props extends PageProps {
-    pageData?: PageData,
+    // pageData?: PageRecord,
+    pageRecord?: PageRecord,
     customRender?: EditorPanelProps["customRender"],
     data: { id?: string },
 }
@@ -33,13 +35,13 @@ interface Props extends PageProps {
 export default class PageEdit extends React.Component<Props, State> {
 
     private validator: FormValidator;
-    private record: PageRecord;
+    // private record: PageRecord;
     private designView: DesignView;
 
     constructor(props) {
         super(props);
 
-        this.state = { pageData: this.props.pageData, componentTarget: "body" };
+        this.state = { pageRecord: this.props.pageRecord, componentTarget: "body" };
 
         //==========================================================================================
         // 设置组件工具栏
@@ -64,19 +66,26 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     async save(): Promise<any> {
-        let { pageData } = this.state;
-        let pageName = this.designView.state.pageName;
+        let { pageName, pageData } = this.designView.state;
         if (!pageName)
             throw errors.pageNameCanntEmpty();
 
-        if (this.record == null) {
-            this.record = { pageData, name: pageName, type: "page" } as PageRecord;
-            await dataSources.pageRecords.insert(this.record);
+        // if (this.record == null) {
+        //     this.record = { pageData, name: pageName, type: "page" } as PageRecord;
+        //     await dataSources.pageRecords.insert(this.record);
+        // }
+        // else {
+        //     this.record.pageData = pageData;
+        //     this.record.name = pageName;
+        //     await dataSources.pageRecords.update(this.record);
+        // }
+        let record = this.state.pageRecord;
+        record.name = pageName;
+        if (record.id == null) {
+            await dataSources.pageRecords.insert(record);
         }
         else {
-            this.record.pageData = pageData;
-            this.record.name = pageName;
-            await dataSources.pageRecords.update(this.record);
+            await dataSources.pageRecords.update(record);
         }
 
     }
@@ -84,7 +93,7 @@ export default class PageEdit extends React.Component<Props, State> {
     private emptyRecord(): Partial<PageRecord> {
         let pageData = PageHelper.emptyPageData();
         let record: Partial<PageRecord> = {
-            id: pageData.id,
+            // id: pageData.id,
             pageData,
             type: "page",
             createDateTime: new Date()
@@ -96,13 +105,13 @@ export default class PageEdit extends React.Component<Props, State> {
         let s = this.props.createService(LocalService);
         if (this.props.data.id) {
             s.getPageData(this.props.data.id as string).then(d => {
-                this.record = d;
-                this.setState({ pageData: d.pageData, pageName: d.name })
+                // this.record = d;
+                this.setState({ pageRecord: d })
             })
         }
         else {
-            let r = this.emptyRecord();
-            this.setState({ pageData: r.pageData });
+            let r = this.emptyRecord() as PageRecord;
+            this.setState({ pageRecord: r });
         }
     }
 
@@ -121,12 +130,12 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     render() {
-        let { pageData, pageName, componentInfos } = this.state;
-        if (pageData == undefined || componentInfos == undefined)
+        let { pageRecord, componentInfos } = this.state;
+        if (pageRecord == undefined || componentInfos == undefined)
             return <div className="empty">
                 数据加载中...
             </div>
-        return <DesignView {...{ pageData, pageName: pageName, componentInfos, customRender: this.props.customRender }}
+        return <DesignView {...{ pageData: pageRecord.pageData, pageName: pageRecord.name, componentInfos, customRender: this.props.customRender }}
             ref={e => this.designView = e || this.designView}
             toolbarButtons={[
                 <button className="btn btn-sm btn-primary" onClick={() => this.preivew()}>
