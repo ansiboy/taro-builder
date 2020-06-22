@@ -2,9 +2,10 @@ import { controller, action, routeData, serverContext, ServerContext } from "mai
 import { Connection, DataHelper, SelectArguments } from "maishu-node-data";
 import { PageRecord } from "../entities";
 import { errors } from "../static/asset/errors";
-import { currentAppId, connection, ServerContextData } from "../common";
+import { connection, ServerContextData } from "../common";
 import { guid, Errors } from "maishu-toolkit";
 import { ComponentInfo } from "taro-builder-core";
+import { currentAppId } from "maishu-chitu-admin";
 
 @controller("page-data")
 export class PageDataController {

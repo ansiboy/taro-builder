@@ -7,11 +7,11 @@ import { ComponentInfo } from "taro-builder-core";
 export type ServerContextData = { db: ConnectionConfig, componentInfos: ComponentInfo[], staticRoot?: VirtualDirectory };
 
 
-const defaultAppId = "00000000-0000-0000-0000-000000000000";
-export let currentAppId = createParameterDecorator(async (req) => {
-    let appId = req.headers["application-id"];
-    return appId || defaultAppId;
-}) as Function;
+// const defaultAppId = "00000000-0000-0000-0000-000000000000";
+// export let currentAppId = createParameterDecorator(async (req) => {
+//     let appId = req.headers["application-id"];
+//     return appId || defaultAppId;
+// }) as Function;
 
 
 export let connection = createParameterDecorator(async (req, res, context: ServerContext<ServerContextData>) => {
