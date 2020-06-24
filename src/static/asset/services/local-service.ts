@@ -1,11 +1,18 @@
 import { Service } from "maishu-chitu-admin/static";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 import { PageRecord } from "../../../entities";
-import websiteConfig from "json!websiteConfig";
 import { ComponentInfo } from "taro-builder-core";
 
-let contextName = websiteConfig.requirejs.context;
 export class LocalService extends Service {
+
+    private defaultApplicationId = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
+
+    get applicationId(): string {
+        if (!super.applicationId)
+            return this.defaultApplicationId;
+
+        return super.applicationId;
+    }
 
     url(path: string): string {
         // let contexts = requirejs.exec("contexts");

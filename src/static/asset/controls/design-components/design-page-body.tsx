@@ -9,6 +9,9 @@ export class DesignPageBody extends React.Component<PageBodyProps> {
         return <DesignPageContext.Consumer>
             {args => {
                 let style: React.CSSProperties = { marginTop: 0 };
+                if (args.pageData == null)
+                    return null;
+                    
                 let header = args.pageData.children.filter(o => o.type == PageHeader.typeName)[0];
                 let footer = args.pageData.children.filter(o => o.type == PageFooter.typeName)[0];
                 if (header != null && (header.props as PageHeaderProps).visible) {

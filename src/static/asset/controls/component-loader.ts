@@ -1,4 +1,4 @@
-import { registerComponent, PageData, componentTypes } from "taro-builder-core";
+import { registerComponent, PageData, componentTypes, ComponentData } from "taro-builder-core";
 import { errors } from "../errors";
 import { FakeComponent } from "./design-view/fake-component";
 import { services } from "../services/index";
@@ -8,26 +8,53 @@ let contextName = websiteConfig.requirejs.context;
 
 export class ComponentLoader {
     static loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, isSuccess: boolean) => void) {
-        for (let i = 0; i < pageData.children.length; i++) {
-            let item = pageData.children[i];
-            let componentType = componentTypes[item.type] as any;
+        let pageDataComponentTypes: string[] = [];
+        let stack: Array<ComponentData> = [...pageData.children];
+        while (stack.length > 0) {
+            let item = stack.pop();
+
+            if (ComponentLoader.isComponentData(item) && pageDataComponentTypes.indexOf(item.type) < 0)
+                pageDataComponentTypes.push(item.type);
+
+
+            if (Array.isArray(item)) {
+                item.forEach(c => stack.push(c))
+            }
+            else {
+                for (let key in item) {
+                    if (item[key] != null && typeof item[key] == "object")
+                        stack.push(item[key]);
+                }
+
+            }
+        }
+
+        for (let i = 0; i < pageDataComponentTypes.length; i++) {
+            let type = pageDataComponentTypes[i];
+            let componentType = componentTypes[type] as any;
             if (componentType == null) {
-                registerComponent(item.type, FakeComponent);
-                loadComponentType(item.type).then(c => {
-                    registerComponent(item.type, c as any);
-                    loadComponentFinish(item.type, true);
+                registerComponent(type, FakeComponent);
+                loadComponentType(type).then(c => {
+                    registerComponent(type, c as any);
+                    loadComponentFinish(type, true);
 
                 }).catch(err => {
                     console.error(err);
                     let componentType = createComponentLoadFail(err, () => {
-                        delete componentTypes[item.type];
+                        delete componentTypes[type];
                         ComponentLoader.loadComponentTypes(pageData, loadComponentFinish);
                     });
-                    registerComponent(item.type, componentType);
-                    loadComponentFinish(item.type, false);
+                    registerComponent(type, componentType);
+                    loadComponentFinish(type, false);
                 })
             }
         }
+
+    }
+
+    private static isComponentData(obj: any) {
+        let c: ComponentData = obj;
+        return typeof c == "object" && c.id != null && c.parentId != null && c.id != null && c.props != null;
     }
 }
 

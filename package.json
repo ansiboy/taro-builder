@@ -1,6 +1,6 @@
 {
     "name": "taro-builder",
-    "version": "1.0.86",
+    "version": "1.0.92",
     "main": "./out/index",
     "scripts": {
         "build": "grunt build"
