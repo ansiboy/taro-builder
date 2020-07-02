@@ -87,18 +87,14 @@ export class ComponentContainer extends BaseComponentContainer {
         })
     }
     componentDidMount() {
-        // this.enableDrapDrop(this.container, this.getPageData(this.designer), this.designer);
-        //========================================
-        // 要加 setTimeout，否则会异常
-        // setTimeout(() => {
-        //     props.componentPanel.addDropTarget(this.container);
-        // })
-        //========================================
     }
     render() {
         return <DesignPageContext.Consumer>
             {args => {
                 let pageData = args.pageData;
+                if (pageData == null)
+                    return null;
+                    
                 let children = pageData.children.filter(o => typeof o != "string" && o.parentId == this.props.id) as ComponentData[];
                 let className = this.props.className || "";
                 if (children.length == 0) {

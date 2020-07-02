@@ -7,7 +7,7 @@ import { LocalService } from "../asset/services/local-service";
 import websiteConfig from "json!websiteConfig";
 import { FormValidator, rules as r } from "maishu-dilu"
 import { dataSources } from "../asset/data-sources";
-import { ComponentTarget, ComponentInfo, PageData } from "taro-builder-core";
+import { ComponentInfo } from "taro-builder-core";
 import { PageHelper } from "../asset/controls/page-helper";
 import { errors } from "../asset/errors";
 import { EditorPanelProps } from "maishu-jueying";
@@ -18,7 +18,6 @@ req([websiteConfig.componentEditorsPath], function () { })
 
 interface State {
     pageRecord?: PageRecord,
-    componentTarget: ComponentTarget,
     componentInfos?: ComponentInfo[],
 }
 
@@ -38,7 +37,7 @@ export default class PageEdit extends React.Component<Props, State> {
     constructor(props) {
         super(props);
 
-        this.state = { pageRecord: this.props.pageRecord, componentTarget: "body" };
+        this.state = { pageRecord: this.props.pageRecord };
 
         //==========================================================================================
         // 设置组件工具栏
@@ -63,7 +62,7 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     async save(): Promise<any> {
-        let { pageName, pageData } = this.designView.state;
+        let { pageName } = this.designView.state;
         if (!pageName)
             throw errors.pageNameCanntEmpty();
 
@@ -79,7 +78,7 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     private emptyRecord(): Partial<PageRecord> {
-        let pageData = PageHelper.emptyPageData();
+        let pageData = this.emptyPageData();
         let record: Partial<PageRecord> = {
             // id: pageData.id,
             pageData,
@@ -87,6 +86,10 @@ export default class PageEdit extends React.Component<Props, State> {
             createDateTime: new Date()
         };
         return record;
+    }
+
+    protected emptyPageData() {
+        return PageHelper.emptyPageData();
     }
 
     componentDidMount() {
