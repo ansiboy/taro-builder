@@ -4,4 +4,11 @@
 
 ## 截图
 
+案例：电商系统小程序页面构造
+
+![](https://ansiboy.github.io/taro-builder/images/20200704165629.png)
+
+![](https://ansiboy.github.io/taro-builder/images/20200704170120.png)
+
+![](https://ansiboy.github.io/taro-builder/images/20200704170150.png)
 
