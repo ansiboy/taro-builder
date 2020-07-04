@@ -1,6 +1,6 @@
 {
     "name": "taro-builder",
-    "version": "1.0.92",
+    "version": "1.0.93",
     "main": "./out/index",
     "scripts": {
         "build": "grunt build"
@@ -59,7 +59,7 @@
         "object-assign-deep": "^0.4.0",
         "remove": "^0.1.5",
         "requirejs": "^2.3.6",
-        "taro-builder-core": "^1.1.27",
+        "taro-builder-core": "^1.1.31",
         "taro-ui": "^3.0.0-alpha.0",
         "typescript": "^3.8.3",
         "vue": "^2.6.11"

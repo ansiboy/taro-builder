@@ -32,8 +32,16 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
         return this.toolbarElement;
     }
 
-    setComponets(componets: ComponentDefine[]) {
-        this.setState({ components: componets }, () => {
+    setComponets(components: ComponentDefine[]) {
+        components.forEach(c => {
+            if (c.sortNumber == null)
+                c.sortNumber = 0;
+
+            if (typeof c.sortNumber == "string")
+                c.sortNumber = Number.parseInt(c.sortNumber);
+        })
+        components.sort((a, b) => a.sortNumber < b.sortNumber ? -1 : 1);
+        this.setState({ components: components }, () => {
             $(this.element).find("li").draggable({
                 helper: "clone",
                 revert: "invalid"
@@ -59,7 +67,7 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
             {components.length == 0 ? empty : components.map((c, i) => {
                 let props = { key: i };
                 props[this.COMPONENT_DATA] = JSON.stringify(c.componentData);
-                return <li {...props} title={c.introduce}>
+                return <li {...props} title={c.introduce} data-sort-number={c.sortNumber}>
                     <div className="btn-link">
                         <i className={c.icon} style={{ fontSize: 44, color: 'black' }}
                             ref={e => {
