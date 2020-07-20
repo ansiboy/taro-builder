@@ -1,7 +1,4 @@
 $hd : 1;
-// @import "../../../node_modules/taro-ui/dist/style/index.scss";
-
-
 .page-view {
     li.selected {
         border: solid 1px blue;
@@ -20,4 +17,8 @@ $hd : 1;
     label {
         padding: 0;
     }
+}
+
+.btn button {
+    width: unset;
 }

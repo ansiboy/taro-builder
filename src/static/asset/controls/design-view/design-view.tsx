@@ -1,10 +1,9 @@
 import React = require("react");
-import { EditorPanel, PageDesigner, PropertyEditorInfo, DesignerContext, EditorPanelProps } from "maishu-jueying";
+import { EditorPanel, PageDesigner, DesignerContext, EditorPanelProps } from "maishu-jueying";
 import "jquery-ui"
 import { ComponentPanel, ComponentDefine, commonGroup } from "../component-panel";
-import { componentRenders } from "../../component-renders/index";
 import {
-    ComponentData, ComponentInfo, PageData,
+    ComponentInfo, PageData,
 } from "taro-builder-core";
 import { DesignPage } from "../design-components/index";
 import "../design-components/index";
@@ -60,17 +59,17 @@ export class DesignView extends React.Component<Props, State> {
         };
     }
 
-    bodyVisible(pageData: PageData): boolean {
+    private bodyVisible(pageData: PageData): boolean {
         let r = PageHelper.findBody(pageData);
         return r != null && r.props.visible == true;
     }
 
-    headerVisible(pageData: PageData): boolean {
+    private headerVisible(pageData: PageData): boolean {
         let r = PageHelper.findHeader(pageData);
         return r != null && r.props.visible == true;
     }
 
-    headerHeight(pageData: PageData, value?: number) {
+    private headerHeight(pageData: PageData, value?: number) {
         if (value == null) {
             let r = PageHelper.findHeader(pageData);
             return r?.props.height;
@@ -80,12 +79,12 @@ export class DesignView extends React.Component<Props, State> {
         this.setState({ pageData });
     }
 
-    footerVisible(pageData: PageData) {
+    private footerVisible(pageData: PageData) {
         let r = PageHelper.findFooter(pageData);
         return r != null && r.props.visible == true;
     }
 
-    footerHeight(pageData: PageData, value?: number) {
+    private footerHeight(pageData: PageData, value?: number) {
         if (value == null) {
             let r = PageHelper.findFooter(pageData);
             return r?.props.height;
@@ -97,36 +96,26 @@ export class DesignView extends React.Component<Props, State> {
         this.setState({ pageData });
     }
 
-    private customRender(editComponents: ComponentData[], items: PropertyEditorInfo[]) {
-        console.assert(editComponents.length == 1);
-        let typename = editComponents[0].type;
-        let componentCustomRender = componentRenders[typename];
-        if (!componentCustomRender)
-            return null;
-
-        return componentCustomRender(items);
-    }
-
-    async showBody(pageData: PageData, visible: boolean) {
+    private async showBody(pageData: PageData, visible: boolean) {
         let c = PageHelper.findBody(pageData);
         console.assert(c != null);
         c.props.visible = visible;
         this.setState({ pageData });
     }
 
-    async showHeader(pageData: PageData, visible: boolean) {
+    private async showHeader(pageData: PageData, visible: boolean) {
         let c = PageHelper.findHeader(pageData, true);
         c.props.visible = visible;
         this.setState({ pageData });
     }
 
-    async showFooter(pageData: PageData, visible: boolean) {
+    private async showFooter(pageData: PageData, visible: boolean) {
         let c = PageHelper.findFooter(pageData, true);
         c.props.visible = visible;
         this.setState({ pageData });
     }
 
-    async onComponentCreated() {
+    private async onComponentCreated() {
         if (this.componentPanel == null || this.editorPanel == null)
             return;
     }
@@ -144,6 +133,10 @@ export class DesignView extends React.Component<Props, State> {
             this.setState({});
         })
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
+    }
+
+    get element() {
+        return this.designer.element;
     }
 
     componentDidMount() {
@@ -202,7 +195,7 @@ export class DesignView extends React.Component<Props, State> {
                                     <div className="pull-left">
                                         页面名称</div>
                                     <div className="pull-right">
-                                        <input className="form-control input-sm" style={{ width: 140 }} value={pageName}
+                                        <input name="name" className="form-control input-sm" style={{ width: 140 }} value={pageName}
                                             onChange={e => {
                                                 pageName = e.target.value;
                                                 this.setState({ pageName });

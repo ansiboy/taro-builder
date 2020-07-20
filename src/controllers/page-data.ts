@@ -43,7 +43,10 @@ export class PageDataController {
         if (item.name) {
             obj.name = item.name;
         }
-        await conn.getRepository(PageRecord).update({ id: item.id, applicationId: appId }, obj);
+        let r = await conn.getRepository(PageRecord).update({ id: item.id, applicationId: appId }, obj);
+        if (r.affected == 0)
+            throw new Error(`Update page record fail.`);
+
         return {};
     }
 

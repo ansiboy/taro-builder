@@ -10,7 +10,8 @@ import { dataSources } from "../asset/data-sources";
 import { ComponentInfo } from "taro-builder-core";
 import { PageHelper } from "../asset/controls/page-helper";
 import { errors } from "../asset/errors";
-import { EditorPanelProps } from "maishu-jueying";
+import { EditorPanelProps, PropertyEditorInfo } from "maishu-jueying";
+import { ComponentData } from "maishu-jueying-core";
 
 let contextName = websiteConfig.requirejs.context;
 let req = requirejs({ context: contextName })
@@ -30,9 +31,9 @@ interface Props extends PageProps {
 
 export default class PageEdit extends React.Component<Props, State> {
 
-    private validator: FormValidator;
+    protected validator: FormValidator;
     // private record: PageRecord;
-    private designView: DesignView;
+    protected designView: DesignView;
 
     constructor(props) {
         super(props);
@@ -63,8 +64,11 @@ export default class PageEdit extends React.Component<Props, State> {
 
     async save(): Promise<any> {
         let { pageName } = this.designView.state;
-        if (!pageName)
-            throw errors.pageNameCanntEmpty();
+        // if (!pageName)
+        //     throw errors.pageNameCanntEmpty();
+
+        if (!this.validator.check())
+            return Promise.reject();
 
         let record = this.state.pageRecord;
         record.name = pageName;
@@ -105,6 +109,7 @@ export default class PageEdit extends React.Component<Props, State> {
                 this.setState({ pageRecord: r });
             }
         }
+        this.createValidator(this.props.source.element);
     }
 
     createValidator(form: HTMLElement) {
@@ -121,13 +126,25 @@ export default class PageEdit extends React.Component<Props, State> {
         window.open(`preview.html#page?id=${this.props.data.id}`, "_new")
     }
 
+    // private editoryCustomRender(a: ComponentData[], b: PropertyEditorInfo[]): JSX.Element {
+    //     let typeName = a[0].type;
+    //     let componentEditorCustomRender = componentEditorRenders[typeName];
+    //     if (!componentEditorCustomRender)
+    //         return null;
+
+    //     return componentEditorCustomRender(b);
+    // }
+
     render() {
         let { pageRecord, componentInfos } = this.state;
         if (pageRecord == undefined || componentInfos == undefined)
             return <div className="empty">
                 数据加载中...
             </div>
-        return <DesignView {...{ pageData: pageRecord.pageData, pageName: pageRecord.name, componentInfos, customRender: this.props.customRender }}
+        return <DesignView {...{
+            pageData: pageRecord.pageData, pageName: pageRecord.name, componentInfos,
+            customRender: this.props.customRender
+        }}
             ref={e => this.designView = e || this.designView}
             toolbarButtons={[
                 <button className="btn btn-sm btn-primary" onClick={() => this.preivew()}>

@@ -17,9 +17,6 @@ start({
     },
     virtualPaths: {
         "node_modules": path.join(__dirname, "../node_modules"),
-        "text.js": path.join("node_modules/maishu-requirejs-plugins/lib/text.js"),
-
-        // "maishu-chitu-admin/static": null
     },
     websiteConfig: websiteConfig,
     // commonjsToAmd: ["\\S+app/out/\\S+.js"]
