@@ -2,6 +2,7 @@ import { Service } from "maishu-chitu-admin/static";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 import { PageRecord } from "../../../entities";
 import { ComponentInfo } from "taro-builder-core";
+import { pathContact } from "maishu-toolkit";
 
 export class LocalService extends Service {
 
@@ -21,7 +22,7 @@ export class LocalService extends Service {
         //     return `${context.config.baseUrl}${path}`;
         // }
         // return `${path}`;
-        let u = this.localServiceUrl(path);
+        let u = this.localUrl(path);
         return u;
     }
 
@@ -56,14 +57,20 @@ export class LocalService extends Service {
 
     private _componentInfos: ComponentInfo[];
     async componentInfos() {
-        let url = this.url("user/componentInfos");
         if (this._componentInfos == null) {
+            let url = this.url("design/components.json");
             this._componentInfos = await this.get<ComponentInfo[]>(url);
 
             this._componentInfos.forEach(o => {
-                if (o.path != null && o.path.endsWith(".js")) {
-                    o.path = o.path.substr(0, o.path.length - ".js".length);
-                }
+                if (o.path != null)
+                    o.path = pathContact("design", o.path);
+
+                if (o.editor != null)
+                    o.editor = pathContact("design", o.editor);
+
+                if (o.design != null)
+                    o.design = pathContact("design", o.design);
+
             })
         }
         return this._componentInfos;

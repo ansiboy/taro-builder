@@ -47,6 +47,7 @@
         "less": "^3.11.1",
         "maishu-chitu-admin": "^2.117.28",
         "maishu-chitu-react": "^1.27.0",
+        "maishu-chitu-scaffold": "file:../chitu-scaffold",
         "maishu-chitu-service": "^1.20.0",
         "maishu-dilu": "^1.6.10",
         "maishu-jueying": "^3.0.20",

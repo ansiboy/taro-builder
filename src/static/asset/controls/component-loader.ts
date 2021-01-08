@@ -1,4 +1,4 @@
-import { registerComponent, PageData, componentTypes, ComponentData } from "taro-builder-core";
+import { registerComponent, PageData, componentTypes, ComponentData, ComponentInfo } from "taro-builder-core";
 import { errors } from "../errors";
 import { FakeComponent } from "./design-view/fake-component";
 import { services } from "../services/index";
@@ -65,17 +65,10 @@ async function loadComponentType(typeName: string) {
         throw errors.canntFindComponentInfo(typeName);
     }
 
-    let path = componentInfo.path;
-    if (path.endsWith(".jsx")) {
-        path = path.substr(0, path.length - 4);
-    }
+    let path = componentInfo.design || componentInfo.path;
 
-    if (path[0] != "/")
-        path = "/" + path;
-
-    console.assert(path.startsWith("/static/"));
-    path = path.substr("/static/".length);
-    return new Promise((resolve, reject) => {
+    let editorPromise = loadComponentEditor(componentInfo);
+    let componentPromise = new Promise((resolve, reject) => {
         let req = requirejs({ context: contextName });
         req([`${path}`], (mod) => {
             let compoenntType = mod[typeName] || mod["default"];
@@ -88,5 +81,24 @@ async function loadComponentType(typeName: string) {
         }, err => {
             reject(err);
         })
+
+    })
+
+    await editorPromise;
+    return componentPromise;
+}
+
+async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {
+    if (componentInfo.editor == null)
+        return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+        let req = requirejs({ context: contextName });
+        req([`${componentInfo.editor}`], (mod) => {
+            resolve(mod);
+        }, err => {
+            reject(err);
+        })
+
     })
 }

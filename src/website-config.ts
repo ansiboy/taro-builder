@@ -1,13 +1,13 @@
 import { WebsiteConfig } from "maishu-chitu-admin";
 import { pathContact } from "maishu-toolkit";
 
-export type MyWebsiteConfig = {
-    componentEditorsPath?: string;
-};
+// export type MyWebsiteConfig = {
+//     componentEditorsPath?: string;
+// };
 
 export let libVirtualPath = "asset/lib";
 
-let websiteConfig: MyWebsiteConfig & WebsiteConfig = {
+let websiteConfig: WebsiteConfig = {
     requirejs: {
         // context: "taro-builder",
         paths: {

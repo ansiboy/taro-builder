@@ -4,18 +4,11 @@ import { PageProps } from "maishu-chitu-react";
 import { buttonOnClick, Less } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../asset/services/local-service";
-import websiteConfig from "json!websiteConfig";
 import { FormValidator, rules as r } from "maishu-dilu"
 import { dataSources } from "../asset/data-sources";
 import { ComponentInfo } from "taro-builder-core";
 import { PageHelper } from "../asset/controls/page-helper";
-import { errors } from "../asset/errors";
-import { EditorPanelProps, PropertyEditorInfo } from "maishu-jueying";
-import { ComponentData } from "maishu-jueying-core";
-
-let contextName = websiteConfig.requirejs.context;
-let req = requirejs({ context: contextName })
-req([websiteConfig.componentEditorsPath], function () { })
+import { EditorPanelProps } from "maishu-jueying";
 
 interface State {
     pageRecord?: PageRecord,
@@ -58,14 +51,12 @@ export default class PageEdit extends React.Component<Props, State> {
         let files = await localService.clientFiles();
         let editorLessFiles = files.filter(o => o.startsWith("components") && o.endsWith("editor.less"));
         editorLessFiles.forEach(path => {
-            Less.renderByRequireJS(path, { contextName });
+            Less.renderByRequireJS(path, {});
         })
     }
 
     async save(): Promise<any> {
         let { pageName } = this.designView.state;
-        // if (!pageName)
-        //     throw errors.pageNameCanntEmpty();
 
         if (!this.validator.check())
             return Promise.reject();
@@ -122,18 +113,8 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     preivew() {
-        // this.props.app.redirect(`preview?id=${this.state.pageData.id}`);
         window.open(`preview.html#page?id=${this.props.data.id}`, "_new")
     }
-
-    // private editoryCustomRender(a: ComponentData[], b: PropertyEditorInfo[]): JSX.Element {
-    //     let typeName = a[0].type;
-    //     let componentEditorCustomRender = componentEditorRenders[typeName];
-    //     if (!componentEditorCustomRender)
-    //         return null;
-
-    //     return componentEditorCustomRender(b);
-    // }
 
     render() {
         let { pageRecord, componentInfos } = this.state;
