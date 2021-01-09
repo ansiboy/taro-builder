@@ -3,7 +3,7 @@ import { errors } from "../errors";
 import { FakeComponent } from "./design-view/fake-component";
 import { services } from "../services/index";
 import { createComponentLoadFail } from "./design-view/load-fail-component";
-import websiteConfig from "json!websiteConfig";
+import * as websiteConfig from "json!websiteConfig";
 let contextName = websiteConfig.requirejs.context;
 
 export class ComponentLoader {

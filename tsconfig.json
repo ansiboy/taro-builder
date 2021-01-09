@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "target": "es6",
+        "module": "commonjs",
+        "outDir": "./",
+        "declaration": false,
+        "jsx": "react",
+        "allowUnusedLabels": true,
+        "allowUmdGlobalAccess": true,
+        "esModuleInterop": true,
+    },
+    "exclude": [
+        "sample-app",
+        "static"
+    ]
+}

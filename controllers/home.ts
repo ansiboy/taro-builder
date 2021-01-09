@@ -15,7 +15,7 @@ export class HomeController extends Controller {
         let filePath = data["_"];
         let tsxFileVirtualPath = filePath + ".tsx";
         console.assert(context.data.staticRoot != null);
-        let filePhysicalPath = context.data.staticRoot.getFile(tsxFileVirtualPath);
+        let filePhysicalPath = context.data.staticRoot.findFile(tsxFileVirtualPath);
         if (filePhysicalPath == null) {
             throw errors.fileNotExists(filePhysicalPath);
         }
@@ -29,7 +29,7 @@ export class HomeController extends Controller {
         let tsxFileVirtualPath = filePath + ".ts";
 
         console.assert(context.data.staticRoot != null);
-        let filePhysicalPath = context.data.staticRoot.getFile(tsxFileVirtualPath);
+        let filePhysicalPath = context.data.staticRoot.findFile(tsxFileVirtualPath);
 
         if (filePhysicalPath == null) {
             throw errors.fileNotExists(filePhysicalPath);
@@ -130,7 +130,7 @@ export class HomeController extends Controller {
         let scssFileVirtualPath = filePath + ".scss";
 
         console.assert(context.data.staticRoot != null);
-        let filePhysicalPath = context.data.staticRoot.getFile(scssFileVirtualPath);
+        let filePhysicalPath = context.data.staticRoot.findFile(scssFileVirtualPath);
 
         if (filePhysicalPath == null) {
             return this.content(`File '${scssFileVirtualPath}' not found.`, StatusCode.NotFound);

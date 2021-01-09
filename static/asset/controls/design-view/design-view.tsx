@@ -1,4 +1,4 @@
-import React = require("react");
+import * as React from "react";
 import { EditorPanel, PageDesigner, DesignerContext, EditorPanelProps } from "maishu-jueying";
 import "jquery-ui"
 import { ComponentPanel, ComponentDefine, commonGroup } from "../component-panel";

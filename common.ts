@@ -13,26 +13,26 @@ export type ServerContextData = { db: ConnectionConfig, componentInfos: Componen
 //     return appId || defaultAppId;
 // }) as Function;
 
-
-export let connection = createParameterDecorator(async (req, res, context: ServerContext<ServerContextData>) => {
+//req, res, context: ServerContext<ServerContextData>
+export let connection = createParameterDecorator(async (ctx: ServerContext<ServerContextData>) => {
     let connectionManager = getConnectionManager();
-    if (!connectionManager.has(context.data.db.database)) {
+    if (!connectionManager.has(ctx.data.db.database)) {
         let dbOptions: ConnectionOptions = {
             type: "mysql",
-            host: context.data.db.host,
-            port: context.data.db.port,
-            username: context.data.db.user,
-            password: context.data.db.password,
-            database: context.data.db.database,
+            host: ctx.data.db.host,
+            port: ctx.data.db.port,
+            username: ctx.data.db.user,
+            password: ctx.data.db.password,
+            database: ctx.data.db.database,
             synchronize: true,
             logging: true,
             entities: [path.join(__dirname, "entities.js")],
-            name: context.data.db.database,
+            name: ctx.data.db.database,
         }
 
         await createConnection(dbOptions)
     }
-    let connection = getConnection(context.data.db.database);
+    let connection = getConnection(ctx.data.db.database);
     return Promise.resolve(connection);
 });
 

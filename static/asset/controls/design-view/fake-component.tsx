@@ -1,4 +1,4 @@
-import React = require("react");
+import * as React from "react";
 import { } from "taro-builder-core";
 import { guid } from "maishu-toolkit";
 

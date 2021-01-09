@@ -1,5 +1,5 @@
 import { DesignView } from "../asset/controls/design-view/index";
-import React = require("react");
+import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 import { buttonOnClick, Less } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";

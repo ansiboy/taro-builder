@@ -1,4 +1,4 @@
-import React = require("react");
+import * as React from "react";
 
 export let loadingElement = <div className="loading">
     <i className="icon-spinner icon-spin" style={{ marginRight: 4 }} />

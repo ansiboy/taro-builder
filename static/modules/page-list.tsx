@@ -2,7 +2,7 @@ import { DataListPage } from "maishu-chitu-admin/static";
 import { PageRecord } from "../../entities";
 import { dataSources } from "../asset/data-sources";
 import { boundField, dateTimeField } from "maishu-wuzhui-helper";
-import React = require("react");
+import * as React from "react";
 
 export default class PageList extends DataListPage<PageRecord> {
     dataSource = dataSources.pageRecords;

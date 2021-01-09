@@ -22,7 +22,7 @@ export class LocalService extends Service {
         //     return `${context.config.baseUrl}${path}`;
         // }
         // return `${path}`;
-        let u = this.localUrl(path);
+        let u = this.localServiceUrl(path);
         return u;
     }
 
