@@ -1,27 +1,19 @@
-import { WebsiteConfig } from "maishu-chitu-admin";
-import { pathContact } from "maishu-toolkit";
-
-// export type MyWebsiteConfig = {
-//     componentEditorsPath?: string;
-// };
-
-export let libVirtualPath = "asset/lib";
-
-let websiteConfig: WebsiteConfig = {
+exports.libVirtualPath = "asset/lib";
+let websiteConfig = {
     requirejs: {
         // context: "taro-builder",
         paths: {
             "maishu-jueying": "/node_modules/maishu-jueying/dist/index",
             "maishu-jueying-core": "/node_modules/maishu-jueying-core/dist/index",
             "taro-builder-core": "/node_modules/taro-builder-core/dist/index",
-            "jquery-ui": `${libVirtualPath}/jquery-ui-1.12.1/jquery-ui`,
-            "devices": `${libVirtualPath}/devices.css-1.2/assets/devices.min.css`,
-            "taro-ui": `${libVirtualPath}/taro-ui`,
+            "jquery-ui": `${exports.libVirtualPath}/jquery-ui-1.12.1/jquery-ui`,
+            "devices": `${exports.libVirtualPath}/devices.css-1.2/assets/devices.min.css`,
+            "taro-ui": `${exports.libVirtualPath}/taro-ui`,
             "taro-ui/dist": "node_modules/taro-ui/dist",
-            "@tarojs/components": `${libVirtualPath}/taro-components`,
-            "@tarojs/taro-h5": `${libVirtualPath}/taro-h5`,
-            "@tarojs/taro": `${libVirtualPath}/taro-h5`,
-            "nervjs": `${libVirtualPath}/nervjs`,
+            "@tarojs/components": `${exports.libVirtualPath}/taro-components`,
+            "@tarojs/taro-h5": `${exports.libVirtualPath}/taro-h5`,
+            "@tarojs/taro": `${exports.libVirtualPath}/taro-h5`,
+            "nervjs": `${exports.libVirtualPath}/nervjs`,
             "tslib": "node_modules/tslib/tslib",
             "htmlparser2": "node_modules/htmlparser2/"
         }
@@ -34,6 +26,5 @@ let websiteConfig: WebsiteConfig = {
             ]
         }
     ]
-}
-
-export default websiteConfig;
+};
+exports.default = websiteConfig;

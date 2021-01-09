@@ -4,13 +4,9 @@ import { InitArguments } from "maishu-chitu-admin/static";
 import { Less } from "maishu-ui-toolkit";
 import * as React from "react";
 import "content/style.scss";
-// import websiteConfig from "json!websiteConfig";
+import "site.less";
 
 window["react"] = React;
-// define("react-default", function () {
-//     return { default: React };
-// })
-
 export default async function (args: InitArguments) {
 
     //================================================================================
@@ -29,7 +25,6 @@ export default async function (args: InitArguments) {
     }
     //================================================================================
 
-    // Less.renderByRequireJS("devices", { contextName: websiteConfig.requirejs.context });
-    // Less.renderByRequireJS("site.less", { contextName: websiteConfig.requirejs.context });
+    Less.renderByRequireJS("devices",);
 
 }

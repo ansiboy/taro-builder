@@ -1,11 +1,19 @@
-import * as ts from "typescript";
-import { controller, action, routeData, ServerContext, serverContext, Controller } from "maishu-node-mvc";
-import { ServerContextData } from "../common";
-import { StatusCode } from "maishu-chitu-service";
-import sass = require("node-sass");
-
-@controller("/")
-export class HomeController extends Controller {
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ts = require("typescript");
+const maishu_node_mvc_1 = require("maishu-node-mvc");
+const maishu_chitu_service_1 = require("maishu-chitu-service");
+const sass = require("node-sass");
+let HomeController = class HomeController extends maishu_node_mvc_1.Controller {
     // @action("*.tsx.js")
     // tsxToJS(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
     //     let filePath = data["_"];
@@ -15,38 +23,29 @@ export class HomeController extends Controller {
     //     if (filePhysicalPath == null) {
     //         throw errors.fileNotExists(filePhysicalPath);
     //     }
-
     //     return this.typescriptToJS(filePhysicalPath, true);
     // }
-
     // @action("*.ts.js")
     // tsToJS(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
     //     let filePath = data["_"];
     //     let tsxFileVirtualPath = filePath + ".ts";
-
     //     console.assert(context.data.staticRoot != null);
     //     let filePhysicalPath = context.data.staticRoot.findFile(tsxFileVirtualPath);
-
     //     if (filePhysicalPath == null) {
     //         throw errors.fileNotExists(filePhysicalPath);
     //     }
-
     //     return this.typescriptToJS(filePhysicalPath, false);
     // }
-
     // private typescriptToJS(filePhysicalPath: string, isTSX: boolean) {
     //     let buffer = fs.readFileSync(filePhysicalPath);
     //     let tsCode = buffer.toString();
-
     //     let ast = babel.parseSync(tsCode, {
     //         plugins: [
     //             ["@babel/plugin-transform-typescript", { isTSX }],
     //             ["@babel/plugin-proposal-decorators", { "legacy": true }]
     //         ]
     //     }) as babel.types.File;
-
     //     let program = ast.program;
-
     //     for (let i = 0; i < program.body.length; i++) {
     //         let source: babel.types.StringLiteral = null;
     //         if (program.body[i].type == "ImportDeclaration") {
@@ -57,16 +56,13 @@ export class HomeController extends Controller {
     //             let d = program.body[i] as babel.types.ExportNamedDeclaration;
     //             source = d.source;
     //         }
-
     //         if (source == null) {
     //             continue;
     //         }
-
     //         if (source.value == "react") {
     //             source.value = "react-default";
     //             continue;
     //         }
-
     //         let refFilePath = source.value;
     //         let arr = refFilePath.split("/");
     //         let ext: string = null;
@@ -75,14 +71,12 @@ export class HomeController extends Controller {
     //             if (tt.length > 1)
     //                 ext = tt[tt.length - 1];
     //         }
-
     //         if (ext == null && refFilePath.startsWith("./") || refFilePath.startsWith("../")) {
     //             let p = path.join(path.dirname(filePhysicalPath), refFilePath);
     //             if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
     //                 p = path.join(p, "index");
     //                 refFilePath = refFilePath + "/index";
     //             }
-
     //             let tsxPath = `${p}.tsx`;
     //             let tsPath = `${p}.ts`;
     //             if (fs.existsSync(tsxPath)) {
@@ -91,7 +85,6 @@ export class HomeController extends Controller {
     //             else if (fs.existsSync(tsPath)) {
     //                 refFilePath = `${refFilePath}.ts`;
     //             }
-
     //             source.value = refFilePath;
     //         }
     //         else if (ext == "less") {
@@ -103,7 +96,6 @@ export class HomeController extends Controller {
     //             source.value = refFilePath;
     //         }
     //     }
-
     //     let r = babel.transformFromAstSync(ast, null, {
     //         plugins: [
     //             ["@babel/plugin-transform-typescript", { isTSX: true }],
@@ -115,31 +107,32 @@ export class HomeController extends Controller {
     //             }]
     //         ]
     //     })
-
     //     let code = `/** Taro builder transform tsx file to javascript amd file, source file is ${filePhysicalPath}. */ \r\n` + r.code;
     //     return code;
     // }
-
-    @action("*.scss.css")
-    scssToCSS(@routeData data, @serverContext context: ServerContext<ServerContextData>) {
+    scssToCSS(data, context) {
         let filePath = data["_"];
         let scssFileVirtualPath = filePath + ".scss";
-
         console.assert(context.data.staticRoot != null);
         let filePhysicalPath = context.data.staticRoot.findFile(scssFileVirtualPath);
-
         if (filePhysicalPath == null) {
-            return this.content(`File '${scssFileVirtualPath}' not found.`, StatusCode.NotFound);
+            return this.content(`File '${scssFileVirtualPath}' not found.`, maishu_chitu_service_1.StatusCode.NotFound);
         }
-
         filePhysicalPath = filePhysicalPath.replace(/\\+|\/+/g, "/");
         let r = sass.renderSync({ data: `$hd : 1; @import \"${filePhysicalPath}\"` });
         return this.content(r.css.toString(), "text/css");
     }
-}
-
+};
+__decorate([
+    maishu_node_mvc_1.action("*.scss.css"),
+    __param(0, maishu_node_mvc_1.routeData), __param(1, maishu_node_mvc_1.serverContext)
+], HomeController.prototype, "scssToCSS", null);
+HomeController = __decorate([
+    maishu_node_mvc_1.controller("/")
+], HomeController);
+exports.HomeController = HomeController;
 /** 将 taro ts 转换为 js */
-export function tarotsToJS(tsCode: string) {
+function tarotsToJS(tsCode) {
     let result = ts.transpileModule(tsCode, {
         compilerOptions: {
             "jsx": ts.JsxEmit.React,
@@ -150,7 +143,6 @@ export function tarotsToJS(tsCode: string) {
             "emitDecoratorMetadata": true
         }
     });
-
     return result;
-
 }
+exports.tarotsToJS = tarotsToJS;

@@ -1,10 +1,9 @@
 import { createParameterDecorator, ServerContext, VirtualDirectory } from "maishu-node-mvc";
-import { ConnectionConfig } from "mysql";
 import { createConnection, getConnection, ConnectionOptions, getConnectionManager } from "maishu-node-data";
 import path = require("path");
 import { ComponentInfo } from "taro-builder-core";
 
-export type ServerContextData = { db: ConnectionConfig, componentInfos: ComponentInfo[], staticRoot?: VirtualDirectory };
+export type ServerContextData = { db: ConnectionOptions, componentInfos: ComponentInfo[], staticRoot?: VirtualDirectory };
 
 
 // const defaultAppId = "00000000-0000-0000-0000-000000000000";
@@ -16,23 +15,13 @@ export type ServerContextData = { db: ConnectionConfig, componentInfos: Componen
 //req, res, context: ServerContext<ServerContextData>
 export let connection = createParameterDecorator(async (ctx: ServerContext<ServerContextData>) => {
     let connectionManager = getConnectionManager();
-    if (!connectionManager.has(ctx.data.db.database)) {
-        let dbOptions: ConnectionOptions = {
-            type: "mysql",
-            host: ctx.data.db.host,
-            port: ctx.data.db.port,
-            username: ctx.data.db.user,
-            password: ctx.data.db.password,
-            database: ctx.data.db.database,
-            synchronize: true,
-            logging: true,
-            entities: [path.join(__dirname, "entities.js")],
-            name: ctx.data.db.database,
-        }
 
+    console.assert(ctx.data.db.name != null);
+    if (!connectionManager.has(ctx.data.db.name)) {
+        let dbOptions: ConnectionOptions = ctx.data.db;
         await createConnection(dbOptions)
     }
-    let connection = getConnection(ctx.data.db.database);
+    let connection = getConnection(ctx.data.db.name);
     return Promise.resolve(connection);
 });
 

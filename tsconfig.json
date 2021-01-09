@@ -5,10 +5,7 @@
         "module": "commonjs",
         "outDir": "./",
         "declaration": false,
-        "jsx": "react",
-        "allowUnusedLabels": true,
-        "allowUmdGlobalAccess": true,
-        "esModuleInterop": true,
+        "jsx": "react"
     },
     "exclude": [
         "sample-app",
