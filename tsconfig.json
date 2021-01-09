@@ -5,10 +5,12 @@
         "module": "commonjs",
         "outDir": "./",
         "declaration": false,
-        "jsx": "react"
+        "jsx": "react",
+        "allowJs": false
     },
     "exclude": [
         "sample-app",
-        "static"
+        "static",
+        "lib"
     ]
 }

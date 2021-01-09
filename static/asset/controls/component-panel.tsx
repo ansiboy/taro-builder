@@ -1,6 +1,8 @@
 import * as React from "react";
 import { classNames } from "maishu-jueying";
 import { ComponentData, ComponentInfo } from "taro-builder-core";
+import * as $ from "jquery";
+import "jquery-ui";
 
 interface ComponentToolbarProps extends React.Props<ComponentPanel> {
     style?: React.CSSProperties,

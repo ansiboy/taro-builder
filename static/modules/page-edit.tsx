@@ -41,7 +41,7 @@ export default class PageEdit extends React.Component<Props, State> {
         localService.componentInfos().then(componentInfos => {
             console.assert(componentInfos != null);
             componentInfos = componentInfos.filter(o => o.displayName != null);
-            this.setState({ componentInfos })
+            this.setState({ componentInfos });
             //==========================================================================================
         })
     }

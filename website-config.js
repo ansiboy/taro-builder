@@ -24,6 +24,9 @@ let websiteConfig = {
             children: [
                 { id: "3CE34AB9-7814-4FE5-85E2-ABA6AAF9C1FD", name: "页面编辑", path: "#page-edit", hidden: true }
             ]
+        },
+        {
+            id: "811A30E2-A04D-44F7-BA18-959698DBCA47", name: "PC 页面", path: "#pc-page-edit",
         }
     ]
 };

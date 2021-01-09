@@ -11,7 +11,7 @@ import { currentAppId } from "maishu-chitu-admin";
 export class PageDataController {
     @action()
     async list(@connection conn: Connection, @routeData { args }: { args: SelectArguments }) {
-        let r = await DataHelper.list(conn.getRepository(PageRecord), { selectArguments: args })
+        let r = await DataHelper.list(conn.getRepository(PageRecord), { selectArguments: args });
         return r;
     }
 
