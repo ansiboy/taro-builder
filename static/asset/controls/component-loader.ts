@@ -3,8 +3,8 @@ import { errors } from "../errors";
 import { FakeComponent } from "./design-view/fake-component";
 import { services } from "../services/index";
 import { createComponentLoadFail } from "./design-view/load-fail-component";
-import * as websiteConfig from "json!websiteConfig";
-let contextName = websiteConfig.requirejs.context;
+// import * as websiteConfig from "json!websiteConfig";
+// let contextName = websiteConfig.requirejs.context;
 
 export class ComponentLoader {
     static loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, isSuccess: boolean) => void) {
@@ -69,8 +69,8 @@ async function loadComponentType(typeName: string) {
 
     let editorPromise = loadComponentEditor(componentInfo);
     let componentPromise = new Promise((resolve, reject) => {
-        let req = requirejs({ context: contextName });
-        req([`${path}`], (mod) => {
+        // let req = requirejs({ context: contextName });
+        requirejs([`${path}`], (mod) => {
             let compoenntType = mod[typeName] || mod["default"];
             if (compoenntType == null)
                 throw errors.moduleNotExport(path, typeName);
@@ -93,8 +93,8 @@ async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {
         return Promise.resolve();
 
     return new Promise((resolve, reject) => {
-        let req = requirejs({ context: contextName });
-        req([`${componentInfo.editor}`], (mod) => {
+        // let req = requirejs({ context: contextName });
+        requirejs([`${componentInfo.editor}`], (mod) => {
             resolve(mod);
         }, err => {
             reject(err);

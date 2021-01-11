@@ -1,11 +1,11 @@
-import { controller, action, routeData, serverContext, ServerContext } from "maishu-node-mvc";
+import { controller, action, routeData, serverContext, ServerContext, JavaScriptProcessor, ContentResult } from "maishu-node-mvc";
 import { Connection, DataHelper, SelectArguments } from "maishu-node-data";
 import { PageRecord } from "../entities";
 import { errors } from "../static/asset/errors";
-import { connection, ServerContextData } from "../common";
+import { connection } from "../common";
 import { guid } from "maishu-toolkit";
-import { ComponentInfo } from "taro-builder-core";
 import { currentAppId } from "maishu-chitu-admin";
+import * as fs from "fs";
 
 @controller("page-data")
 export class PageDataController {
@@ -90,10 +90,28 @@ export class PageDataController {
         return r;
     }
 
-    /** 获取用户端组件信息 */
-    @action("/user/componentInfos")
-    getComponentInfos(@serverContext c: ServerContext<ServerContextData>): ComponentInfo[] {
-        return c.data.componentInfos;
+    // /** 获取用户端组件信息 */
+    // @action("/user/componentInfos")
+    // getComponentInfos(@serverContext c: ServerContext<ServerContextData>): ComponentInfo[] {
+    //     return c.data.componentInfos;
+    // }
+
+    @action("/website-config.js")
+    readWebsiteConfigFile(@serverContext c: ServerContext) {
+        let physicalPath = c.rootDirectory.findFile("website-config.js");
+        console.assert(physicalPath != null);
+        let b = fs.readFileSync(physicalPath, { encoding: "utf8" });
+        b = JavaScriptProcessor.transformJS(b, {
+            "presets": [
+                ["@babel/preset-env", {
+                    "targets": { chrome: 58 }
+                }],
+            ],
+            plugins: [
+                ["@babel/plugin-transform-modules-amd", { noInterop: true }]
+            ]
+        })
+        return new ContentResult(b, { "Content-Type": `application/x-javascript; charset=utf8` });
     }
 
 }

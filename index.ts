@@ -3,17 +3,33 @@ import { ServerContextData } from "./common";
 import { errors } from "./errors";
 import websiteConfig from "./website-config";
 import { ConnectionOptions } from "maishu-node-data";
+import * as path from "path";
 
 export type Settings = AdminSettings & {
-    db: ConnectionOptions
+    db: ConnectionOptions,
+    componentStation: string,
 };
 
-// const AppirectoryName = "app";
 export function start(settings: Settings) {
-
     if (!settings.db) {
         throw errors.settingFieldNull("db");
     }
+
+    if (!settings.componentStation) {
+        throw errors.settingFieldNull("componentStation");
+    }
+
+    settings.db = Object.assign({
+        entities: ["./entities.js"],
+    } as Settings["db"], settings.db);
+
+    settings.virtualPaths = Object.assign(settings.virtualPaths || {}, {
+        "node_modules": path.join(__dirname, "node_modules"),
+    });
+
+    settings.proxy = Object.assign(settings.proxy || {}, {
+        "/design/(\\S+)": `${settings.componentStation}/$1`,
+    });
 
     let componentInfos = [];
     let serverContextData: ServerContextData = { db: settings.db, componentInfos: componentInfos };

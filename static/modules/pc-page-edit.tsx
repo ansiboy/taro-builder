@@ -37,11 +37,9 @@ export default class PCPageEdit extends React.Component<Props, State> {
             console.assert(componentInfos != null);
             componentInfos = componentInfos.filter(o => o.displayName != null);
             this.setState({ componentInfos });
-            this.componentPanel.setComponets(componentInfos.map(o => ({
-                type: o.type, path: o.path, group: o.group, icon: o.icon,
-                displayName: o.displayName,
+            this.componentPanel.setComponets(componentInfos.map(o => Object.assign(o, {
                 componentData: { type: o.type, props: {} } as ComponentData
-            })))
+            })));
             //==========================================================================================
         });
     }
@@ -58,12 +56,12 @@ export default class PCPageEdit extends React.Component<Props, State> {
 
     private emptyPageData() {
         let r = PageHelper.emptyPageData();
-        r.children.push({
-            id: guid(),
-            type: "Carousel",
-            parentId: PageBody.id,
-            props: {}
-        })
+        // r.children.push({
+        //     id: guid(),
+        //     type: "Carousel",
+        //     parentId: PageBody.id,
+        //     props: {}
+        // })
         return r;
     }
 

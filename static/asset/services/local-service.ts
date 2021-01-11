@@ -3,6 +3,7 @@ import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui
 import { PageRecord } from "../../../entities";
 import { ComponentInfo } from "taro-builder-core";
 import { pathContact } from "maishu-toolkit";
+import websiteConfig from "website-config";
 
 export class LocalService extends Service {
 
@@ -16,12 +17,6 @@ export class LocalService extends Service {
     }
 
     url(path: string): string {
-        // let contexts = requirejs.exec("contexts");
-        // let context: RequireContext = contexts[contextName];
-        // if (context != null && context.config != null && context.config.baseUrl != null) {
-        //     return `${context.config.baseUrl}${path}`;
-        // }
-        // return `${path}`;
         let u = this.localServiceUrl(path);
         return u;
     }
@@ -57,22 +52,43 @@ export class LocalService extends Service {
 
     private _componentInfos: ComponentInfo[];
     async componentInfos() {
+        let componentStationPath = websiteConfig.componentStationPath;
         if (this._componentInfos == null) {
-            let url = this.url("design/components.json");
-            this._componentInfos = await this.get<ComponentInfo[]>(url);
+            let config = await this.componentStationConfig();
+            this._componentInfos = config.components;
 
             this._componentInfos.forEach(o => {
                 if (o.path != null)
-                    o.path = pathContact("design", o.path);
+                    o.path = pathContact(componentStationPath, o.path);
 
                 if (o.editor != null)
-                    o.editor = pathContact("design", o.editor);
+                    o.editor = pathContact(componentStationPath, o.editor);
 
                 if (o.design != null)
-                    o.design = pathContact("design", o.design);
+                    o.design = pathContact(componentStationPath, o.design);
 
             })
         }
         return this._componentInfos;
     }
+
+    async componentGroups() {
+        let config = await this.componentStationConfig();
+        return config.groups;
+    }
+
+    private _componentStationConfig: ComponentStationConfig;
+    async componentStationConfig(): Promise<ComponentStationConfig> {
+        let componentStationPath = "design";
+        if (this._componentStationConfig == null) {
+            let url = this.url(`${componentStationPath}/config.json`);
+            this._componentStationConfig = await this.get<ComponentStationConfig>(url);
+        }
+        return this._componentStationConfig;
+    }
+}
+
+interface ComponentStationConfig {
+    components: ComponentInfo[],
+    groups: { name: string, id: string }[]
 }

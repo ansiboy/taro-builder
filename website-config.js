@@ -1,7 +1,11 @@
 exports.libVirtualPath = "asset/lib";
 let websiteConfig = {
+    //===================================================
+    // 组件站点配置
+    componentStationConfig: "config.json",
+    componentStationPath: "design",
+    //===================================================
     requirejs: {
-        // context: "taro-builder",
         paths: {
             "maishu-jueying": "/node_modules/maishu-jueying/dist/index",
             "maishu-jueying-core": "/node_modules/maishu-jueying-core/dist/index",

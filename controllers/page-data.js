@@ -25,6 +25,7 @@ const errors_1 = require("../static/asset/errors");
 const common_1 = require("../common");
 const maishu_toolkit_1 = require("maishu-toolkit");
 const maishu_chitu_admin_1 = require("maishu-chitu-admin");
+const fs = require("fs");
 let PageDataController = class PageDataController {
     list(conn, { args }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -108,9 +109,26 @@ let PageDataController = class PageDataController {
             return r;
         });
     }
-    /** 获取用户端组件信息 */
-    getComponentInfos(c) {
-        return c.data.componentInfos;
+    // /** 获取用户端组件信息 */
+    // @action("/user/componentInfos")
+    // getComponentInfos(@serverContext c: ServerContext<ServerContextData>): ComponentInfo[] {
+    //     return c.data.componentInfos;
+    // }
+    readWebsiteConfigFile(c) {
+        let physicalPath = c.rootDirectory.findFile("website-config.js");
+        console.assert(physicalPath != null);
+        let b = fs.readFileSync(physicalPath, { encoding: "utf8" });
+        b = maishu_node_mvc_1.JavaScriptProcessor.transformJS(b, {
+            "presets": [
+                ["@babel/preset-env", {
+                        "targets": { chrome: 58 }
+                    }],
+            ],
+            plugins: [
+                ["@babel/plugin-transform-modules-amd", { noInterop: true }]
+            ]
+        });
+        return new maishu_node_mvc_1.ContentResult(b, { "Content-Type": `application/x-javascript; charset=utf8` });
     }
 };
 __decorate([
@@ -138,9 +156,9 @@ __decorate([
     __param(0, common_1.connection), __param(1, maishu_node_mvc_1.routeData)
 ], PageDataController.prototype, "items", null);
 __decorate([
-    maishu_node_mvc_1.action("/user/componentInfos"),
+    maishu_node_mvc_1.action("/website-config.js"),
     __param(0, maishu_node_mvc_1.serverContext)
-], PageDataController.prototype, "getComponentInfos", null);
+], PageDataController.prototype, "readWebsiteConfigFile", null);
 PageDataController = __decorate([
     maishu_node_mvc_1.controller("page-data")
 ], PageDataController);
