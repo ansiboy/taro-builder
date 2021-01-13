@@ -2,7 +2,7 @@ import { Service } from "maishu-chitu-admin/static";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 import { PageRecord } from "../../../entities";
 import { ComponentInfo } from "taro-builder-core";
-import { pathContact } from "maishu-toolkit";
+import { pathConcat } from "maishu-toolkit";
 import websiteConfig from "website-config";
 
 export class LocalService extends Service {
@@ -59,13 +59,16 @@ export class LocalService extends Service {
 
             this._componentInfos.forEach(o => {
                 if (o.path != null)
-                    o.path = pathContact(componentStationPath, o.path);
+                    o.path = pathConcat(componentStationPath, o.path);
 
                 if (o.editor != null)
-                    o.editor = pathContact(componentStationPath, o.editor);
+                    o.editor = pathConcat(componentStationPath, o.editor);
 
                 if (o.design != null)
-                    o.design = pathContact(componentStationPath, o.design);
+                    o.design = pathConcat(componentStationPath, o.design);
+
+                if (o.layout != null)
+                    o.layout = pathConcat(componentStationPath, o.layout);
 
             })
         }

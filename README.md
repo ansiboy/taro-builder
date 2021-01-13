@@ -83,63 +83,122 @@
 
 ![](https://ansiboy.github.io/taro-builder/images/20210111170151.png)
 
-## 组件开发演示
+## 组件的开发
 
-在组件站点内，创建一文件夹
+1. 在组件站点内，创建一文件夹
 
-```
-hello-world
-├── component.tsx
-└── editor.tsx
-```
+   ```
+   hello-world
+   ├── component.tsx
+   └── editor.tsx
+   ```
 
-**component.tsx 文件内容**
+   **component.tsx 文件内容**
 
-```ts
-import * as React from 'react'
+   ```ts
+   import * as React from 'react'
 
-interface Props {
-  text: string
-}
+   interface Props {
+     text: string
+   }
 
-export default class HelloWorld extends React.Component<Props> {
-  static defaultProps: Props = { text: 'No Text' }
+   export default class HelloWorld extends React.Component<Props> {
+     static defaultProps: Props = { text: 'No Text' }
 
-  render () {
-    let { text } = this.props
-    return <div>{text}</div>
-  }
-}
-```
+     render () {
+       let { text } = this.props
+       return <div>{text}</div>
+     }
+   }
+   ```
 
-**editor.tsx 文件内容**
+   **editor.tsx 文件内容**
 
-```ts
-import { Component, TextInput } from 'maishu-jueying'
+   ```ts
+   import { Component, TextInput } from 'maishu-jueying'
 
-Component.setPropEditor({
-  displayName: '文本',
-  componentType: 'HelloWorld',
-  propName: 'text',
-  editorType: TextInput
-})
-```
+   Component.setPropEditor({
+     displayName: '文本',
+     componentType: 'HelloWorld',
+     propName: 'text',
+     editorType: TextInput
+   })
+   ```
 
-配置 config.json 文件
+1. 配置 config.json 文件
 
-在 config.json 文件的 **components** 字段，添加组件的配置信息
+   在 config.json 文件的 **components** 字段，添加组件的配置信息
 
-```json
-{
-  "displayName": "你好",
-  "icon": "icon-list-alt",
-  "introduce": "Hello World 示例",
-  "type": "HelloWorld",
-  "path": "hello-world/component",
-  "editor": "hello-world/editor"
-}
-```
+   ```json
+   {
+     "displayName": "你好",
+     "icon": "icon-list-alt",
+     "introduce": "Hello World 示例",
+     "type": "HelloWorld",
+     "path": "hello-world/component",
+     "editor": "hello-world/editor"
+   }
+   ```
 
-刷新界面
+1. 使用组件
+
+   刷新界面可以看到组件面板多了一个明为 "你好" 的组件，将该组件添加到页面视图，点击该组件，修改文本框的文字为 "Hello World"，可以看得到界面上显示了 "Hello World" 文字。
+
+## 编辑器的开发
+
+**示例**
+
+在下面的示例中，创建一组件，用于改变 HelloWorld 组件的文字颜色。
+
+1. 首先，要修改一下 HelloWorld 组件，即 hello-world.tsx 文件，实现文字颜色的显示。
+
+    ```ts
+    import * as React from "react";
+
+    interface Props {
+        text: string,
+        color?: string,
+    }
+
+    export default class HelloWorld extends React.Component<Props> {
+
+        static defaultProps: Props = { text: "No Text" }
+
+        render() {
+            let { text, color } = this.props;
+            return <div style={{ color }}>{text}</div>
+        }
+    }
+    ```
+
+1. 在 "hello world" 文件夹中，添加名为 text-color.tsx 文件。
+
+    文件内容如下：
+
+    ```ts
+    import { PropEditor, PropEditorState } from "maishu-jueying";
+    import *  as React from "react";
+
+    let colors = ["#BF0705", "#85BB49", "#E469A2"];
+    export class TextColor extends PropEditor<string>{
+        changeColor(value: string) {
+            this.props.updateComponentProp(value);
+        }
+        render() {
+            return <ul>
+                {colors.map(c => <li className="pull-left"
+                    style={{ width: 20, height: 20, display: "block", backgroundColor: c, marginRight: 4 }}
+                    onClick={() => this.changeColor(c)}></li>)}
+            </ul>
+        }
+    }
+    ```
+
+    **说明**
+    1. 所有的编辑器组件，都需要继承于类 **PropEditor** ，其中第一个泛类参数为属性值的类型。这个示例中，color 的类型为 **string** 。  
+    
+    1. **this.props.updateComponentProp** 用于更新组件对应的属性值。
+
+
 
 

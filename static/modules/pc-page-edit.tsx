@@ -4,12 +4,12 @@ import { PageRecord } from "../../entities";
 import { LocalService } from "../asset/services/local-service";
 import { ComponentData, ComponentInfo, PageBody, PageData } from "taro-builder-core";
 import { PageHelper } from "../asset/controls/page-helper";
-import { DesignerContext, EditorPanel, EditorPanelProps, PageDesigner } from "maishu-jueying";
+import { DesignerContext, EditorPanel, EditorPanelProps, PageDesigner, PropertyEditorInfo } from "maishu-jueying";
 import { ComponentPanel } from "../asset/controls/component-panel";
 import { ComponentLoader } from "../asset/controls/component-loader";
 import { DesignPage } from "../asset/controls/design-components/index";
 import "./pc-page-edit.less";
-import { guid } from "maishu-toolkit";
+import { componentRenders } from "../asset/component-renders/index";
 
 interface State {
     pageRecord?: PageRecord,
@@ -26,14 +26,15 @@ interface Props extends PageProps {
 export default class PCPageEdit extends React.Component<Props, State> {
     componentPanel: ComponentPanel;
     editorPanel: EditorPanel;
+    localService: LocalService;
 
     constructor(props) {
         super(props);
 
         this.state = { pageRecord: this.props.pageRecord, isReady: false };
 
-        let localService = this.props.app.createService(LocalService);
-        localService.componentInfos().then(componentInfos => {
+        this.localService = this.props.app.createService(LocalService);
+        this.localService.componentInfos().then(componentInfos => {
             console.assert(componentInfos != null);
             componentInfos = componentInfos.filter(o => o.displayName != null);
             this.setState({ componentInfos });
@@ -88,7 +89,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
         if (componentPanel == null)
             return;
 
-        ComponentLoader.loadComponentTypes(pageData, () => {
+        ComponentLoader.loadComponentTypes(pageData, () => this.localService.componentInfos(), () => {
             this.setState({});
         })
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
@@ -135,7 +136,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
                 <div className="empty">
                     数据加载中...
                 </div> :
-                <PageDesigner pageData={pageRecord.pageData}>
+                <PageDesigner pageData={pageRecord.pageData} >
                     <div className="pull-right" style={{ width: 300, marginTop: -90 }}>
                         <div className="panel panel-default">
                             <div className="panel-heading">页面设置</div>
@@ -162,7 +163,14 @@ export default class PCPageEdit extends React.Component<Props, State> {
                                 </li>
                             </ul>
                         </div>
-                        <EditorPanel className="well" customRender={this.props.customRender}
+                        <EditorPanel className="well" customRender={(editComponents, propEditors) => {
+                            let typeName = editComponents[0].type;
+                            let componentEditorCustomRender = componentRenders[typeName];
+                            if (!componentEditorCustomRender)
+                                return null;
+
+                            return componentEditorCustomRender(propEditors);
+                        }}
                             ref={e => this.editorPanel = this.editorPanel || e} />
                     </div>
                     <DesignerContext.Consumer>

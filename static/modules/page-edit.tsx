@@ -113,7 +113,7 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
     preivew() {
-        window.open(`preview.html#page?id=${this.props.data.id}`, "_new")
+        window.open(`preview/index.html#page?id=${this.props.data.id}`, "_new")
     }
 
     render() {

@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.libVirtualPath = void 0;
-exports.libVirtualPath = "asset/lib";
+export let libVirtualPath = "asset/lib";
 let websiteConfig = {
     //===================================================
     // 组件站点配置
@@ -37,4 +34,4 @@ let websiteConfig = {
         }
     ]
 };
-exports.default = websiteConfig;
+export default websiteConfig;

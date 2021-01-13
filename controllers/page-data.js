@@ -18,6 +18,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PageDataController = void 0;
 const maishu_node_mvc_1 = require("maishu-node-mvc");
 const maishu_node_data_1 = require("maishu-node-data");
 const entities_1 = require("../entities");
@@ -130,6 +131,25 @@ let PageDataController = class PageDataController {
         });
         return new maishu_node_mvc_1.ContentResult(b, { "Content-Type": `application/x-javascript; charset=utf8` });
     }
+    infoComponentScript(d) {
+        let script = `
+import * as React from "react";
+
+interface Props {
+    text: string
+}
+
+export default class InfoComponent extends React.Component<Props> {
+    render() {
+        let { text } = this.props;
+        return <div className="text-center" style={{ paddingTop: 20, paddingBottom: 20 }}>
+            {${d.text}}
+        </div>
+    }
+}
+        `;
+        return new maishu_node_mvc_1.ContentResult(script, { "Content-Type": `application/x-javascript; charset=utf8` });
+    }
 };
 __decorate([
     maishu_node_mvc_1.action(),
@@ -159,6 +179,10 @@ __decorate([
     maishu_node_mvc_1.action("/website-config.js"),
     __param(0, maishu_node_mvc_1.serverContext)
 ], PageDataController.prototype, "readWebsiteConfigFile", null);
+__decorate([
+    maishu_node_mvc_1.action("/info-component.js"),
+    __param(0, maishu_node_mvc_1.routeData)
+], PageDataController.prototype, "infoComponentScript", null);
 PageDataController = __decorate([
     maishu_node_mvc_1.controller("page-data")
 ], PageDataController);

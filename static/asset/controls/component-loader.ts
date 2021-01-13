@@ -1,13 +1,16 @@
 import { registerComponent, PageData, componentTypes, ComponentData, ComponentInfo } from "taro-builder-core";
+import { componentRenders } from "../component-renders/index";
 import { errors } from "../errors";
 import { FakeComponent } from "./design-view/fake-component";
-import { services } from "../services/index";
 import { createComponentLoadFail } from "./design-view/load-fail-component";
+import InfoComponent from "./info-component";
+
+// import { services } from "../services/index";
 // import * as websiteConfig from "json!websiteConfig";
 // let contextName = websiteConfig.requirejs.context;
 
 export class ComponentLoader {
-    static loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, isSuccess: boolean) => void) {
+    static loadComponentTypes(pageData: PageData, loadComponentInfos: () => Promise<ComponentInfo[]>, loadComponentFinish: (typeName: string, isSuccess: boolean) => void) {
         let pageDataComponentTypes: string[] = [];
         let stack: Array<ComponentData> = [...pageData.children];
         while (stack.length > 0) {
@@ -34,7 +37,7 @@ export class ComponentLoader {
             let componentType = componentTypes[type] as any;
             if (componentType == null) {
                 registerComponent(type, FakeComponent);
-                loadComponentType(type).then(c => {
+                loadComponentType(type, loadComponentInfos).then(c => {
                     registerComponent(type, c as any);
                     loadComponentFinish(type, true);
 
@@ -42,7 +45,7 @@ export class ComponentLoader {
                     console.error(err);
                     let componentType = createComponentLoadFail(err, () => {
                         delete componentTypes[type];
-                        ComponentLoader.loadComponentTypes(pageData, loadComponentFinish);
+                        ComponentLoader.loadComponentTypes(pageData, loadComponentInfos, loadComponentFinish);
                     });
                     registerComponent(type, componentType);
                     loadComponentFinish(type, false);
@@ -58,16 +61,24 @@ export class ComponentLoader {
     }
 }
 
-async function loadComponentType(typeName: string) {
-    let componentInfos = await services.local.componentInfos();
+async function loadComponentType(typeName: string, loadComponentInfos: () => Promise<ComponentInfo[]>) {
+    let componentInfos = await loadComponentInfos();//services.local.componentInfos();
     let componentInfo = componentInfos.filter(o => o.type == typeName)[0];
     if (componentInfo == null) {
-        throw errors.canntFindComponentInfo(typeName);
+        // throw errors.canntFindComponentInfo(typeName);
+        let error = errors.canntFindComponentInfo(typeName);;
+        componentInfo = {
+            type: InfoComponent.name,
+            path: `/info-component.js?text=${error.message}`,
+            // props: { text: error.message }
+        }
+
     }
 
     let path = componentInfo.design || componentInfo.path;
 
     let editorPromise = loadComponentEditor(componentInfo);
+    let layoutPromise = loadComponentLayout(componentInfo);
     let componentPromise = new Promise((resolve, reject) => {
         // let req = requirejs({ context: contextName });
         requirejs([`${path}`], (mod) => {
@@ -85,6 +96,7 @@ async function loadComponentType(typeName: string) {
     })
 
     await editorPromise;
+    await layoutPromise;
     return componentPromise;
 }
 
@@ -93,8 +105,27 @@ async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {
         return Promise.resolve();
 
     return new Promise((resolve, reject) => {
-        // let req = requirejs({ context: contextName });
         requirejs([`${componentInfo.editor}`], (mod) => {
+            resolve(mod);
+        }, err => {
+            reject(err);
+        })
+
+    })
+}
+
+async function loadComponentLayout(componentInfo: ComponentInfo): Promise<any> {
+    if (componentInfo.layout == null)
+        return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+        requirejs([`${componentInfo.layout}`], (mod) => {
+            let func = mod?.default || mod;
+            if (typeof func != "function") {
+                console.error(`Module ${componentInfo.layout} is not a function.`)
+                resolve({});
+            }
+            componentRenders[componentInfo.type] = mod.default || mod;
             resolve(mod);
         }, err => {
             reject(err);

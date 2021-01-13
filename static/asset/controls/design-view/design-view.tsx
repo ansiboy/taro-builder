@@ -9,6 +9,7 @@ import { DesignPage } from "../design-components/index";
 import "../design-components/index";
 import { PageHelper } from "../page-helper";
 import { ComponentLoader } from "../component-loader";
+import { services } from "../../services/index";
 
 interface Props {
     // app: Application,
@@ -129,7 +130,7 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     private renderPageData(pageData: PageData, componentPanel: ComponentPanel) {
-        ComponentLoader.loadComponentTypes(pageData, () => {
+        ComponentLoader.loadComponentTypes(pageData, () => services.local.componentInfos(), () => {
             this.setState({});
         })
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
@@ -233,7 +234,7 @@ export class DesignView extends React.Component<Props, State> {
                                                     let value = Number.parseInt(e.target.value);
                                                     this.headerHeight(pageData, value);
                                                 }
-                                                catch{
+                                                catch {
 
                                                 }
                                             }} />
@@ -260,7 +261,7 @@ export class DesignView extends React.Component<Props, State> {
                                                     let value = Number.parseInt(e.target.value);
                                                     this.footerHeight(pageData, value);
                                                 }
-                                                catch{
+                                                catch {
 
                                                 }
                                             }} />
