@@ -28,6 +28,9 @@ __decorate([
 __decorate([
     maishu_node_data_1.Column({ name: "type", type: "varchar", length: 20 })
 ], PageRecord.prototype, "type", void 0);
+__decorate([
+    maishu_node_data_1.Column({ name: "edit_page", type: "varchar" })
+], PageRecord.prototype, "editPage", void 0);
 PageRecord = __decorate([
     maishu_node_data_1.Entity("page_data_record")
 ], PageRecord);

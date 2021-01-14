@@ -228,7 +228,7 @@ export class DesignView extends React.Component<Props, State> {
                                         页眉高度</div>
                                     <div className="pull-right">
                                         <input className="form-control input-sm" value={this.headerHeight(pageData) || ""}
-                                            style={{ width: 60, textAlign: "right", display: this.footerVisible(pageData) ? "" : "none" }}
+                                            style={{ width: 60, textAlign: "right", display: this.headerVisible(pageData) ? "" : "none" }}
                                             onChange={e => {
                                                 try {
                                                     let value = Number.parseInt(e.target.value);

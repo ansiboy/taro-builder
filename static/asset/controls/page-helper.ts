@@ -1,7 +1,7 @@
 import {
     ComponentData, Page, PageBody, PageHeader, PageHeaderProps,
     PageFooter, PageFooterProps, PageData, PageBodyProps
-} from "taro-builder-core";
+} from "maishu-jueying-core";
 import { guid } from "maishu-toolkit";
 
 export class PageHelper {

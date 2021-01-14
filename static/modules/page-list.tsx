@@ -23,6 +23,11 @@ export default class PageList extends DataListPage<PageRecord> {
     }
 
     protected executeEdit(dataItem: PageRecord) {
+        if (dataItem.editPage) {
+            this.props.app.redirect(dataItem.editPage, { id: dataItem.id });
+            return;
+        }
+
         this.props.app.redirect("page-edit", { id: dataItem.id });
     }
 }
