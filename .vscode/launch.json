@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/cli.js",
+            "program": "${workspaceFolder}/out/cli.js",
             "cwd": "${workspaceFolder}"
         }
     ]

@@ -24,7 +24,7 @@ interface State {
 interface Props extends PageProps {
     pageRecord?: PageRecord,
     customRender?: EditorPanelProps["customRender"],
-    data: { id?: string },
+    data: { id?: string, name?: string },
 }
 
 export default class PCPageEdit extends React.Component<Props, State> {
@@ -81,6 +81,11 @@ export default class PCPageEdit extends React.Component<Props, State> {
             if (this.props.data.id) {
                 s.getPageData(this.props.data.id as string).then(d => {
                     this.setState({ pageRecord: d, pageName: d.name });
+                })
+            }
+            else if (this.props.data.name) {
+                s.getPageDataByName(this.props.data.name).then(d => {
+                    this.setState({ pageRecord: d, pageName: d.name })
                 })
             }
             else {

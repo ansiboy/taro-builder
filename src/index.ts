@@ -4,6 +4,7 @@ import { errors } from "./errors";
 import websiteConfig from "./website-config";
 import { ConnectionOptions } from "maishu-node-data";
 import * as path from "path";
+import { VirtualDirectory } from "maishu-node-mvc";
 
 export type Settings = AdminSettings & {
     db: ConnectionOptions,
@@ -23,19 +24,27 @@ export function start(settings: Settings) {
         entities: ["./entities.js"],
     } as Settings["db"], settings.db);
 
-    settings.virtualPaths = Object.assign(settings.virtualPaths || {}, {
-        "node_modules": path.join(__dirname, "node_modules"),
-    });
+    // settings.virtualPaths = Object.assign(settings.virtualPaths || {}, {
+    //     "node_modules": path.join(__dirname, "node_modules"),
+    //     "static": path.join(__dirname, "../src/static"),
+    // });
 
     settings.proxy = Object.assign(settings.proxy || {}, {
         "/design/(\\S+)": `${settings.componentStation}/$1`,
     });
 
-    let componentInfos = [];
-    let serverContextData: ServerContextData = { db: settings.db, componentInfos: componentInfos };
+    let websiteRoot = new VirtualDirectory(__dirname);
+    websiteRoot.setPath("static", path.join(__dirname, "../src/static"));
+    websiteRoot.findDirectory("static").setPath("node_modules", path.join(__dirname, "../node_modules"));
+    debugger
+    // websiteRoot.setPath("static/node_modules", path.join(__dirname, "../node_modules"));
+
+    // let componentInfos = [];
+    let serverContextData: ServerContextData = { db: settings.db };
     settings.websiteConfig = websiteConfig;
     settings.serverContextData = serverContextData;
-    startAdmin(settings).then(r => {
+    settings.rootDirectory = websiteRoot;
+    let w = startAdmin(settings).then(r => {
         let staticDirectory = r.websiteDirectory.findDirectory("static");
         console.assert(staticDirectory != null);
         serverContextData.staticRoot = staticDirectory;
