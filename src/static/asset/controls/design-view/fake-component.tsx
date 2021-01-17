@@ -1,5 +1,4 @@
 import * as React from "react";
-import { } from "taro-builder-core";
 import { guid } from "maishu-toolkit";
 
 export class FakeComponent extends React.Component<any> {

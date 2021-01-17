@@ -1,9 +1,9 @@
-import { component, PageBody, PageBodyProps, PageHeader, PageHeaderProps, PageFooter, PageFooterProps } from "taro-builder-core";
+import { PageBody, PageBodyProps, PageHeader, PageHeaderProps, PageFooter, PageFooterProps, registerComponent } from "maishu-jueying-core";
 import * as React from "react";
 import { ComponentContainer } from "./component-container";
 import { DesignPageContext } from "./design-page";
 
-@component({ type: PageBody.typeName })
+// @component({ type: PageBody.typeName })
 export class DesignPageBody extends React.Component<PageBodyProps> {
     render() {
         return <DesignPageContext.Consumer>
@@ -11,7 +11,7 @@ export class DesignPageBody extends React.Component<PageBodyProps> {
                 let style: React.CSSProperties = { marginTop: 0 };
                 if (args.pageData == null)
                     return null;
-                    
+
                 let header = args.pageData.children.filter(o => o.type == PageHeader.typeName)[0];
                 let footer = args.pageData.children.filter(o => o.type == PageFooter.typeName)[0];
                 if (header != null && (header.props as PageHeaderProps).visible) {
@@ -30,5 +30,7 @@ export class DesignPageBody extends React.Component<PageBodyProps> {
         </DesignPageContext.Consumer>
     }
 }
+
+registerComponent(PageBody.typeName, DesignPageBody);
 
 

@@ -6,7 +6,7 @@ import { PageRecord } from "../../entities";
 import { LocalService } from "../asset/services/local-service";
 import { FormValidator, rules as r } from "maishu-dilu"
 import { dataSources } from "../asset/data-sources";
-import { ComponentInfo } from "taro-builder-core";
+// import { ComponentInfo } from "taro-builder-core";
 import { PageHelper } from "../asset/controls/page-helper";
 import { EditorPanelProps } from "maishu-jueying";
 

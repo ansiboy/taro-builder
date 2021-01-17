@@ -36,10 +36,6 @@ export function start(settings: Settings) {
     let websiteRoot = new VirtualDirectory(__dirname);
     websiteRoot.setPath("static", path.join(__dirname, "../src/static"));
     websiteRoot.findDirectory("static").setPath("node_modules", path.join(__dirname, "../node_modules"));
-    debugger
-    // websiteRoot.setPath("static/node_modules", path.join(__dirname, "../node_modules"));
-
-    // let componentInfos = [];
     let serverContextData: ServerContextData = { db: settings.db };
     settings.websiteConfig = websiteConfig;
     settings.serverContextData = serverContextData;

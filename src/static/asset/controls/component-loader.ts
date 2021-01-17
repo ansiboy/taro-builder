@@ -1,4 +1,4 @@
-import { registerComponent, PageData, componentTypes, ComponentData, ComponentInfo } from "taro-builder-core";
+import { registerComponent, PageData, componentTypes, ComponentData } from "maishu-jueying-core";
 import { componentRenders } from "../component-renders/index";
 import { errors } from "../errors";
 import { FakeComponent } from "./design-view/fake-component";
@@ -8,6 +8,24 @@ import InfoComponent from "./info-component";
 // import { services } from "../services/index";
 // import * as websiteConfig from "json!websiteConfig";
 // let contextName = websiteConfig.requirejs.context;
+
+/** 组件描述信息 */
+export interface ComponentInfo {
+    /** 组件类型名称 */
+    type: string;
+    /** 组件显示名称 */
+    displayName?: string;
+    /** 组件图标 */
+    icon?: string;
+    /** 组件介绍 */
+    introduce?: string;
+    /** 组件路经 */
+    path: string;
+    design?: string;
+    editor?: string;
+    layout?: string;
+}
+
 
 export class ComponentLoader {
     static loadComponentTypes(pageData: PageData, loadComponentInfos: () => Promise<ComponentInfo[]>, loadComponentFinish: (typeName: string, isSuccess: boolean) => void) {

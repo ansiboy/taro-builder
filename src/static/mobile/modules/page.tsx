@@ -1,8 +1,10 @@
-import { Page, PageData } from "taro-builder-core";
-import { services } from "../../services/index";
-import { errors } from "../../errors";
-import { ComponentLoader } from "../../controls/component-loader";
-import React from "react";
+import { Page, PageData } from "maishu-jueying-core";
+import { services } from "../../asset/services/index";
+import { errors } from "../../asset/errors";
+import { ComponentLoader } from "../../asset/controls/component-loader";
+import * as React from "react";
+import { LocalService } from "../../asset/services/local-service";
+import { errorHandle } from "maishu-chitu-admin/static";
 
 interface State {
     pageData?: PageData
@@ -11,6 +13,8 @@ interface State {
 interface Props {
     data: { [key: string]: string }
 }
+
+let localService = new LocalService(err => errorHandle(err))
 
 export default class MobilePage extends React.Component<Props, State>{
     constructor(props) {
@@ -28,7 +32,7 @@ export default class MobilePage extends React.Component<Props, State>{
         if (r == null)
             throw errors.pageRecordNotExists(id);
 
-        ComponentLoader.loadComponentTypes(r.pageData, () => {
+        ComponentLoader.loadComponentTypes(r.pageData, () => localService.componentInfos(), () => {
             this.setState({});
         });
         this.setState({ pageData: r.pageData });

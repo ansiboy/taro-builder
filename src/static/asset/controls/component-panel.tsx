@@ -1,6 +1,6 @@
 import * as React from "react";
 import { classNames } from "maishu-jueying";
-import { ComponentData, ComponentInfo } from "taro-builder-core";
+import { ComponentData } from "maishu-jueying-core";
 import * as $ from "jquery";
 import "jquery-ui";
 

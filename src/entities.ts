@@ -20,7 +20,7 @@ export class PageRecord {
     @Column({ name: "type", type: "varchar", length: 20 })
     type: "system" | "snapshoot" | "page";
 
-    @Column({ name: "edit_page", type: "varchar" })
+    @Column({ name: "edit_page", type: "varchar", length: 45 })
     editPage?: string
 }
 

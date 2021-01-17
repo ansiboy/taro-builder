@@ -2,7 +2,7 @@ import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../asset/services/local-service";
-import { ComponentData, ComponentInfo, PageData, PageHeader } from "taro-builder-core";
+import { ComponentData, PageData, PageHeader } from "maishu-jueying-core";
 import { PageHelper } from "../asset/controls/page-helper";
 import { Component, DesignerContext, EditorPanel, EditorPanelProps, PageDesigner, PropEditor, PropertyEditorInfo } from "maishu-jueying";
 import { ComponentPanel } from "../asset/controls/component-panel";
@@ -242,7 +242,8 @@ export default class PCPageEdit extends React.Component<Props, State> {
                         </button>
                     </li>
                     <li className="pull-right">
-                        <button className="btn btn-sm btn-primary">
+                        <button className="btn btn-sm btn-primary"
+                            onClick={() => window.open(`preview.html#page?id=${pageRecord.id}`)}>
                             <i className="icon-eye-open"></i><span>预览</span>
                         </button>
                     </li>

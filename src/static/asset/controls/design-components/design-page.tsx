@@ -1,4 +1,4 @@
-import { Page, component, parseComponentData, ComponentData, PageData } from "taro-builder-core";
+import { Page, PageData, registerComponent } from "maishu-jueying-core";
 import { DesignerContext, PageDesigner } from "maishu-jueying";
 import * as React from "react";
 import { ComponentPanel } from "../component-panel";
@@ -6,7 +6,7 @@ import { ComponentPanel } from "../component-panel";
 type T = { page: DesignPage, designer: PageDesigner, pageData: PageData, componentPanel: ComponentPanel };
 export let DesignPageContext = React.createContext<T>({ page: null, designer: null, pageData: null, componentPanel: null });
 
-@component({ type: Page.typeName })
+// @component({ type: Page.typeName })
 export class DesignPage extends React.Component<{ pageData: PageData, componentPanel: ComponentPanel }> {
     element: HTMLElement;
 
@@ -26,4 +26,5 @@ export class DesignPage extends React.Component<{ pageData: PageData, componentP
 }
 
 DesignPage.contextType = DesignerContext;
+registerComponent(Page.typeName, DesignPage);
 

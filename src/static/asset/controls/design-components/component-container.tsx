@@ -1,8 +1,8 @@
 import { PageDesigner, DesignerContext } from "maishu-jueying";
-import { ComponentData, parseComponentData } from "taro-builder-core";
+import { ComponentData, parseComponentData } from "maishu-jueying-core";
 import { guid } from "maishu-toolkit";
 import { DesignPageContext } from "./design-page";
-import { ComponentContainer as BaseComponentContainer } from "taro-builder-core";
+import { ComponentContainer as BaseComponentContainer } from "maishu-jueying-core";
 import * as React from "react";
 
 export interface CompoenntContainerProps {

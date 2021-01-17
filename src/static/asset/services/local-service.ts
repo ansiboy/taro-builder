@@ -1,11 +1,9 @@
 import { Service } from "maishu-chitu-admin/static";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 import { PageRecord } from "../../../entities";
-import { ComponentInfo as BaseComponentInfo } from "taro-builder-core";
 import { pathConcat } from "maishu-toolkit";
 import websiteConfig from "website-config";
 
-type ComponentInfo = BaseComponentInfo & { editor?: string, design?: string }
 
 export class LocalService extends Service {
 

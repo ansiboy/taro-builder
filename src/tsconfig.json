@@ -10,7 +10,6 @@
     },
     "exclude": [
         "sample-app",
-        "static",
         "lib"
     ]
 }

@@ -1,7 +1,7 @@
 import { PageProps } from "maishu-chitu-react";
 import { guid } from "maishu-toolkit";
 import * as React from "react";
-import { PageData, Page, PageBody } from "taro-builder-core";
+import { PageData, Page, PageBody } from "maishu-jueying-core";
 import { LocalService } from "../services/local-service";
 import { ComponentLoader } from "../../asset/controls/component-loader"
 //D:\projects\taro-builder\node_modules\@tarojs\components\dist\index.js

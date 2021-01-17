@@ -1,5 +1,5 @@
-import React from "react";
-import { PageData, Page } from "taro-builder-core";
+import * as React from "react";
+import { PageData, Page } from "maishu-jueying-core";
 
 export interface PageViewProps {
     pageData: PageData

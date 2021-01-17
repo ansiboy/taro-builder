@@ -2,9 +2,7 @@ import * as React from "react";
 import { EditorPanel, PageDesigner, DesignerContext, EditorPanelProps } from "maishu-jueying";
 import "jquery-ui"
 import { ComponentPanel, ComponentDefine, commonGroup } from "../component-panel";
-import {
-    ComponentInfo, PageData,
-} from "taro-builder-core";
+import { PageData } from "maishu-jueying-core";
 import { DesignPage } from "../design-components/index";
 import "../design-components/index";
 import { PageHelper } from "../page-helper";
@@ -130,6 +128,7 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     private renderPageData(pageData: PageData, componentPanel: ComponentPanel) {
+        debugger;
         ComponentLoader.loadComponentTypes(pageData, () => services.local.componentInfos(), () => {
             this.setState({});
         })

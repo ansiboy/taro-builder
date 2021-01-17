@@ -1,8 +1,6 @@
 (function () {
-
-
-    let node_modules = "../node_modules";
-    let lib = "../asset/lib";
+    let node_modules = "node_modules";
+    let lib = "lib";
     requirejs.config({
         shim: {
             fetch: {
@@ -19,8 +17,11 @@
                 exports: 'userServices'
             },
         },
+        baseUrl: '../',
         paths: {
-            css: `${node_modules}/maishu-requirejs-plugins/src/css`,
+
+            css: `${lib}/css`,
+            text: `${lib}/text`,
             json: `${node_modules}/maishu-requirejs-plugins/src/json`,
             "lessjs": `${node_modules}/less/dist/less`,
             "jquery": `${node_modules}/jquery/dist/jquery.min`,
@@ -38,26 +39,51 @@
             "maishu-ui-toolkit": `${node_modules}/maishu-ui-toolkit/dist/index`,
             "maishu-services-sdk": `${node_modules}/maishu-services-sdk/dist/index`,
             "maishu-dzg-shop": `${node_modules}/maishu-haoyi-dzg/`,
-            "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/dist/index`,
-            "maishu-jueying-core": `${node_modules}/maishu-jueying-core/dist/index`,
-            "taro-builder-core": `${node_modules}/taro-builder-core/dist/index.min`,
-            "taro-ui/dist": "node_modules/taro-ui/dist",
-
-            "@tarojs/components": `${lib}/taro-components`,
-            "@tarojs/taro-h5": `${lib}/taro-h5`,
-            "@tarojs/taro": `${lib}/taro-h5`,
-
+            "modules": "mobile/modules",
             "common/static": "/common/static",
-            "maishu-chitu-admin": `${node_modules}/maishu-chitu-admin`,
-
-            "website-config": "../website-config",
-            "controls": "../asset/controls"
-
+            "taro-builder-core": "node_modules/taro-builder-core/dist/index",
+            "maishu-jueying-core": "node_modules/maishu-jueying-core/dist/index",
+            "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/dist/static.min`,
+            "@tarojs/components": "lib/taro-components",
+            "@tarojs/taro-h5": "lib/taro-h5",
+            "@tarojs/taro": "lib/taro-h5",
+            "taro-ui": "lib/taro-ui",
+            "taro-ui/dist": "node_modules/taro-ui/dist",
         }
     });
 
-    requirejs(["application"], function (mod) {
-        mod.app.run();
+    window["h5"] = "weapp";
+    requirejs(["react"], function (react) {
+        window["react"] = window["React"] = react;
+
+        define("react-default", function () {
+            return { default: React };
+        })
+
+        //================================================================================
+        // 为缺失的 API 提供默认值
+        window["wx"] = {
+
+        }
+        window["getCurrentPages"] = function () {
+
+        }
+        window["getApp"] = function () {
+
+        }
+        window["requirePlugin"] = function () {
+
+        }
+        //================================================================================
+
+        requirejs(['mobile/user-application'],
+            function (appExports) {
+                let app = appExports.app;
+                app.run();
+            }
+        );
+
     })
+
 
 })();

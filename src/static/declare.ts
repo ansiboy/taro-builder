@@ -21,7 +21,10 @@ declare let requirejs: {
     exec(name);
 };
 
-// declare function define(module: string, callback: Function): void;
+interface ComponentInfo {
+    design: string
+}
+declare function define(module: string, callback: Function): void;
 
 // declare module "components/carousel" {
 //     let a: typeof import("../../sample-app/src/components/carousel/component");
@@ -31,4 +34,17 @@ declare let requirejs: {
 declare module "website-config" {
     let a: typeof import("../website-config");
     export = a;
+}
+
+interface ComponentInfo {
+    displayName: string;
+    type: string;
+    path: string;
+    editor: string;
+    design: string;
+    layout?: string;
+    sortNumber?: number;
+    icon?: string;
+    introduce?: string;
+    group?: string;
 }

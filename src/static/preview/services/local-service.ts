@@ -1,5 +1,4 @@
 import { Service } from "maishu-chitu-service";
-import { ComponentInfo } from "maishu-jueying-core";
 import { PageRecord } from "../../../entities";
 import websiteConfig from "website-config";
 import { pathConcat } from "maishu-toolkit";
