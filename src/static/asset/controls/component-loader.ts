@@ -28,7 +28,7 @@ export interface ComponentInfo {
 
 
 export class ComponentLoader {
-    static loadComponentTypes(pageData: PageData, loadComponentInfos: () => Promise<ComponentInfo[]>, loadComponentFinish: (typeName: string, isSuccess: boolean) => void) {
+    static loadComponentTypes(pageData: PageData, loadComponentInfos: () => Promise<ComponentInfo[]>, loadComponentFinish: (typeName: string, componentInfo: ComponentInfo) => void) {
         let pageDataComponentTypes: string[] = [];
         let stack: Array<ComponentData> = [...pageData.children];
         while (stack.length > 0) {
@@ -56,8 +56,8 @@ export class ComponentLoader {
             if (componentType == null) {
                 registerComponent(type, FakeComponent);
                 loadComponentType(type, loadComponentInfos).then(c => {
-                    registerComponent(type, c as any);
-                    loadComponentFinish(type, true);
+                    registerComponent(type, c.componentType);
+                    loadComponentFinish(type, c.componentInfo);
 
                 }).catch(err => {
                     console.error(err);
@@ -66,11 +66,19 @@ export class ComponentLoader {
                         ComponentLoader.loadComponentTypes(pageData, loadComponentInfos, loadComponentFinish);
                     });
                     registerComponent(type, componentType);
-                    loadComponentFinish(type, false);
+                    loadComponentFinish(type, null);
                 })
             }
         }
 
+    }
+
+    static loadComponentEditor(compoenntInfo: ComponentInfo) {
+        return loadComponentEditor(compoenntInfo);
+    }
+
+    static loadComponentLayout(compoenntInfo: ComponentInfo) {
+        return loadComponentLayout(compoenntInfo);
     }
 
     private static isComponentData(obj: any) {
@@ -78,6 +86,7 @@ export class ComponentLoader {
         return typeof c == "object" && c.id != null && c.parentId != null && c.id != null && c.props != null;
     }
 }
+
 
 async function loadComponentType(typeName: string, loadComponentInfos: () => Promise<ComponentInfo[]>) {
     let componentInfos = await loadComponentInfos();//services.local.componentInfos();
@@ -95,12 +104,12 @@ async function loadComponentType(typeName: string, loadComponentInfos: () => Pro
 
     let path = componentInfo.design || componentInfo.path;
 
-    let editorPromise = loadComponentEditor(componentInfo);
-    let layoutPromise = loadComponentLayout(componentInfo);
-    let componentPromise = new Promise((resolve, reject) => {
-        // let req = requirejs({ context: contextName });
+    // let editorPromise = loadComponentEditor(componentInfo);
+    // let layoutPromise = loadComponentLayout(componentInfo);
+    // let componentPromise = 
+    let componentType = await new Promise<React.ComponentClass<any>>((resolve, reject) => {
         requirejs([`${path}`], (mod) => {
-            let compoenntType = mod[typeName] || mod["default"];
+            let compoenntType: React.ComponentClass<any> = mod[typeName] || mod["default"];
             if (compoenntType == null)
                 throw errors.moduleNotExport(path, typeName);
 
@@ -113,9 +122,11 @@ async function loadComponentType(typeName: string, loadComponentInfos: () => Pro
 
     })
 
-    await editorPromise;
-    await layoutPromise;
-    return componentPromise;
+    // await editorPromise;
+    // await layoutPromise;
+    // return componentPromise;
+
+    return { componentType, componentInfo };
 }
 
 async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {

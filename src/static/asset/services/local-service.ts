@@ -4,17 +4,18 @@ import { PageRecord } from "../../../entities";
 import { pathConcat } from "maishu-toolkit";
 import websiteConfig from "website-config";
 
+Service.headers["application-id"] = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
 
 export class LocalService extends Service {
 
-    private defaultApplicationId = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
+    // private defaultApplicationId = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
 
-    get applicationId(): string {
-        if (!super.applicationId)
-            return this.defaultApplicationId;
+    // get applicationId(): string {
+    //     if (!super.applicationId)
+    //         return this.defaultApplicationId;
 
-        return super.applicationId;
-    }
+    //     return super.applicationId;
+    // }
 
     url(path: string): string {
         let u = this.localServiceUrl(path);

@@ -103,9 +103,14 @@ export default class PCPageEdit extends React.Component<Props, State> {
         if (componentPanel == null)
             return;
 
-        ComponentLoader.loadComponentTypes(pageData, () => this.localService.componentInfos(), () => {
-            this.setState({});
-        })
+        ComponentLoader.loadComponentTypes(pageData, () => this.localService.componentInfos(),
+            async (typeName, componentInfo) => {
+                await Promise.all([
+                    ComponentLoader.loadComponentEditor(componentInfo),
+                    ComponentLoader.loadComponentLayout(componentInfo),
+                ])
+                this.setState({});
+            })
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
     }
 

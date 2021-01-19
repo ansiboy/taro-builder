@@ -128,8 +128,11 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     private renderPageData(pageData: PageData, componentPanel: ComponentPanel) {
-        debugger;
-        ComponentLoader.loadComponentTypes(pageData, () => services.local.componentInfos(), () => {
+        ComponentLoader.loadComponentTypes(pageData, () => services.local.componentInfos(), async (typeName, componentInfo) => {
+            await Promise.all([
+                ComponentLoader.loadComponentEditor(componentInfo),
+                ComponentLoader.loadComponentLayout(componentInfo),
+            ])
             this.setState({});
         })
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
