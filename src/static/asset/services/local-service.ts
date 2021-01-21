@@ -31,7 +31,7 @@ export class LocalService extends Service {
         Object.assign(item, r);
         return item;
     }
-    async getPageData(id: string): Promise<PageRecord> {
+    async getPageRecord(id: string): Promise<PageRecord> {
         let r = await this.getByJson<PageRecord>(this.url("page-data/item"), { id });
         return r;
     }

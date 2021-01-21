@@ -91,7 +91,7 @@ export default class PageEdit extends React.Component<Props, State> {
         let s = this.props.createService(LocalService);
         if (this.state.pageRecord == null) {
             if (this.props.data.id) {
-                s.getPageData(this.props.data.id as string).then(d => {
+                s.getPageRecord(this.props.data.id as string).then(d => {
                     this.setState({ pageRecord: d })
                 })
             }

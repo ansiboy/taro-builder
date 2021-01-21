@@ -2,9 +2,9 @@ import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../asset/services/local-service";
-import { ComponentData, PageBody, PageData, PageFooter, PageHeader, parseComponentData } from "maishu-jueying-core";
+import { ComponentData, PageData } from "maishu-jueying-core";
 import { PageHelper } from "../asset/controls/page-helper";
-import { Component, DesignerContext, EditorPanel, EditorPanelProps, PageDesigner, PropEditor, PropertyEditorInfo } from "maishu-jueying";
+import { DesignerContext, EditorPanel, EditorPanelProps, PageDesigner } from "maishu-jueying";
 import { ComponentPanel } from "../asset/controls/component-panel";
 import { ComponentLoader } from "../asset/controls/component-loader";
 import { DesignPage } from "../asset/controls/design-components/index";
@@ -13,8 +13,7 @@ import { componentRenders } from "../asset/component-renders/index";
 import { dataSources } from "../asset/data-sources";
 import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
-import { getTsBuildInfoEmitOutputFilePath } from "typescript";
-import { trim } from "jquery";
+import { template } from "@babel/core";
 
 interface State {
     pageRecord?: PageRecord,
@@ -78,13 +77,12 @@ export default class PCPageEdit extends React.Component<Props, State> {
     }
 
     async componentDidMount() {
-        let s = this.props.createService(LocalService);
         let pageRecord: PageRecord;
         let templateRecord: PageRecord;
         if (this.state.pageRecord == null) {
             pageRecord = await this.getPageRecord();
             if (pageRecord.templateId) {
-                templateRecord = await this.localService.getPageData(pageRecord.templateId);
+                templateRecord = await this.localService.getPageRecord(pageRecord.templateId);
             }
         }
 
@@ -95,7 +93,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
         let s = this.localService;
         let pageRecord: PageRecord;
         if (this.props.data.id) {
-            pageRecord = await s.getPageData(this.props.data.id as string);
+            pageRecord = await s.getPageRecord(this.props.data.id as string);
         }
         else if (this.props.data.name) {
             pageRecord = await s.getPageDataByName(this.props.data.name)
@@ -244,8 +242,22 @@ export default class PCPageEdit extends React.Component<Props, State> {
         );
     }
 
-    render() {
+    changeTemplate(templateId: string) {
+        let { pageRecord, templateRecord } = this.state;
+        if (!templateId) {
+            if (templateRecord != null) {
+                PageHelper.trimTemplate(pageRecord.pageData, templateRecord.pageData);
+            }
+            this.setState({ templateRecord: null, pageRecord });
+            return;
+        }
 
+        this.localService.getPageRecord(templateId).then(r => {
+            this.setState({ templateRecord: r });
+        });
+    }
+
+    render() {
         let { pageRecord, componentInfos, isReady, templateRecord, templateList } = this.state;
         let pageData = pageRecord?.pageData;
         templateList = templateList || [];
@@ -323,9 +335,10 @@ export default class PCPageEdit extends React.Component<Props, State> {
                                     <div className="pull-left">
                                         视图尺寸</div>
                                     <div className="pull-right">
-                                        <select className="form-control" value={templateRecord?.id || ""} style={{ width: 180 }}>
-                                            <option>请选择模板</option>
-                                            {templateList.map(t => <option value={t.id} >
+                                        <select className="form-control" value={templateRecord?.id || ""} style={{ width: 180 }}
+                                            onChange={e => this.changeTemplate(e.target.value)}>
+                                            <option value="">请选择模板</option>
+                                            {templateList.map(t => <option value={t.id} key={t.id}>
                                                 {t.name}
                                             </option>)}
                                         </select>

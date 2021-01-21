@@ -28,7 +28,7 @@ export default class MobilePage extends React.Component<Props, State>{
         if (!id)
             throw errors.urlParameterEmpty("id");
 
-        let r = await services.local.getPageData(id);
+        let r = await services.local.getPageRecord(id);
         if (r == null)
             throw errors.pageRecordNotExists(id);
 
