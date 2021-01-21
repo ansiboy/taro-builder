@@ -32,7 +32,7 @@ export default class MobilePage extends React.Component<Props, State>{
         if (r == null)
             throw errors.pageRecordNotExists(id);
 
-        ComponentLoader.loadComponentTypes(r.pageData, () => localService.componentInfos(), () => {
+        ComponentLoader.loadComponentTypes(r.pageData, () => {
             this.setState({});
         });
         this.setState({ pageData: r.pageData });

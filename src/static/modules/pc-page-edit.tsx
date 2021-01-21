@@ -117,7 +117,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
             PageHelper.mergeTemplate(pageData, template);
         }
 
-        ComponentLoader.loadComponentTypes(pageData, () => this.localService.componentInfos(),
+        ComponentLoader.loadComponentTypes(pageData,
             async (typeName, componentInfo) => {
                 await Promise.all([
                     ComponentLoader.loadComponentEditor(componentInfo),

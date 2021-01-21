@@ -21,9 +21,7 @@ declare let requirejs: {
     exec(name);
 };
 
-interface ComponentInfo {
-    design: string
-}
+
 declare function define(module: string, callback: Function): void;
 
 // declare module "components/carousel" {
@@ -37,11 +35,11 @@ declare module "website-config" {
 }
 
 interface ComponentInfo {
-    displayName: string;
+    displayName?: string;
     type: string;
     path: string;
-    editor: string;
-    design: string;
+    editor?: string;
+    design?: string;
     layout?: string;
     sortNumber?: number;
     icon?: string;

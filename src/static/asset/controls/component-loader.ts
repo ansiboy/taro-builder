@@ -1,6 +1,8 @@
+import { errorHandle } from "maishu-chitu-admin/static";
 import { registerComponent, PageData, componentTypes, ComponentData } from "maishu-jueying-core";
 import { componentRenders } from "../component-renders/index";
 import { errors } from "../errors";
+import { LocalService } from "../services/local-service";
 import { FakeComponent } from "./design-view/fake-component";
 import { createComponentLoadFail } from "./design-view/load-fail-component";
 import InfoComponent from "./info-component";
@@ -27,8 +29,9 @@ export interface ComponentInfo {
 }
 
 
+let localService = new LocalService(err => errorHandle(err));
 export class ComponentLoader {
-    static loadComponentTypes(pageData: PageData, loadComponentInfos: () => Promise<ComponentInfo[]>, loadComponentFinish: (typeName: string, componentInfo: ComponentInfo) => void) {
+    static loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, componentInfo: ComponentInfo) => void) {
         let pageDataComponentTypes: string[] = [];
         let stack: Array<ComponentData> = [...pageData.children];
         while (stack.length > 0) {
@@ -55,7 +58,7 @@ export class ComponentLoader {
             let componentType = componentTypes[type] as any;
             if (componentType == null) {
                 registerComponent(type, FakeComponent);
-                loadComponentType(type, loadComponentInfos).then(c => {
+                loadComponentType(type).then(c => {
                     registerComponent(type, c.componentType);
                     loadComponentFinish(type, c.componentInfo);
 
@@ -63,7 +66,7 @@ export class ComponentLoader {
                     console.error(err);
                     let componentType = createComponentLoadFail(err, () => {
                         delete componentTypes[type];
-                        ComponentLoader.loadComponentTypes(pageData, loadComponentInfos, loadComponentFinish);
+                        ComponentLoader.loadComponentTypes(pageData, loadComponentFinish);
                     });
                     registerComponent(type, componentType);
                     loadComponentFinish(type, null);
@@ -88,7 +91,7 @@ export class ComponentLoader {
 
     static loadComponentType(compoenntInfo: ComponentInfo) {
         if (!compoenntInfo) throw errors.argumentNull("componentInfo");
-        
+
         let typeName = compoenntInfo.type;
         let path = compoenntInfo.path;
         return new Promise((resolove, reject) => {
@@ -108,8 +111,8 @@ export class ComponentLoader {
 }
 
 
-async function loadComponentType(typeName: string, loadComponentInfos: () => Promise<ComponentInfo[]>) {
-    let componentInfos = await loadComponentInfos();//services.local.componentInfos();
+async function loadComponentType(typeName: string) {
+    let componentInfos = await localService.componentInfos();
     let componentInfo = componentInfos.filter(o => o.type == typeName)[0];
     if (componentInfo == null) {
         // throw errors.canntFindComponentInfo(typeName);
