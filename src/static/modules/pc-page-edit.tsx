@@ -244,6 +244,8 @@ export default class PCPageEdit extends React.Component<Props, State> {
 
     changeTemplate(templateId: string) {
         let { pageRecord, templateRecord } = this.state;
+        pageRecord.templateId = templateId || null;
+
         if (!templateId) {
             if (templateRecord != null) {
                 PageHelper.trimTemplate(pageRecord.pageData, templateRecord.pageData);
@@ -251,7 +253,6 @@ export default class PCPageEdit extends React.Component<Props, State> {
             this.setState({ templateRecord: null, pageRecord });
             return;
         }
-
         this.localService.getPageRecord(templateId).then(r => {
             this.setState({ templateRecord: r });
         });

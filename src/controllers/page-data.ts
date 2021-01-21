@@ -39,7 +39,7 @@ export class PageDataController {
         if (item.id == null) throw errors.argumentFieldNull("id", "item");
         if (!appId) throw errors.argumentNull("appId");
 
-        let obj: Partial<PageRecord> = { pageData: item.pageData };
+        let obj: Partial<PageRecord> = { pageData: item.pageData, templateId: item.templateId };
         if (item.name) {
             obj.name = item.name;
         }
