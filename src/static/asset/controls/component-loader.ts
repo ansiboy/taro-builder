@@ -1,4 +1,4 @@
-import { errorHandle } from "maishu-chitu-admin/static";
+import { errorHandle } from "../../asset/errorHandle";
 import { registerComponent, PageData, componentTypes, ComponentData } from "maishu-jueying-core";
 import { componentRenders } from "../component-renders/index";
 import { errors } from "../errors";
@@ -6,10 +6,6 @@ import { LocalService } from "../services/local-service";
 import { FakeComponent } from "./design-view/fake-component";
 import { createComponentLoadFail } from "./design-view/load-fail-component";
 import InfoComponent from "./info-component";
-
-// import { services } from "../services/index";
-// import * as websiteConfig from "json!websiteConfig";
-// let contextName = websiteConfig.requirejs.context;
 
 /** 组件描述信息 */
 export interface ComponentInfo {

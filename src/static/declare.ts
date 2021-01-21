@@ -1,18 +1,4 @@
 
-// declare module "json!websiteConfig" {
-//     let a: typeof import("../website-config")["default"];
-//     export = a;
-// }
-
-// type RequireConfig = {
-//     context: string,
-//     baseUrl?: string
-// };
-
-// type RequireContext = {
-//     config: RequireConfig
-// }
-
 declare let requirejs: {
     (config: any);
     (config: any, modules: string[], callback?: Function, err?: Function);

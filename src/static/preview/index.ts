@@ -22,6 +22,7 @@
         paths: {
             css: `${node_modules}/maishu-requirejs-plugins/src/css`,
             json: `${node_modules}/maishu-requirejs-plugins/src/json`,
+            text: `${node_modules}/maishu-requirejs-plugins/lib/text`,
             "lessjs": `${node_modules}/less/dist/less`,
             "jquery": `${node_modules}/jquery/dist/jquery.min`,
             "js-md5": `${node_modules}/js-md5/src/md5`,
@@ -38,7 +39,6 @@
             "maishu-ui-toolkit": `${node_modules}/maishu-ui-toolkit/dist/index`,
             "maishu-services-sdk": `${node_modules}/maishu-services-sdk/dist/index`,
             "maishu-dzg-shop": `${node_modules}/maishu-haoyi-dzg/`,
-            "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/dist/index`,
             "maishu-jueying-core": `${node_modules}/maishu-jueying-core/dist/index`,
             "taro-builder-core": `${node_modules}/taro-builder-core/dist/index.min`,
             "taro-ui/dist": "node_modules/taro-ui/dist",

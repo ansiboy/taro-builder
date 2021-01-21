@@ -4,7 +4,7 @@ import { errors } from "../../asset/errors";
 import { ComponentLoader } from "../../asset/controls/component-loader";
 import * as React from "react";
 import { LocalService } from "../../asset/services/local-service";
-import { errorHandle } from "maishu-chitu-admin/static";
+import { errorHandle } from "../../asset/errorHandle";
 
 interface State {
     pageData?: PageData
@@ -22,6 +22,7 @@ export default class MobilePage extends React.Component<Props, State>{
 
         this.state = {};
         this.loadPageData();
+
     }
     async loadPageData() {
         let id = this.props.data["id"];

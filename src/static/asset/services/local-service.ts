@@ -1,4 +1,4 @@
-import { Service } from "maishu-chitu-admin/static";
+import { Service } from "maishu-chitu-service";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 import { PageRecord } from "../../../entities";
 import { pathConcat } from "maishu-toolkit";
@@ -9,8 +9,9 @@ Service.headers["application-id"] = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
 export class LocalService extends Service {
 
     url(path: string): string {
-        let u = this.localServiceUrl(path);
-        return u;
+        // let u = this.localServiceUrl(path);
+        // return u;
+        return path;
     }
 
     pageRecordList(args: DataSourceSelectArguments) {
