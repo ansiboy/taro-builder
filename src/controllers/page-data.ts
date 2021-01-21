@@ -136,4 +136,13 @@ export default class InfoComponent extends React.Component<Props> {
         return new ContentResult(script, { "Content-Type": `application/x-javascript; charset=utf8` });
     }
 
+    @action("template-list")
+    templateList(@connection conn: Connection) {
+        if (!conn) throw errors.argumentNull("conn");
+
+        let pageRecords = conn.getRepository(PageRecord).find({ select: ["id", "name"], where: { type: "template" } });
+        return pageRecords;
+
+    }
+
 }

@@ -85,6 +85,26 @@ export class ComponentLoader {
         let c: ComponentData = obj;
         return typeof c == "object" && c.id != null && c.parentId != null && c.id != null && c.props != null;
     }
+
+    static loadComponentType(compoenntInfo: ComponentInfo) {
+        if (!compoenntInfo) throw errors.argumentNull("componentInfo");
+        
+        let typeName = compoenntInfo.type;
+        let path = compoenntInfo.path;
+        return new Promise((resolove, reject) => {
+            requirejs([`${compoenntInfo.path}`], (mod) => {
+                let compoenntType: React.ComponentClass<any> = mod[typeName] || mod["default"];
+                if (compoenntType == null)
+                    throw errors.moduleNotExport(path, typeName);
+
+                componentTypes[typeName] = compoenntType;
+                resolove(compoenntType);
+            }, err => {
+                reject(err);
+            });
+
+        })
+    }
 }
 
 

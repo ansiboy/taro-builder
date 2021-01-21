@@ -2,7 +2,7 @@ import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../asset/services/local-service";
-import { ComponentData, PageData, PageHeader } from "maishu-jueying-core";
+import { ComponentData, PageBody, PageData, PageFooter, PageHeader, parseComponentData } from "maishu-jueying-core";
 import { PageHelper } from "../asset/controls/page-helper";
 import { Component, DesignerContext, EditorPanel, EditorPanelProps, PageDesigner, PropEditor, PropertyEditorInfo } from "maishu-jueying";
 import { ComponentPanel } from "../asset/controls/component-panel";
@@ -13,12 +13,16 @@ import { componentRenders } from "../asset/component-renders/index";
 import { dataSources } from "../asset/data-sources";
 import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
+import { getTsBuildInfoEmitOutputFilePath } from "typescript";
+import { trim } from "jquery";
 
 interface State {
     pageRecord?: PageRecord,
     componentInfos?: ComponentInfo[],
     isReady: boolean,
-    pageName: string,
+    // pageName: string,
+    templateRecord?: PageRecord,
+    templateList?: PageRecord[]
 }
 
 interface Props extends PageProps {
@@ -39,7 +43,6 @@ export default class PCPageEdit extends React.Component<Props, State> {
 
         this.state = {
             pageRecord: this.props.pageRecord, isReady: false,
-            pageName: "No Name"
         };
 
         this.localService = this.props.app.createService(LocalService);
@@ -52,6 +55,11 @@ export default class PCPageEdit extends React.Component<Props, State> {
             })));
             //==========================================================================================
         });
+
+        this.localService.templateList().then(r => {
+            this.setState({ templateList: r })
+        });
+
     }
 
     private emptyRecord(): Partial<PageRecord> {
@@ -66,42 +74,50 @@ export default class PCPageEdit extends React.Component<Props, State> {
 
     private emptyPageData() {
         let r = PageHelper.emptyPageData();
-        // r.children.push({
-        //     id: guid(),
-        //     type: "Carousel",
-        //     parentId: PageBody.id,
-        //     props: {}
-        // })
         return r;
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         let s = this.props.createService(LocalService);
+        let pageRecord: PageRecord;
+        let templateRecord: PageRecord;
         if (this.state.pageRecord == null) {
-            if (this.props.data.id) {
-                s.getPageData(this.props.data.id as string).then(d => {
-                    this.setState({ pageRecord: d, pageName: d.name });
-                })
-            }
-            else if (this.props.data.name) {
-                s.getPageDataByName(this.props.data.name).then(d => {
-                    this.setState({ pageRecord: d, pageName: d.name })
-                })
-            }
-            else {
-                let r = this.emptyRecord() as PageRecord;
-                this.setState({ pageRecord: r });
+            pageRecord = await this.getPageRecord();
+            if (pageRecord.templateId) {
+                templateRecord = await this.localService.getPageData(pageRecord.templateId);
             }
         }
 
-        this.setState({ isReady: true, });
-
-        // this.createValidator(this.props.source.element);
+        this.setState({ isReady: true, pageRecord, templateRecord });
     }
 
-    private renderPageData(pageData: PageData, componentPanel: ComponentPanel) {
+    private async getPageRecord() {
+        let s = this.localService;
+        let pageRecord: PageRecord;
+        if (this.props.data.id) {
+            pageRecord = await s.getPageData(this.props.data.id as string);
+        }
+        else if (this.props.data.name) {
+            pageRecord = await s.getPageDataByName(this.props.data.name)
+        }
+        else {
+            pageRecord = this.emptyRecord() as PageRecord;
+        }
+
+        if (!pageRecord.pageData) {
+            pageRecord.pageData = this.emptyPageData();
+        }
+
+        return pageRecord;
+    }
+
+    private renderPageData(pageData: PageData, componentPanel: ComponentPanel, template?: PageData) {
         if (componentPanel == null)
             return;
+
+        if (template) {
+            PageHelper.mergeTemplate(pageData, template);
+        }
 
         ComponentLoader.loadComponentTypes(pageData, () => this.localService.componentInfos(),
             async (typeName, componentInfo) => {
@@ -109,9 +125,16 @@ export default class PCPageEdit extends React.Component<Props, State> {
                     ComponentLoader.loadComponentEditor(componentInfo),
                     ComponentLoader.loadComponentLayout(componentInfo),
                 ])
-                this.setState({});
-            })
-        return <DesignPage pageData={pageData} componentPanel={componentPanel} />
+                let r = this.state.pageRecord;
+                r.pageData = pageData;
+                console.assert(r != null);
+                this.setState({ pageRecord: r });
+            }
+        );
+
+        return <>
+            <DesignPage pageData={pageData} componentPanel={componentPanel} />
+        </>
     }
 
     private bodyVisible(pageData: PageData): boolean {
@@ -158,7 +181,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
     }
 
     private async showBody(pageData: PageData, visible: boolean) {
-        let c = PageHelper.findBody(pageData);
+        let c = PageHelper.findBody(pageData, true);
         console.assert(c != null);
         c.props.visible = visible;
 
@@ -191,19 +214,25 @@ export default class PCPageEdit extends React.Component<Props, State> {
     }
 
     async save(): Promise<any> {
-        let { pageName } = this.state;
+        let { } = this.state;
 
         if (!this.validator.check())
             return Promise.reject();
 
-        let record = this.state.pageRecord;
-        record.name = pageName;
-        record.editPage = "pc-page-edit";
-        if (record.id == null) {
-            await dataSources.pageRecords.insert(record);
+        let pageRecord = this.state.pageRecord;
+        let templateRecord = this.state.templateRecord;
+        pageRecord.editPage = "pc-page-edit";
+        //===============================================
+        // 移除掉模板控件
+        if (templateRecord) {
+            PageHelper.trimTemplate(pageRecord.pageData, templateRecord.pageData);
+        }
+        //===============================================
+        if (pageRecord.id == null) {
+            await dataSources.pageRecords.insert(pageRecord);
         }
         else {
-            await dataSources.pageRecords.update(record);
+            await dataSources.pageRecords.update(pageRecord);
         }
     }
 
@@ -217,8 +246,9 @@ export default class PCPageEdit extends React.Component<Props, State> {
 
     render() {
 
-        let { pageRecord, componentInfos, isReady, pageName } = this.state;
+        let { pageRecord, componentInfos, isReady, templateRecord, templateList } = this.state;
         let pageData = pageRecord?.pageData;
+        templateList = templateList || [];
         return <>
             <div>
                 <ul className="nav nav-tabs">
@@ -272,10 +302,10 @@ export default class PCPageEdit extends React.Component<Props, State> {
                                     <div className="pull-left">
                                         页面名称</div>
                                     <div className="pull-right">
-                                        <input name="name" className="form-control input-sm" style={{ width: 180 }} value={pageName || ""}
+                                        <input name="name" className="form-control input-sm" style={{ width: 180 }} value={pageRecord.name || "No Name"}
                                             onChange={(e) => {
-                                                pageName = e.target.value;
-                                                this.setState({ pageName });
+                                                pageRecord.name = e.target.value;
+                                                this.setState({ pageRecord });
                                             }} />
                                     </div>
                                 </li>
@@ -287,6 +317,18 @@ export default class PCPageEdit extends React.Component<Props, State> {
                                             onChange={() => {
 
                                             }} />
+                                    </div>
+                                </li>
+                                <li className="list-group-item clearfix">
+                                    <div className="pull-left">
+                                        视图尺寸</div>
+                                    <div className="pull-right">
+                                        <select className="form-control" value={templateRecord?.id || ""} style={{ width: 180 }}>
+                                            <option>请选择模板</option>
+                                            {templateList.map(t => <option value={t.id} >
+                                                {t.name}
+                                            </option>)}
+                                        </select>
                                     </div>
                                 </li>
                                 <li className="list-group-item clearfix">
@@ -366,7 +408,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
                             ref={e => this.editorPanel = this.editorPanel || e} />
                     </div>
                     <DesignerContext.Consumer>
-                        {() => isReady ? this.renderPageData(pageRecord.pageData, this.componentPanel) : null}
+                        {() => isReady ? this.renderPageData(pageRecord.pageData, this.componentPanel, templateRecord?.pageData) : null}
                     </DesignerContext.Consumer>
                 </PageDesigner>
             }

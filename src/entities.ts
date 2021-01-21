@@ -18,10 +18,13 @@ export class PageRecord {
     applicationId?: string;
 
     @Column({ name: "type", type: "varchar", length: 20 })
-    type: "system" | "snapshoot" | "page";
+    type: "system" | "snapshoot" | "page" | "template";
 
     @Column({ name: "edit_page", type: "varchar", length: 45, nullable: true })
-    editPage?: string
+    editPage?: string;
+
+    @Column({ name: "template_id", type: "varchar", length: 36, nullable: true })
+    templateId?: string;
 }
 
 @Entity("data_object")

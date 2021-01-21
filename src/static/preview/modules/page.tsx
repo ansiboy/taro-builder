@@ -4,7 +4,8 @@ import * as React from "react";
 import { PageData, Page, PageBody } from "maishu-jueying-core";
 import { LocalService } from "../services/local-service";
 import { ComponentLoader } from "../../asset/controls/component-loader"
-//D:\projects\taro-builder\node_modules\@tarojs\components\dist\index.js
+import { PageHelper } from "../../asset/controls/page-helper";
+
 interface State {
     pageData: PageData
 }
@@ -16,14 +17,22 @@ export default class PageView extends React.Component<PageProps, State> {
 
         this.state = { pageData: this.emptyPageData() };
         this.localService = this.props.createService(LocalService);
-        this.localService.getPageRecord(this.props.data.id as string).then(r => {
-            ComponentLoader.loadComponentTypes(r.pageData, () => this.localService.componentInfos(), (typeName, isSuccess) => {
-                this.setState({ pageData: r.pageData })
+        this.localService.getPageRecord(this.props.data.id as string)
+            .then(async r => {
+                if (!r.templateId) {
+                    return r;
+                }
+
+                let template = await this.localService.getPageRecord(r.templateId);
+                PageHelper.mergeTemplate(r.pageData, template.pageData);
+                return r;
+            })
+            .then(r => {
+
+                ComponentLoader.loadComponentTypes(r.pageData, () => this.localService.componentInfos(), (typeName, isSuccess) => {
+                    this.setState({ pageData: r.pageData })
+                });
             });
-
-            // this.setState({ pageData: r.pageData })
-        });
-
     }
     emptyPageData() {
         let pageId = guid();

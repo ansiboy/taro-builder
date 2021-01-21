@@ -8,15 +8,6 @@ Service.headers["application-id"] = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
 
 export class LocalService extends Service {
 
-    // private defaultApplicationId = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
-
-    // get applicationId(): string {
-    //     if (!super.applicationId)
-    //         return this.defaultApplicationId;
-
-    //     return super.applicationId;
-    // }
-
     url(path: string): string {
         let u = this.localServiceUrl(path);
         return u;
@@ -93,6 +84,12 @@ export class LocalService extends Service {
             this._componentStationConfig = await this.get<ComponentStationConfig>(url);
         }
         return this._componentStationConfig;
+    }
+
+    async templateList(): Promise<PageRecord[]> {
+        let url = this.url("page-data/template-list");
+        let r = this.getByJson<PageRecord[]>(url);
+        return r;
     }
 }
 
