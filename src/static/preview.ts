@@ -33,7 +33,6 @@ requirejs.config({
         "maishu-toolkit": `${node_modules}/maishu-toolkit/dist/index`,
         "maishu-ui-toolkit": `${node_modules}/maishu-ui-toolkit/dist/index`,
         "maishu-services-sdk": `${node_modules}/maishu-services-sdk/dist/index`,
-        "maishu-dzg-shop": `${node_modules}/maishu-haoyi-dzg/`,
         "maishu-chitu-admin/static": `${node_modules}/maishu-chitu-admin/dist/index`,
         "modules": "mobile/modules",
         "common/static": "/common/static",
