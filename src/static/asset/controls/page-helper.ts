@@ -70,16 +70,21 @@ export class PageHelper {
         if (!pageData) throw errors.argumentNull("pageData");
         if (!template) throw errors.argumentNull("template");
 
-        let templateHeaderData = PageHelper.findHeader(template);
-        let templateHeaderChildren = template.children.filter(o => o.parentId == templateHeaderData.id);
-        let templateFooterData = PageHelper.findFooter(template);
-        let templateFooterChildren = template.children.filter(o => o.parentId == templateFooterData.id);
-        let templateBodyData = PageHelper.findBody(template);
-        let templateBodyChildren = template.children.filter(o => o.parentId == templateBodyData.id);
-
         let pageHeaderData = PageHelper.findHeader(pageData, true);
         let pageFooterData = PageHelper.findFooter(pageData, true);
         let pageBodyData = PageHelper.findBody(pageData, true);
+
+        let templateHeaderData = PageHelper.findHeader(template);
+        let templateHeaderChildren = template.children.filter(o => o.parentId == templateHeaderData.id);
+        templateHeaderChildren.forEach(c => c.parentId = pageHeaderData.id);
+
+        let templateFooterData = PageHelper.findFooter(template);
+        let templateFooterChildren = template.children.filter(o => o.parentId == templateFooterData.id);
+        templateFooterChildren.forEach(c => c.parentId = pageFooterData.id);
+
+        let templateBodyData = PageHelper.findBody(template);
+        let templateBodyChildren = template.children.filter(o => o.parentId == templateBodyData.id);
+        templateBodyChildren.forEach(c => c.parentId = pageBodyData.id);
 
         let pageDataControlIds = pageData.children.map(o => o.id);
         [...templateHeaderChildren, ...templateBodyChildren, ...templateFooterChildren].forEach((c, i) => {
@@ -88,14 +93,6 @@ export class PageHelper {
                 return;
             }
 
-            if (i <= templateHeaderChildren.length - 1)
-                c.parentId = pageHeaderData.id;
-            else if (i <= templateHeaderChildren.length + templateBodyChildren.length - 1)
-                c.parentId = pageBodyData.id;
-            else
-                c.parentId = pageFooterData.id;
-
-            // c.parentId = i <= templateHeaderChildren.length - 1 ? pageHeaderData.id : pageFooterData.id;
             pageData.children.push(c);
             c.selected = false;
         })
