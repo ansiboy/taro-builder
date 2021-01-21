@@ -4,6 +4,7 @@ import {
 } from "maishu-jueying-core";
 import { guid } from "maishu-toolkit";
 import { errors } from "../../../errors";
+import { ComponentContainerProps } from "../controls/design-components/component-container";
 
 export class PageHelper {
     static emptyPageData(): PageData {
@@ -95,7 +96,10 @@ export class PageHelper {
 
             pageData.children.push(c);
             c.selected = false;
-        })
+        });
+
+        (pageHeaderData.props as ComponentContainerProps).enable = false;
+        (pageFooterData.props as ComponentContainerProps).enable = false;
 
         return pageData;
     }

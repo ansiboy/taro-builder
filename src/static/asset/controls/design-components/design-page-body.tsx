@@ -3,8 +3,7 @@ import * as React from "react";
 import { ComponentContainer } from "./component-container";
 import { DesignPageContext } from "./design-page";
 
-// @component({ type: PageBody.typeName })
-export class DesignPageBody extends React.Component<PageBodyProps> {
+export class DesignPageBody extends React.Component<PageBodyProps & { enable?: boolean }> {
     render() {
         return <DesignPageContext.Consumer>
             {args => {
@@ -25,7 +24,7 @@ export class DesignPageBody extends React.Component<PageBodyProps> {
                 }
 
                 style.display = this.props.visible ? "" : "none";
-                return <ComponentContainer className={PageBody.className} {...this.props} style={style} />
+                return <ComponentContainer className={PageBody.className} {...this.props} style={style} enable={this.props.enable} />
             }}
         </DesignPageContext.Consumer>
     }

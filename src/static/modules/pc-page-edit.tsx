@@ -13,7 +13,6 @@ import { componentRenders } from "../asset/component-renders/index";
 import { dataSources } from "../asset/data-sources";
 import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
-import { template } from "@babel/core";
 
 interface State {
     pageRecord?: PageRecord,
