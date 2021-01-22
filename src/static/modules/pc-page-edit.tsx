@@ -9,7 +9,7 @@ import { ComponentPanel } from "../asset/controls/component-panel";
 import { ComponentLoader } from "../asset/controls/component-loader";
 import { DesignPage } from "../asset/controls/design-components/index";
 import "./pc-page-edit.less";
-import { componentRenders } from "../asset/component-renders/index";
+import { getComponentRender } from "../asset/component-renders/index";
 import { dataSources } from "../asset/data-sources";
 import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
@@ -193,9 +193,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
     private async showHeader(pageData: PageData, visible: boolean) {
         let c = PageHelper.findHeader(pageData, true);
         c.props.visible = visible;
-        c.props["style"] = {
-            position: "absolute",
-        } as React.CSSProperties;
+        c.props["style"] = {} as React.CSSProperties;
 
         let pageRecord = this.state.pageRecord;
         pageRecord.pageData = pageData;
@@ -414,7 +412,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
                         </div>
                         <EditorPanel className="well" customRender={(editComponents, propEditors) => {
                             let typeName = editComponents[0].type;
-                            let componentEditorCustomRender = componentRenders[typeName];
+                            let componentEditorCustomRender = getComponentRender(typeName);
                             if (!componentEditorCustomRender)
                                 return null;
 

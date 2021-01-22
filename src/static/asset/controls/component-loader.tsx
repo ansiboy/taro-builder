@@ -3,9 +3,9 @@ import { registerComponent, PageData, componentTypes, ComponentData } from "mais
 
 import { errors } from "../errors";
 import { LocalService } from "../services/local-service";
-import { FakeComponent } from "./design-view/fake-component";
-import { createComponentLoadFail } from "./design-view/load-fail-component";
 import InfoComponent from "./info-component";
+import * as React from "react";
+import { guid } from "maishu-toolkit";
 
 /** 组件描述信息 */
 export interface ComponentInfo {
@@ -165,15 +165,14 @@ async function loadComponentLayout(componentInfo: ComponentInfo): Promise<any> {
     if (componentInfo.layout == null)
         return Promise.resolve();
     //import { componentRenders } from "../component-renders/index";
-
     return new Promise((resolve, reject) => {
-        requirejs([`${componentInfo.layout}`, "../component-renders/index"], (mod, componentRenders) => {
+        requirejs([`${componentInfo.layout}`, "asset/component-renders/index"], (mod, renderModule) => {
             let func = mod?.default || mod;
             if (typeof func != "function") {
                 console.error(`Module ${componentInfo.layout} is not a function.`)
                 resolve({});
             }
-            componentRenders[componentInfo.type] = mod.default || mod;
+            renderModule.setComponentRender(componentInfo.type, mod.default || mod);
             resolve(mod);
         }, err => {
             reject(err);
@@ -182,3 +181,23 @@ async function loadComponentLayout(componentInfo: ComponentInfo): Promise<any> {
     })
 }
 
+export class FakeComponent extends React.Component<any> {
+    render() {
+        return <div key={this.props.id || guid()} style={{ padding: "50px 0 50px 0", textAlign: "center" }}>
+            组件正在加载中...
+        </div>
+    }
+}
+
+export function createComponentLoadFail(error: any, reload: () => void) {
+    return class ComponentLoadFail extends React.Component {
+        render() {
+            let msg = typeof error == "string" ? error : error.message;
+            return <div>
+                <div onClick={e => reload()}>组件加载错误, 点击重新加载</div>
+                <div>{msg}</div>
+            </div>
+        }
+    }
+
+}

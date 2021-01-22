@@ -8,7 +8,7 @@ declare let requirejs: {
 };
 
 
-declare function define(module: string, callback: Function): void;
+declare function define(module: string | string[], callback: Function): void;
 
 // declare module "components/carousel" {
 //     let a: typeof import("../../sample-app/src/components/carousel/component");
