@@ -1,6 +1,6 @@
 import { errorHandle } from "../../asset/errorHandle";
 import { registerComponent, PageData, componentTypes, ComponentData } from "maishu-jueying-core";
-import { componentRenders } from "../component-renders/index";
+
 import { errors } from "../errors";
 import { LocalService } from "../services/local-service";
 import { FakeComponent } from "./design-view/fake-component";
@@ -27,7 +27,9 @@ export interface ComponentInfo {
 
 let localService = new LocalService(err => errorHandle(err));
 export class ComponentLoader {
-    static loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, componentInfo: ComponentInfo) => void) {
+    static loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, componentInfo: ComponentInfo) => void, isRuntimeMode?: boolean) {
+        isRuntimeMode = isRuntimeMode == null ? false : isRuntimeMode;
+        let isDesignMode = !isRuntimeMode;
         let pageDataComponentTypes: string[] = [];
         let stack: Array<ComponentData> = [...pageData.children];
         while (stack.length > 0) {
@@ -54,7 +56,7 @@ export class ComponentLoader {
             let componentType = componentTypes[type] as any;
             if (componentType == null) {
                 registerComponent(type, FakeComponent);
-                loadComponentType(type).then(c => {
+                loadComponentType(type, isDesignMode).then(c => {
                     registerComponent(type, c.componentType);
                     loadComponentFinish(type, c.componentInfo);
 
@@ -107,7 +109,7 @@ export class ComponentLoader {
 }
 
 
-async function loadComponentType(typeName: string) {
+async function loadComponentType(typeName: string, isDesignMode: boolean) {
     let componentInfos = await localService.componentInfos();
     let componentInfo = componentInfos.filter(o => o.type == typeName)[0];
     if (componentInfo == null) {
@@ -121,11 +123,8 @@ async function loadComponentType(typeName: string) {
 
     }
 
-    let path = componentInfo.design || componentInfo.path;
+    let path = isDesignMode ? componentInfo.design || componentInfo.path : componentInfo.path;
 
-    // let editorPromise = loadComponentEditor(componentInfo);
-    // let layoutPromise = loadComponentLayout(componentInfo);
-    // let componentPromise = 
     let componentType = await new Promise<React.ComponentClass<any>>((resolve, reject) => {
         requirejs([`${path}`], (mod) => {
             let compoenntType: React.ComponentClass<any> = mod[typeName] || mod["default"];
@@ -165,9 +164,10 @@ async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {
 async function loadComponentLayout(componentInfo: ComponentInfo): Promise<any> {
     if (componentInfo.layout == null)
         return Promise.resolve();
+    //import { componentRenders } from "../component-renders/index";
 
     return new Promise((resolve, reject) => {
-        requirejs([`${componentInfo.layout}`], (mod) => {
+        requirejs([`${componentInfo.layout}`, "../component-renders/index"], (mod, componentRenders) => {
             let func = mod?.default || mod;
             if (typeof func != "function") {
                 console.error(`Module ${componentInfo.layout} is not a function.`)
@@ -181,3 +181,4 @@ async function loadComponentLayout(componentInfo: ComponentInfo): Promise<any> {
 
     })
 }
+

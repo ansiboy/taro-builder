@@ -28,10 +28,9 @@ export default class PageView extends React.Component<PageProps, State> {
                 return r;
             })
             .then(r => {
-
                 ComponentLoader.loadComponentTypes(r.pageData, (typeName, isSuccess) => {
                     this.setState({ pageData: r.pageData })
-                });
+                }, true);
             });
     }
     emptyPageData() {

@@ -47,29 +47,9 @@ export class LocalService extends Service {
         return r;
     }
 
-    private _componentInfos: ComponentInfo[];
     async componentInfos() {
-        let componentStationPath = websiteConfig.componentStationPath;
-        if (this._componentInfos == null) {
-            let config = await this.componentStationConfig();
-            this._componentInfos = config.components;
-
-            this._componentInfos.forEach(o => {
-                if (o.path != null)
-                    o.path = pathConcat(componentStationPath, o.path);
-
-                if (o.editor != null)
-                    o.editor = pathConcat(componentStationPath, o.editor);
-
-                if (o.design != null)
-                    o.design = pathConcat(componentStationPath, o.design);
-
-                if (o.layout != null)
-                    o.layout = pathConcat(componentStationPath, o.layout);
-
-            })
-        }
-        return this._componentInfos;
+        let config = await this.componentStationConfig();
+        return config.components;
     }
 
     async componentGroups() {
@@ -80,10 +60,28 @@ export class LocalService extends Service {
     private _componentStationConfig: ComponentStationConfig;
     async componentStationConfig(): Promise<ComponentStationConfig> {
         let componentStationPath = "design";
-        if (this._componentStationConfig == null) {
-            let url = this.url(`${componentStationPath}/config.json`);
-            this._componentStationConfig = await this.get<ComponentStationConfig>(url);
-        }
+        if (this._componentStationConfig != null)
+            return this._componentStationConfig;
+
+        let url = this.url(`${componentStationPath}/config.json`);
+        this._componentStationConfig = await this.get<ComponentStationConfig>(url);
+
+        let _componentInfos = this._componentStationConfig.components;
+        _componentInfos.forEach(o => {
+            if (o.path != null)
+                o.path = pathConcat(componentStationPath, o.path);
+
+            if (o.editor != null)
+                o.editor = pathConcat(componentStationPath, o.editor);
+
+            if (o.design != null)
+                o.design = pathConcat(componentStationPath, o.design);
+
+            if (o.layout != null)
+                o.layout = pathConcat(componentStationPath, o.layout);
+
+        })
+
         return this._componentStationConfig;
     }
 

@@ -35,7 +35,7 @@ export default class MobilePage extends React.Component<Props, State>{
 
         ComponentLoader.loadComponentTypes(r.pageData, () => {
             this.setState({});
-        });
+        }, true);
         this.setState({ pageData: r.pageData });
     }
 

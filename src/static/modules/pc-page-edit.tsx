@@ -20,7 +20,8 @@ interface State {
     isReady: boolean,
     // pageName: string,
     templateRecord?: PageRecord,
-    templateList?: PageRecord[]
+    templateList?: PageRecord[],
+    groups?: { id: string, name: string }[]
 }
 
 interface Props extends PageProps {
@@ -44,10 +45,11 @@ export default class PCPageEdit extends React.Component<Props, State> {
         };
 
         this.localService = this.props.app.createService(LocalService);
-        this.localService.componentInfos().then(componentInfos => {
+        this.localService.componentStationConfig().then(c => {
+            let componentInfos = c.components;
             console.assert(componentInfos != null);
             componentInfos = componentInfos.filter(o => o.displayName != null);
-            this.setState({ componentInfos });
+            this.setState({ componentInfos, groups: c.groups });
             this.componentPanel.setComponets(componentInfos.map(o => Object.assign(o, {
                 componentData: { type: o.type, props: {} } as ComponentData
             })));
@@ -333,7 +335,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
                                 </li>
                                 <li className="list-group-item clearfix">
                                     <div className="pull-left">
-                                        视图尺寸</div>
+                                        页面模板</div>
                                     <div className="pull-right">
                                         <select className="form-control" value={templateRecord?.id || ""} style={{ width: 180 }}
                                             onChange={e => this.changeTemplate(e.target.value)}>
