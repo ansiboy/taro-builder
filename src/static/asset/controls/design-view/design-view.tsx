@@ -1,7 +1,7 @@
 import * as React from "react";
 import { EditorPanel, PageDesigner, DesignerContext, EditorPanelProps } from "maishu-jueying";
 import "jquery-ui"
-import { ComponentPanel, ComponentDefine, commonGroup } from "../component-panel";
+import { ComponentPanel, commonGroup } from "../component-panel";
 import { PageData } from "maishu-jueying-core";
 import { DesignPage } from "../design-components/index";
 import "../design-components/index";
@@ -9,6 +9,7 @@ import { PageHelper } from "../page-helper";
 import { ComponentLoader } from "../component-loader";
 import { services } from "../../services/index";
 import { ComponentInfo } from "../../../model";
+import { guid } from "maishu-jueying/out/common";
 
 interface Props {
     // app: Application,
@@ -146,14 +147,17 @@ export class DesignView extends React.Component<Props, State> {
     componentDidMount() {
         //==========================================================================================
         // 设置组件工具栏
-        let componentDefines = this.props.componentInfos.map(o => Object.assign({
-            componentData: {
-                type: o.type,
-                props: {},
-            }
-        }, o) as ComponentDefine)
+        // let componentDefines = this.props.componentInfos.map(o => Object.assign({
+        //     componentData: {
+        //         type: o.type,
+        //         props: {},
+        //     }
+        // }, o) as ComponentDefine)
+        this.props.componentInfos.forEach(c => {
+            c.data = c.data || { id: guid(), type: c.type, props: {} }
+        })
 
-        this.componentPanel.setComponets(componentDefines);
+        this.componentPanel.setComponets(this.props.componentInfos);
         //==========================================================================================
         this.setState({ isReady: true, });
     }

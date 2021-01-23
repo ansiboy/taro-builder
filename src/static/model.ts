@@ -1,3 +1,5 @@
+import { ComponentData } from "maishu-jueying-core";
+
 export interface ComponentInfo {
     displayName?: string;
     type: string;
@@ -9,4 +11,5 @@ export interface ComponentInfo {
     icon?: string;
     introduce?: string;
     group?: string;
+    data?: ComponentData
 }

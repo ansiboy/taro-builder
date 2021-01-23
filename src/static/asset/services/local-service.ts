@@ -2,7 +2,6 @@ import { Service } from "maishu-chitu-service";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
 import { PageRecord } from "../../../entities";
 import { pathConcat } from "maishu-toolkit";
-import websiteConfig from "website-config";
 import { ComponentInfo } from "../../model";
 
 Service.headers["application-id"] = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";

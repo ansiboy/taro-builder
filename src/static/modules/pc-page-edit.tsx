@@ -14,6 +14,7 @@ import { dataSources } from "../asset/data-sources";
 import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
 import { ComponentInfo } from "../model";
+import { guid } from "maishu-toolkit";
 
 interface State {
     pageRecord?: PageRecord,
@@ -51,6 +52,9 @@ export default class PCPageEdit extends React.Component<Props, State> {
             console.assert(componentInfos != null);
             componentInfos = componentInfos.filter(o => o.displayName != null);
             this.setState({ componentInfos, groups: c.groups });
+            componentInfos.forEach(c => {
+                c.data = c.data || { id: guid(), type: c.type, props: {} };
+            })
             this.componentPanel.setComponets(componentInfos.map(o => Object.assign(o, {
                 componentData: { type: o.type, props: {} } as ComponentData
             })));

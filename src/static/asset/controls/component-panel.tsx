@@ -1,24 +1,23 @@
 import * as React from "react";
 import { classNames } from "maishu-jueying";
-import { ComponentData } from "maishu-jueying-core";
 import * as $ from "jquery";
 import "jquery-ui";
 import { ComponentInfo } from "../../model";
 
-interface ComponentToolbarProps extends React.Props<ComponentPanel> {
+interface ComponentToolbarProps extends React.ClassAttributes<ComponentPanel> {
     style?: React.CSSProperties,
     className?: string,
     empty?: string | JSX.Element,
 }
 
 interface ComponentToolbarState {
-    components: ComponentDefine[],
+    components: ComponentInfo[],
     group: string,
 }
 
-export type ComponentDefine = ComponentInfo & {
-    componentData: ComponentData,
-}
+// export type ComponentDefine = ComponentInfo & {
+//     componentData: ComponentData,
+// }
 
 export let commonGroup = "common";
 export class ComponentPanel extends React.Component<ComponentToolbarProps, ComponentToolbarState> {
@@ -35,7 +34,7 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
         return this.toolbarElement;
     }
 
-    setComponets(components: ComponentDefine[]) {
+    setComponets(components: ComponentInfo[]) {
         components.forEach(c => {
             if (c.sortNumber == null)
                 c.sortNumber = 0;
@@ -69,7 +68,7 @@ export class ComponentPanel extends React.Component<ComponentToolbarProps, Compo
             ref={(e: HTMLElement) => this.toolbarElement = this.toolbarElement || e}>
             {components.length == 0 ? empty : components.map((c, i) => {
                 let props = { key: i };
-                props[this.COMPONENT_DATA] = JSON.stringify(c.componentData);
+                props[this.COMPONENT_DATA] = JSON.stringify(c.data);
                 return <li {...props} title={c.introduce} data-sort-number={c.sortNumber}>
                     <div className="btn-link">
                         <i className={c.icon} style={{ fontSize: 44, color: 'black' }}
