@@ -9,6 +9,7 @@ import { dataSources } from "../asset/data-sources";
 // import { ComponentInfo } from "taro-builder-core";
 import { PageHelper } from "../asset/controls/page-helper";
 import { EditorPanelProps } from "maishu-jueying";
+import { ComponentInfo } from "../model";
 
 interface State {
     pageRecord?: PageRecord,

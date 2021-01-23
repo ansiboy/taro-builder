@@ -8,6 +8,7 @@ import "../design-components/index";
 import { PageHelper } from "../page-helper";
 import { ComponentLoader } from "../component-loader";
 import { services } from "../../services/index";
+import { ComponentInfo } from "../../../model";
 
 interface Props {
     // app: Application,

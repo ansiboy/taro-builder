@@ -13,6 +13,7 @@ import { getComponentRender } from "../asset/component-renders/index";
 import { dataSources } from "../asset/data-sources";
 import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
+import { ComponentInfo } from "../model";
 
 interface State {
     pageRecord?: PageRecord,

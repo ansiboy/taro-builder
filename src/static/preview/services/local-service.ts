@@ -2,6 +2,7 @@ import { Service } from "maishu-chitu-service";
 import { PageRecord } from "../../../entities";
 import websiteConfig from "website-config";
 import { pathConcat } from "maishu-toolkit";
+import { ComponentInfo } from "../../model";
 
 export class LocalService extends Service {
     async getPageRecord(id: string): Promise<PageRecord> {

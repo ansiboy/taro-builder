@@ -3,6 +3,7 @@ import { classNames } from "maishu-jueying";
 import { ComponentData } from "maishu-jueying-core";
 import * as $ from "jquery";
 import "jquery-ui";
+import { ComponentInfo } from "../../model";
 
 interface ComponentToolbarProps extends React.Props<ComponentPanel> {
     style?: React.CSSProperties,
