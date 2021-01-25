@@ -106,6 +106,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
         }
         else {
             pageRecord = this.emptyRecord() as PageRecord;
+            pageRecord.name = this.props.data.name;
         }
 
         if (!pageRecord.pageData) {

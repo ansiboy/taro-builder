@@ -9,7 +9,7 @@ import { PageHelper } from "../page-helper";
 import { ComponentLoader } from "../component-loader";
 import { services } from "../../services/index";
 import { ComponentInfo } from "../../../model";
-import { guid } from "maishu-jueying/out/common";
+import { guid } from "maishu-toolkit";
 
 interface Props {
     // app: Application,

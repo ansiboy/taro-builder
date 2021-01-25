@@ -6,7 +6,7 @@
         "outDir": "../out",
         "declaration": true,
         "jsx": "react",
-        "allowJs": false
+        "allowJs": false,
     },
     "exclude": [
         "sample-app",

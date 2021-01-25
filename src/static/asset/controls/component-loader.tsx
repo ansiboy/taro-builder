@@ -67,7 +67,7 @@ export class ComponentLoader {
                         ComponentLoader.loadComponentTypes(pageData, loadComponentFinish);
                     });
                     registerComponent(type, componentType);
-                    loadComponentFinish(type, null);
+                    // loadComponentFinish(type, null);
                 })
             }
         }
