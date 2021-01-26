@@ -141,6 +141,7 @@ export default class InfoComponent extends React.Component<Props> {
             ],
             plugins: [
                 ["@babel/plugin-transform-typescript", { isTSX: true }],
+                ["@babel/plugin-transform-react-jsx", { "pragma": "React.createElement", "pragmaFrag": "React.Fragment" }],
                 ["@babel/plugin-transform-modules-amd", { noInterop: true }]
             ]
         })
