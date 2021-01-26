@@ -127,13 +127,25 @@ export default class InfoComponent extends React.Component<Props> {
     render() {
         let { text } = this.props;
         return <div className="text-center" style={{ paddingTop: 20, paddingBottom: 20 }}>
-            {${d.text}}
+            ${d.text}
         </div>
     }
 }
         `;
 
-        return new ContentResult(script, { "Content-Type": `application/x-javascript; charset=utf8` });
+        let b = JavaScriptProcessor.transformJS(script, {
+            "presets": [
+                ["@babel/preset-env", {
+                    "targets": { chrome: 58 }
+                }],
+            ],
+            plugins: [
+                ["@babel/plugin-transform-typescript", { isTSX: true }],
+                ["@babel/plugin-transform-modules-amd", { noInterop: true }]
+            ]
+        })
+
+        return new ContentResult(b, { "Content-Type": `application/x-javascript; charset=utf8` });
     }
 
     @action("template-list")
