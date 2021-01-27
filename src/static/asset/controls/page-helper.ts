@@ -35,7 +35,7 @@ export class PageHelper {
         }
         return c;
     }
-    static findHeader(pageData: PageData, createIfNotExists: boolean = false): HeaderComponentData {
+    static findHeader(pageData: PageData, createIfNotExists: boolean = false): HeaderComponentData | null {
         if (pageData == null) throw errors.argumentNull("pageData");
 
         let c = pageData.children.filter(o => typeof o != "string" && o.type == PageHeader.typeName)[0];
@@ -76,15 +76,15 @@ export class PageHelper {
         let pageBodyData = PageHelper.findBody(pageData, true);
 
         let templateHeaderData = PageHelper.findHeader(template);
-        let templateHeaderChildren = template.children.filter(o => o.parentId == templateHeaderData.id);
+        let templateHeaderChildren = templateHeaderData ? template.children.filter(o => o.parentId == templateHeaderData.id) : [];
         templateHeaderChildren.forEach(c => c.parentId = pageHeaderData.id);
 
         let templateFooterData = PageHelper.findFooter(template);
-        let templateFooterChildren = template.children.filter(o => o.parentId == templateFooterData.id);
+        let templateFooterChildren = templateFooterData ? template.children.filter(o => o.parentId == templateFooterData.id) : [];
         templateFooterChildren.forEach(c => c.parentId = pageFooterData.id);
 
         let templateBodyData = PageHelper.findBody(template);
-        let templateBodyChildren = template.children.filter(o => o.parentId == templateBodyData.id);
+        let templateBodyChildren = templateBodyData ? template.children.filter(o => o.parentId == templateBodyData.id) : [];
         templateBodyChildren.forEach(c => c.parentId = pageBodyData.id);
 
         let pageDataControlIds = pageData.children.map(o => o.id);
