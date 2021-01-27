@@ -35,6 +35,13 @@ let websiteConfig = {
         { id: "494B35BB-FA79-459E-8F27-45B2DAB8F53D", name: "购物车", path: "#pc-page-edit?name=shopping-cart" },
         { id: "B57D6BE3-56C3-42BF-A784-0CE88B1DD22C", name: "模板页", path: "#pc-page-edit?name=template" },
         { id: "07FC8953-9D4F-417D-B3C9-3861C4327CD5", name: "订单支付", path: "#pc-page-edit?name=checkouts" },
+        { id: "53813E5B-A7C4-497A-B010-5455E847FB12", name: "订单列表", path: "#pc-page-edit?name=order-list" },
+        { id: "72CBEFAC-5AFB-4E80-9ECD-26DCBC6B9F4B", name: "订单详情", path: "#pc-page-edit?name=order-detail" },
+        { id: "B9EB2282-EC49-402C-BFAB-DD4E7F4B8879", name: "登录", path: "#pc-page-edit?name=login" },
+        { id: "921B36A9-D464-4657-9F57-16B8214FA7F8", name: "注册", path: "#pc-page-edit?name=register" },
+        { id: "E0D3BC32-989E-4C22-9C75-523820C4ED76", name: "忘记密码", path: "#pc-page-edit?name=forget-password" },
+        { id: "99CEE6E1-7B84-4012-8828-A550CAD99411", name: "地址列表", path: "#pc-page-edit?name=receipt-list" },
+        { id: "52996F0A-C263-41BF-8891-6ED5421DB44F", name: "地址编辑", path: "#pc-page-edit?name=receipt-edit" }
 
     ]
 };
