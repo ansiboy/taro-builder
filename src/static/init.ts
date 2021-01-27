@@ -19,7 +19,6 @@ export default async function (args: InitArguments) {
             let arr = pagePath.split("/");
             let stationPath = arr.shift();
             path = pathConcat(stationPath, "modules", arr.join("/"));
-            debugger;
 
         }
         return loadjs.apply(this, [path]);
