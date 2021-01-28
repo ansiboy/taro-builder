@@ -3,6 +3,7 @@ import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui
 import { PageRecord } from "../../../entities";
 import { pathConcat } from "maishu-toolkit";
 import { ComponentInfo } from "../../model";
+import websiteConfig from "website-config";
 
 Service.headers["application-id"] = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
 
@@ -63,8 +64,11 @@ export class LocalService extends Service {
         if (this._componentStationConfig != null)
             return this._componentStationConfig;
 
-        let url = this.url(`${componentStationPath}/config.json`);
-        this._componentStationConfig = await this.get<ComponentStationConfig>(url);
+        let url = this.url(`${componentStationPath}/${websiteConfig.componentStationConfig}`);
+        if (url.endsWith(".json"))
+            this._componentStationConfig = await this.get<ComponentStationConfig>(url);
+        else
+            this._componentStationConfig = await this.loadJS(url);
 
         let _componentInfos = this._componentStationConfig.components;
         _componentInfos.forEach(o => {
@@ -89,6 +93,16 @@ export class LocalService extends Service {
         let url = this.url("page-data/template-list");
         let r = this.getByJson<PageRecord[]>(url);
         return r;
+    }
+
+    async loadJS<T>(jsPath: string): Promise<T> {
+        return new Promise((resolve, reject) => {
+            requirejs([jsPath], (mod) => {
+                resolve(mod.default || mod)
+            }, err => {
+                reject(err)
+            })
+        })
     }
 }
 

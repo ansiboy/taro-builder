@@ -2,7 +2,7 @@ export let libVirtualPath = "asset/lib";
 let websiteConfig = {
     //===================================================
     // 组件站点配置
-    componentStationConfig: "config.json",
+    componentStationConfig: "config.js",
     componentStationPath: "design",
     //===================================================
     requirejs: {
