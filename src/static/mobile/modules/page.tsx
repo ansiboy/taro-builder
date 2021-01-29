@@ -4,7 +4,7 @@ import { errors } from "../../asset/errors";
 import { ComponentLoader } from "../../asset/controls/component-loader";
 import * as React from "react";
 import { LocalService } from "../../asset/services/local-service";
-import { errorHandle } from "../../asset/errorHandle";
+import { errorHandle } from "../../asset/error-handle";
 
 interface State {
     pageData?: PageData
