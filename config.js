@@ -6,9 +6,9 @@ const path = require("path");
 let db = {
     type: "mysql", host: "127.0.0.1", username: "root", password: "81263",
     port: 3306, name: "taro-builder", database: "taro-builder", entities: [path.join(__dirname, "./out/entities.js")],
-    synchronize: true,
+    synchronize: false,
 };
-let componentStation = "http://192.168.2.118:6736";
+let componentStation = "http://192.168.2.94:6736";
 let port = 5216;
 //=============================================================
 
