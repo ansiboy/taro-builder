@@ -8,7 +8,7 @@ let db = {
     port: 3306, name: "taro-builder", database: "taro-builder", entities: [path.join(__dirname, "./out/entities.js")],
     synchronize: true,
 };
-let componentStation = "http://192.168.2.118:6736";
+let componentStation = "http://192.168.2.94:6736";
 let port = 5216;
 //=============================================================
 
