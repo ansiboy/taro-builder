@@ -1,4 +1,4 @@
-import { errorHandle } from "../../asset/errorHandle";
+import { errorHandle } from "../../asset/error-handle";
 import { registerComponent, PageData, componentTypes, ComponentData } from "maishu-jueying-core";
 
 import { errors } from "../errors";

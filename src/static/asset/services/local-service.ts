@@ -60,9 +60,11 @@ export class LocalService extends Service {
 
     private _componentStationConfig: ComponentStationConfig;
     async componentStationConfig(): Promise<ComponentStationConfig> {
-        let componentStationPath = "design";
+        let componentStationPath = websiteConfig.componentStationPath;
         if (this._componentStationConfig != null)
             return this._componentStationConfig;
+
+
 
         let url = this.url(`${componentStationPath}/${websiteConfig.componentStationConfig}`);
         if (url.endsWith(".json"))
@@ -71,20 +73,24 @@ export class LocalService extends Service {
             this._componentStationConfig = await this.loadJS(url);
 
         let _componentInfos = this._componentStationConfig.components;
-        _componentInfos.forEach(o => {
-            if (o.path != null)
-                o.path = pathConcat(componentStationPath, o.path);
+        if (!_componentInfos["pathContacted"]) {
+            _componentInfos["pathContacted"] = true;
+            _componentInfos.forEach(o => {
+                if (o.path != null)
+                    o.path = pathConcat(componentStationPath, o.path);
 
-            if (o.editor != null)
-                o.editor = pathConcat(componentStationPath, o.editor);
+                if (o.editor != null)
+                    o.editor = pathConcat(componentStationPath, o.editor);
 
-            if (o.design != null)
-                o.design = pathConcat(componentStationPath, o.design);
+                if (o.design != null)
+                    o.design = pathConcat(componentStationPath, o.design);
 
-            if (o.layout != null)
-                o.layout = pathConcat(componentStationPath, o.layout);
+                if (o.layout != null)
+                    o.layout = pathConcat(componentStationPath, o.layout);
 
-        })
+            })
+        }
+
 
         return this._componentStationConfig;
     }
