@@ -3,7 +3,6 @@ import { registerComponent, PageData, componentTypes, ComponentData } from "mais
 
 import { errors } from "../errors";
 import { LocalService } from "../services/local-service";
-import InfoComponent from "./info-component";
 import * as React from "react";
 import { guid } from "maishu-toolkit";
 
@@ -27,7 +26,7 @@ export interface ComponentInfo {
 
 let localService = new LocalService(err => errorHandle(err));
 export class ComponentLoader {
-    static loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, componentInfo: ComponentInfo) => void, isRuntimeMode?: boolean) {
+    static async loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, componentInfo: ComponentInfo) => void, isRuntimeMode?: boolean) {
         isRuntimeMode = isRuntimeMode == null ? false : isRuntimeMode;
         let isDesignMode = !isRuntimeMode;
         let pageDataComponentTypes: string[] = [];
@@ -70,6 +69,11 @@ export class ComponentLoader {
                     // loadComponentFinish(type, null);
                 })
             }
+            else {
+                let componentInfos = await localService.componentInfos();
+                let componentInfo = componentInfos[type];
+                loadComponentFinish(type, componentInfo);
+            }
         }
 
     }
@@ -87,25 +91,6 @@ export class ComponentLoader {
         return typeof c == "object" && c.id != null && c.parentId != null && c.id != null && c.props != null;
     }
 
-    static loadComponentType(compoenntInfo: ComponentInfo) {
-        if (!compoenntInfo) throw errors.argumentNull("componentInfo");
-
-        let typeName = compoenntInfo.type;
-        let path = compoenntInfo.path;
-        return new Promise((resolove, reject) => {
-            requirejs([`${compoenntInfo.path}`], (mod) => {
-                let compoenntType: React.ComponentClass<any> = mod[typeName] || mod["default"];
-                if (compoenntType == null)
-                    throw errors.moduleNotExport(path, typeName);
-
-                componentTypes[typeName] = compoenntType;
-                resolove(compoenntType);
-            }, err => {
-                reject(err);
-            });
-
-        })
-    }
 }
 
 
@@ -113,13 +98,15 @@ async function loadComponentType(typeName: string, isDesignMode: boolean) {
     let componentInfos = await localService.componentInfos();
     let componentInfo = componentInfos.filter(o => o.type == typeName)[0];
     if (componentInfo == null) {
-        // throw errors.canntFindComponentInfo(typeName);
         let error = errors.canntFindComponentInfo(typeName);;
-        componentInfo = {
-            type: InfoComponent.name,
-            path: `/info-component.js?text=${error.message}`,
-            // props: { text: error.message }
-        }
+        // componentInfo = {
+        //     type: InfoComponent.name,
+        //     path: `/info-component.js?text=${error.message}`,
+        //     // props: { text: error.message }
+        // }
+
+        let componentType = CreateInfoComponent(error.message);
+        return { componentType, componentInfo };
 
     }
 
@@ -135,7 +122,12 @@ async function loadComponentType(typeName: string, isDesignMode: boolean) {
             resolve(compoenntType);
 
         }, err => {
-            reject(err);
+            let text = typeof err == "string" ? err : err.message;
+            let componentType = CreateInfoComponent(text);
+            // return { componentType, componentInfo };
+            // reject(err);
+            // console.error(err);
+            resolve(componentType)
         })
 
     })
@@ -155,7 +147,10 @@ async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {
         requirejs([`${componentInfo.editor}`], (mod) => {
             resolve(mod);
         }, err => {
-            reject(err);
+            let text = typeof err == "string" ? err : err.message;
+            let componentType = CreateInfoComponent(text);
+            // reject(err);
+            resolve(componentType);
         })
 
     })
@@ -196,6 +191,17 @@ export function createComponentLoadFail(error: any, reload: () => void) {
             return <div>
                 <div onClick={e => reload()}>组件加载错误, 点击重新加载</div>
                 <div>{msg}</div>
+            </div>
+        }
+    }
+
+}
+
+export function CreateInfoComponent(text: string) {
+    return class InfoComponent extends React.Component {
+        render() {
+            return <div className="text-center" style={{ paddingTop: 20, paddingBottom: 20 }}>
+                {text}
             </div>
         }
     }

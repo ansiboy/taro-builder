@@ -49,6 +49,7 @@ export class PageHelper {
         }
         return c;
     }
+    
     static findFooter(pageData: PageData, createIfNotExists: boolean = false): FooterComponentData | null {
         let c = pageData.children.filter(o => typeof o != "string" && o.type == PageFooter.typeName)[0] as FooterComponentData;
         if (c == null && createIfNotExists) {
