@@ -26,7 +26,7 @@ export interface ComponentInfo {
 
 let localService = new LocalService(err => errorHandle(err));
 export class ComponentLoader {
-    static async loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName: string, componentInfo: ComponentInfo) => void, isRuntimeMode?: boolean) {
+    static async loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName?: string, componentInfo?: ComponentInfo) => void, isRuntimeMode?: boolean) {
         isRuntimeMode = isRuntimeMode == null ? false : isRuntimeMode;
         let isDesignMode = !isRuntimeMode;
         let pageDataComponentTypes: string[] = [];
@@ -50,8 +50,15 @@ export class ComponentLoader {
             }
         }
 
-        for (let i = 0; i < pageDataComponentTypes.length; i++) {
-            let type = pageDataComponentTypes[i];
+
+        let typesToLoad = pageDataComponentTypes.filter(o => componentTypes[o] == null);
+        if (typesToLoad.length == 0) {
+            loadComponentFinish();
+            return;
+        }
+
+        for (let i = 0; i < typesToLoad.length; i++) {
+            let type = typesToLoad[i];
             let componentType = componentTypes[type] as any;
             if (componentType == null) {
                 registerComponent(type, FakeComponent);
@@ -66,13 +73,8 @@ export class ComponentLoader {
                         ComponentLoader.loadComponentTypes(pageData, loadComponentFinish);
                     });
                     registerComponent(type, componentType);
-                    // loadComponentFinish(type, null);
+                    loadComponentFinish(type, null);
                 })
-            }
-            else {
-                let componentInfos = await localService.componentInfos();
-                let componentInfo = componentInfos[type];
-                loadComponentFinish(type, componentInfo);
             }
         }
 
@@ -140,7 +142,7 @@ async function loadComponentType(typeName: string, isDesignMode: boolean) {
 }
 
 async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {
-    if (componentInfo.editor == null)
+    if (componentInfo?.editor == null)
         return Promise.resolve();
 
     return new Promise((resolve, reject) => {
@@ -157,7 +159,7 @@ async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {
 }
 
 async function loadComponentLayout(componentInfo: ComponentInfo): Promise<any> {
-    if (componentInfo.layout == null)
+    if (componentInfo?.layout == null)
         return Promise.resolve();
     //import { componentRenders } from "../component-renders/index";
     return new Promise((resolve, reject) => {
