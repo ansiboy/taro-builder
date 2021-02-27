@@ -87,7 +87,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
         let templateRecord: PageRecord;
         if (this.state.pageRecord == null) {
             pageRecord = await this.getPageRecord();
-            if (pageRecord.templateId) {
+            if (pageRecord?.templateId) {
                 templateRecord = await this.localService.getPageRecord(pageRecord.templateId);
             }
         }
@@ -109,10 +109,10 @@ export default class PCPageEdit extends React.Component<Props, State> {
             pageRecord.name = this.props.data.name;
         }
 
-        if (!pageRecord.pageData) {
-            pageRecord.pageData = this.emptyPageData();
-        }
+        if (!pageRecord)
+            return null;
 
+        pageRecord.pageData = pageRecord.pageData || this.emptyPageData();
         return pageRecord;
     }
 
@@ -306,131 +306,142 @@ export default class PCPageEdit extends React.Component<Props, State> {
                     <ComponentPanel ref={e => this.componentPanel = this.componentPanel || e} />
                 </div>
             </div>
-            {pageRecord == null || componentInfos == undefined ?
-                <div className="empty">
-                    数据加载中...
-                </div> :
-                <PageDesigner pageData={pageRecord.pageData}
-                    ref={e => this.setPageDesigner(e)}>
-                    <div className="pull-right" style={{ width: 300, marginTop: -90 }}>
-                        <div className="panel panel-default">
-                            <div className="panel-heading">页面设置</div>
-                            <ul className="list-group">
-                                <li className="list-group-item clearfix">
-                                    <div className="pull-left">
-                                        页面名称</div>
-                                    <div className="pull-right">
-                                        <input name="name" className="form-control input-sm" style={{ width: 180 }} value={pageRecord.name || "No Name"}
-                                            onChange={(e) => {
-                                                pageRecord.name = e.target.value;
-                                                this.setState({ pageRecord });
-                                            }} />
-                                    </div>
-                                </li>
-                                <li className="list-group-item clearfix">
-                                    <div className="pull-left">
-                                        视图尺寸</div>
-                                    <div className="pull-right">
-                                        <input name="name" className="form-control input-sm" style={{ width: 180 }} value={""}
-                                            onChange={() => {
-
-                                            }} />
-                                    </div>
-                                </li>
-                                <li className="list-group-item clearfix">
-                                    <div className="pull-left">
-                                        页面模板</div>
-                                    <div className="pull-right">
-                                        <select className="form-control" value={templateRecord?.id || ""} style={{ width: 180 }}
-                                            onChange={e => this.changeTemplate(e.target.value)}>
-                                            <option value="">请选择模板</option>
-                                            {templateList.map(t => <option value={t.id} key={t.id}>
-                                                {t.name}
-                                            </option>)}
-                                        </select>
-                                    </div>
-                                </li>
-                                <li className="list-group-item clearfix">
-                                    <div className="pull-left">
-                                        显示主页</div>
-                                    <label className="switch pull-right">
-                                        <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                            checked={this.bodyVisible(pageData)}
-                                            onChange={e => this.showBody(pageData, e.target.checked)} />
-                                        <span className="lbl middle"></span>
-                                    </label>
-                                </li>
-                                <li className="list-group-item clearfix">
-                                    <div className="pull-left">
-                                        显示页眉</div>
-                                    <label className="switch pull-right">
-                                        <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                            checked={this.headerVisible(pageData)}
-                                            onChange={e => this.showHeader(pageData, e.target.checked)} />
-                                        <span className="lbl middle"></span>
-                                    </label>
-                                </li>
-                                <li className="list-group-item clearfix" style={{ display: this.headerVisible(pageData) ? "" : "none" }}>
-                                    <div className="pull-left">
-                                        页眉高度</div>
-                                    <div className="pull-right">
-                                        <input className="form-control input-sm" value={this.headerHeight(pageData) || ""}
-                                            style={{ width: 60, textAlign: "right", display: this.headerVisible(pageData) ? "" : "none" }}
-                                            onChange={e => {
-                                                try {
-                                                    let value = Number.parseInt(e.target.value);
-                                                    this.headerHeight(pageData, value);
-                                                }
-                                                catch {
-
-                                                }
-                                            }} />
-                                    </div>
-                                </li>
-                                <li className="list-group-item clearfix">
-                                    <div className="pull-left">
-                                        显示页脚</div>
-                                    <label className="switch pull-right">
-                                        <input type="checkbox" className="ace ace-switch ace-switch-5"
-                                            checked={this.footerVisible(pageData)}
-                                            onChange={e => this.showFooter(pageData, e.target.checked)} />
-                                        <span className="lbl middle"></span>
-                                    </label>
-                                </li>
-                                <li className="list-group-item clearfix" style={{ display: this.footerVisible(pageData) ? "" : "none" }}>
-                                    <div className="pull-left">
-                                        页脚高度</div>
-                                    <div className="pull-right">
-                                        <input className="form-control input-sm" style={{ width: 60, textAlign: "right" }}
-                                            value={this.footerHeight(pageData) || ""}
-                                            onChange={e => {
-                                                try {
-                                                    let value = Number.parseInt(e.target.value);
-                                                    this.footerHeight(pageData, value);
-                                                }
-                                                catch {
-
-                                                }
-                                            }} />
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <EditorPanel className="well" customRender={(editComponents, propEditors) => {
-                            let typeName = editComponents[0].type;
-                            let componentEditorCustomRender = getComponentRender(typeName);
-                            if (!componentEditorCustomRender)
-                                return null;
-
-                            return componentEditorCustomRender(propEditors);
-                        }}
-                            ref={e => this.editorPanel = this.editorPanel || e} />
-                    </div>
-                    <DesignerContext.Consumer>
-                        {() => isReady ? this.renderPageData(pageRecord.pageData, this.componentPanel, templateRecord?.pageData) : null}
-                    </DesignerContext.Consumer>
-                </PageDesigner>
-            }
+            {this.renderMain()}
         </>
+    }
+
+    renderMain() {
+        let { pageRecord, componentInfos, isReady, templateRecord, templateList } = this.state;
+        let pageData = pageRecord?.pageData;
+        templateList = templateList || [];
+
+        if (pageRecord === undefined || componentInfos == undefined)
+            return <div className="empty">
+                数据加载中...
+            </div>
+
+        if (pageRecord === null)
+            return <div className="empty">加载页面失败</div>
+
+        return <PageDesigner pageData={pageRecord.pageData}
+            ref={e => this.setPageDesigner(e)}>
+            <div className="pull-right" style={{ width: 300, marginTop: -90 }}>
+                <div className="panel panel-default">
+                    <div className="panel-heading">页面设置</div>
+                    <ul className="list-group">
+                        <li className="list-group-item clearfix">
+                            <div className="pull-left">
+                                页面名称</div>
+                            <div className="pull-right">
+                                <input name="name" className="form-control input-sm" style={{ width: 180 }} value={pageRecord.name || "No Name"}
+                                    onChange={(e) => {
+                                        pageRecord.name = e.target.value;
+                                        this.setState({ pageRecord });
+                                    }} />
+                            </div>
+                        </li>
+                        <li className="list-group-item clearfix">
+                            <div className="pull-left">
+                                视图尺寸</div>
+                            <div className="pull-right">
+                                <input name="name" className="form-control input-sm" style={{ width: 180 }} value={""}
+                                    onChange={() => {
+
+                                    }} />
+                            </div>
+                        </li>
+                        <li className="list-group-item clearfix">
+                            <div className="pull-left">
+                                页面模板</div>
+                            <div className="pull-right">
+                                <select className="form-control" value={templateRecord?.id || ""} style={{ width: 180 }}
+                                    onChange={e => this.changeTemplate(e.target.value)}>
+                                    <option value="">请选择模板</option>
+                                    {templateList.map(t => <option value={t.id} key={t.id}>
+                                        {t.name}
+                                    </option>)}
+                                </select>
+                            </div>
+                        </li>
+                        <li className="list-group-item clearfix">
+                            <div className="pull-left">
+                                显示主页</div>
+                            <label className="switch pull-right">
+                                <input type="checkbox" className="ace ace-switch ace-switch-5"
+                                    checked={this.bodyVisible(pageData)}
+                                    onChange={e => this.showBody(pageData, e.target.checked)} />
+                                <span className="lbl middle"></span>
+                            </label>
+                        </li>
+                        <li className="list-group-item clearfix">
+                            <div className="pull-left">
+                                显示页眉</div>
+                            <label className="switch pull-right">
+                                <input type="checkbox" className="ace ace-switch ace-switch-5"
+                                    checked={this.headerVisible(pageData)}
+                                    onChange={e => this.showHeader(pageData, e.target.checked)} />
+                                <span className="lbl middle"></span>
+                            </label>
+                        </li>
+                        <li className="list-group-item clearfix" style={{ display: this.headerVisible(pageData) ? "" : "none" }}>
+                            <div className="pull-left">
+                                页眉高度</div>
+                            <div className="pull-right">
+                                <input className="form-control input-sm" value={this.headerHeight(pageData) || ""}
+                                    style={{ width: 60, textAlign: "right", display: this.headerVisible(pageData) ? "" : "none" }}
+                                    onChange={e => {
+                                        try {
+                                            let value = Number.parseInt(e.target.value);
+                                            this.headerHeight(pageData, value);
+                                        }
+                                        catch {
+
+                                        }
+                                    }} />
+                            </div>
+                        </li>
+                        <li className="list-group-item clearfix">
+                            <div className="pull-left">
+                                显示页脚</div>
+                            <label className="switch pull-right">
+                                <input type="checkbox" className="ace ace-switch ace-switch-5"
+                                    checked={this.footerVisible(pageData)}
+                                    onChange={e => this.showFooter(pageData, e.target.checked)} />
+                                <span className="lbl middle"></span>
+                            </label>
+                        </li>
+                        <li className="list-group-item clearfix" style={{ display: this.footerVisible(pageData) ? "" : "none" }}>
+                            <div className="pull-left">
+                                页脚高度</div>
+                            <div className="pull-right">
+                                <input className="form-control input-sm" style={{ width: 60, textAlign: "right" }}
+                                    value={this.footerHeight(pageData) || ""}
+                                    onChange={e => {
+                                        try {
+                                            let value = Number.parseInt(e.target.value);
+                                            this.footerHeight(pageData, value);
+                                        }
+                                        catch {
+
+                                        }
+                                    }} />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <EditorPanel className="well" customRender={(editComponents, propEditors) => {
+                    let typeName = editComponents[0].type;
+                    let componentEditorCustomRender = getComponentRender(typeName);
+                    if (!componentEditorCustomRender)
+                        return null;
+
+                    return componentEditorCustomRender(propEditors);
+                }}
+                    ref={e => this.editorPanel = this.editorPanel || e} />
+            </div>
+            <DesignerContext.Consumer>
+                {() => isReady ? this.renderPageData(pageRecord.pageData, this.componentPanel, templateRecord?.pageData) : null}
+            </DesignerContext.Consumer>
+        </PageDesigner>
     }
 }
