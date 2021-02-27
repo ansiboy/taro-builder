@@ -32,7 +32,7 @@ let websiteConfig = {
         // { id: "811A30E2-A04D-44F7-BA18-959698DBCA47", name: "PC 页面", path: "#pc-page-edit" },
         { id: "5F4A69CA-6D36-40C7-9175-EC9D9B5E0EB2", name: "首页", path: "#pc-page-edit?name=home" },
         { id: "B3A45E5B-43A8-4A50-8196-5305A820CAA8", name: "商品列表", path: "#pc-page-edit?name=product-list" },
-        { id: "B3A45E5B-43A8-4A50-8196-5305A820CAA8", name: "商品详情", path: "#pc-page-edit?name=product" },
+        { id: "B3A45E5B-43A8-4A50-8196-5305A820CAA9", name: "商品详情", path: "#pc-page-edit?name=product" },
         { id: "494B35BB-FA79-459E-8F27-45B2DAB8F53D", name: "购物车", path: "#pc-page-edit?name=shopping-cart" },
         { id: "B57D6BE3-56C3-42BF-A784-0CE88B1DD22C", name: "模板页", path: "#pc-page-edit?name=template" },
         { id: "07FC8953-9D4F-417D-B3C9-3861C4327CD5", name: "订单支付", path: "#pc-page-edit?name=checkouts" },
