@@ -1,4 +1,3 @@
-// site.less
 .component-panel {
     display      : flex;
     margin-bottom: 10px;
@@ -77,5 +76,29 @@ a {
 }
 
 button.btn {
+    width: unset;
+}
+
+.page-view {
+    li.selected {
+        border: solid 1px blue;
+    }
+}
+
+.component-panel {
+    .empty {
+        text-align: center;
+        width     : 100%;
+        border    : solid 1px #cccccc;
+    }
+}
+
+.editor-panel {
+    label {
+        padding: 0;
+    }
+}
+
+.btn button {
     width: unset;
 }

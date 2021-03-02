@@ -37,8 +37,12 @@ export default class PageView extends React.Component<PageProps, State> {
                 // }, true);
                 let componentLoader = new ComponentLoader(r.pageData);
                 componentLoader.loadComponentsComplete.add(() => {
+                    debugger
                     this.setState({ pageData: r.pageData });
                 })
+                componentLoader.loadComponentTypes();
+            }).catch(err => {
+                debugger
             });
     }
     emptyPageData() {
