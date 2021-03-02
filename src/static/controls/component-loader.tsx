@@ -1,6 +1,6 @@
 import { registerComponent, PageData, componentTypes, ComponentData } from "maishu-jueying-core";
 
-import { errors } from "../../errors";
+import { errors } from "../errors";
 import { LocalService } from "../services";
 import * as React from "react";
 import { guid } from "maishu-toolkit";

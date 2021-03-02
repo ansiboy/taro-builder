@@ -2,7 +2,6 @@
 
 
     let node_modules = "../node_modules";
-    let lib = "lib";
     requirejs.config({
         shim: {
             fetch: {
@@ -40,11 +39,6 @@
             "maishu-services-sdk": `${node_modules}/maishu-services-sdk/dist/index`,
             "maishu-jueying-core": `${node_modules}/maishu-jueying-core/dist/index`,
             "taro-builder-core": `${node_modules}/taro-builder-core/dist/index.min`,
-            "taro-ui/dist": "node_modules/taro-ui/dist",
-
-            "@tarojs/components": `${lib}/taro-components`,
-            "@tarojs/taro-h5": `${lib}/taro-h5`,
-            "@tarojs/taro": `${lib}/taro-h5`,
 
             "common/static": "/common/static",
             "maishu-chitu-admin": `${node_modules}/maishu-chitu-admin`,
