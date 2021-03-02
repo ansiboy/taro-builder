@@ -1,7 +1,7 @@
 import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 import { PageRecord } from "../../entities";
-import { LocalService } from "../services/local-service";
+import { LocalService } from "../services";
 import { ComponentData, PageData } from "maishu-jueying-core";
 import { PageHelper } from "../controls/page-helper";
 import { DesignerContext, EditorPanel, EditorPanelProps, PageDesigner } from "maishu-jueying";
@@ -9,7 +9,7 @@ import { ComponentPanel } from "../controls/component-panel";
 import { DesignPage } from "../controls/design-components/index";
 import "./pc-page-edit.less";
 import { getComponentRender } from "../component-renders/index";
-import { dataSources } from "../data-sources";
+import { dataSources } from "../services";
 import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
 import { ComponentInfo } from "../model";

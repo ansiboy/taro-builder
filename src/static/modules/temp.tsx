@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Page, PageData, componentTypes, registerComponent } from "maishu-jueying-core";
 import { PageRecord } from "../../entities";
-import { LocalService } from "../services/local-service";
+import { LocalService } from "../services";
 import { PageView } from "../controls/page-view";
 
 // let req = requirejs.config({ context: "shop3" })

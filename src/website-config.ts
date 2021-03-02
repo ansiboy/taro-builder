@@ -24,10 +24,13 @@ let websiteConfig = {
             "maishu-wuzhui-helper": "/node_modules/maishu-wuzhui-helper/dist/index",
             "maishu-dilu": "/node_modules/maishu-dilu/dist/index",
 
-            "taro-builder-core": "/node_modules/taro-builder-core/dist/index",
+            "services": "services/index",
+
+            "devices": `${libVirtualPath}/devices.css-1.2/assets/devices.min.css`,
             "jquery": "node_modules/jquery/dist/jquery",
             "jquery-ui": `${libVirtualPath}/jquery-ui-1.12.1/jquery-ui`,
-            "devices": `${libVirtualPath}/devices.css-1.2/assets/devices.min.css`,
+            "js-md5": "node_modules/js-md5/build/md5.min",
+            "taro-builder-core": "/node_modules/taro-builder-core/dist/index",
             "taro-ui": `${libVirtualPath}/taro-ui`,
             "taro-ui/dist": "node_modules/taro-ui/dist",
             "@tarojs/components": `${libVirtualPath}/taro-components`,
@@ -36,7 +39,6 @@ let websiteConfig = {
             "nervjs": `${libVirtualPath}/nervjs`,
             "tslib": "node_modules/tslib/tslib",
             "htmlparser2": "node_modules/htmlparser2/",
-            "js-md5": "node_modules/js-md5/build/md5.min",
 
         }
     },

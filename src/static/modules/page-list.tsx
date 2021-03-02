@@ -1,6 +1,6 @@
 // import { DataListPage } from "maishu-chitu-admin/static";
 import { PageRecord } from "../../entities";
-import { dataSources } from "../data-sources";
+import { dataSources } from "../services";
 // import { boundField, dateTimeField } from "maishu-wuzhui-helper";
 import * as React from "react";
 import { boundField, createGridView, customDataField, dateTimeField } from "maishu-wuzhui-helper";

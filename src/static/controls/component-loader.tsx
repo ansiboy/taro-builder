@@ -1,7 +1,7 @@
 import { registerComponent, PageData, componentTypes, ComponentData } from "maishu-jueying-core";
 
 import { errors } from "../../errors";
-import { LocalService } from "../services/local-service";
+import { LocalService } from "../services";
 import * as React from "react";
 import { guid } from "maishu-toolkit";
 import { Callback } from "maishu-toolkit";
@@ -183,7 +183,7 @@ async function loadComponentLayout(componentInfo: ComponentInfo): Promise<any> {
         return Promise.resolve();
     //import { componentRenders } from "../component-renders/index";
     return new Promise((resolve, reject) => {
-        (require as any)([`${componentInfo.layout}`, "asset/component-renders/index"], (mod, renderModule) => {
+        (require as any)([`${componentInfo.layout}`, "component-renders/index"], (mod, renderModule) => {
             let func = mod?.default || mod;
             if (typeof func != "function") {
                 console.error(`Module ${componentInfo.layout} is not a function.`)

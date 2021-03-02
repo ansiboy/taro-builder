@@ -3,9 +3,9 @@ import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 import { buttonOnClick, Less } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";
-import { LocalService } from "../services/local-service";
+import { LocalService } from "../services";
 import { FormValidator, rules as r } from "maishu-dilu"
-import { dataSources } from "../data-sources";
+import { dataSources } from "../services";
 // import { ComponentInfo } from "taro-builder-core";
 import { PageHelper } from "../controls/page-helper";
 import { EditorPanelProps } from "maishu-jueying";

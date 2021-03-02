@@ -2,7 +2,7 @@ import { PageProps } from "maishu-chitu-react";
 import { guid } from "maishu-toolkit";
 import * as React from "react";
 import { PageData, Page, PageBody } from "maishu-jueying-core";
-import { LocalService } from "../../services/local-service";
+import { LocalService } from "../../services";
 import { ComponentLoader } from "../../controls/component-loader"
 import { PageHelper } from "../../controls/page-helper";
 
