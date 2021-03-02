@@ -26,7 +26,7 @@ let websiteConfig = {
 
             "devices": `${libVirtualPath}/devices.css-1.2/assets/devices.min.css`,
             "jquery": "node_modules/jquery/dist/jquery",
-            "jquery-ui": `node_modules/jqueryui/jquery-ui.min`,
+            "jquery-ui": `${libVirtualPath}/jquery-ui-1.12.1/jquery-ui`,
             "js-md5": "node_modules/js-md5/build/md5.min",
             "taro-builder-core": "/node_modules/taro-builder-core/dist/index",
             "taro-ui": `${libVirtualPath}/taro-ui`,
