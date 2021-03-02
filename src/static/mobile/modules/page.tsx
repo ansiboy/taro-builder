@@ -2,7 +2,7 @@ import { Page, PageData } from "maishu-jueying-core";
 import { errors } from "../../asset/errors";
 import { ComponentLoader } from "../../asset/controls/component-loader";
 import * as React from "react";
-import { LocalService } from "../../asset/services/local-service";
+import { LocalService } from "../../services/local-service";
 
 interface State {
     pageData?: PageData

@@ -1,8 +1,8 @@
 import { Service } from "maishu-chitu-service";
 import { DataSourceSelectArguments, DataSourceSelectResult } from "maishu-wuzhui-helper";
-import { PageRecord } from "../../../entities";
+import { PageRecord } from "../../entities";
 import { pathConcat } from "maishu-toolkit";
-import { ComponentInfo } from "../../model";
+import { ComponentInfo } from "../model";
 import websiteConfig from "website-config";
 import { errorHandle } from "../error-handle";
 

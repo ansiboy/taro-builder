@@ -3,7 +3,7 @@ import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 import { buttonOnClick, Less } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";
-import { LocalService } from "../asset/services/local-service";
+import { LocalService } from "../services/local-service";
 import { FormValidator, rules as r } from "maishu-dilu"
 import { dataSources } from "../asset/data-sources";
 // import { ComponentInfo } from "taro-builder-core";

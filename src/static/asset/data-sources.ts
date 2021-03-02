@@ -1,6 +1,6 @@
 import { DataSource } from "maishu-toolkit";
 import { PageRecord } from "../../entities";
-import { LocalService } from "./services/local-service";
+import { LocalService } from "../services/local-service";
 
 let localService = new LocalService();
 let pageDataDataSource = new DataSource<PageRecord>({
