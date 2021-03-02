@@ -2,7 +2,7 @@ import * as React from "react";
 import { classNames } from "maishu-jueying";
 import * as $ from "jquery";
 import "jquery-ui";
-import { ComponentInfo } from "../../model";
+import { ComponentInfo } from "../model";
 
 interface ComponentToolbarProps extends React.ClassAttributes<ComponentPanel> {
     style?: React.CSSProperties,

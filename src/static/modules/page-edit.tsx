@@ -1,13 +1,13 @@
-import { DesignView } from "../asset/controls/design-view/index";
+import { DesignView } from "../controls/design-view/index";
 import * as React from "react";
 import { PageProps } from "maishu-chitu-react";
 import { buttonOnClick, Less } from "maishu-ui-toolkit";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../services/local-service";
 import { FormValidator, rules as r } from "maishu-dilu"
-import { dataSources } from "../asset/data-sources";
+import { dataSources } from "../data-sources";
 // import { ComponentInfo } from "taro-builder-core";
-import { PageHelper } from "../asset/controls/page-helper";
+import { PageHelper } from "../controls/page-helper";
 import { EditorPanelProps } from "maishu-jueying";
 import { ComponentInfo } from "../model";
 

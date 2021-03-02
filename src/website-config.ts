@@ -1,4 +1,4 @@
-export let libVirtualPath = "asset/lib";
+export let libVirtualPath = "lib";
 let websiteConfig = {
     //===================================================
     // 组件站点配置

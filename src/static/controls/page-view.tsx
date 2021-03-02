@@ -1,7 +1,7 @@
 import * as React from "react";
 import { PageData, Page } from "maishu-jueying-core";
 import { ComponentLoader } from "./component-loader";
-import { LocalService } from "../../services/local-service";
+import { LocalService } from "../services/local-service";
 
 export interface PageViewProps {
     pageData: PageData

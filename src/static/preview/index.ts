@@ -2,7 +2,7 @@
 
 
     let node_modules = "../node_modules";
-    let lib = "../asset/lib";
+    let lib = "lib";
     requirejs.config({
         shim: {
             fetch: {

@@ -3,18 +3,18 @@ import { PageProps } from "maishu-chitu-react";
 import { PageRecord } from "../../entities";
 import { LocalService } from "../services/local-service";
 import { ComponentData, PageData } from "maishu-jueying-core";
-import { PageHelper } from "../asset/controls/page-helper";
+import { PageHelper } from "../controls/page-helper";
 import { DesignerContext, EditorPanel, EditorPanelProps, PageDesigner } from "maishu-jueying";
-import { ComponentPanel } from "../asset/controls/component-panel";
-import { DesignPage } from "../asset/controls/design-components/index";
+import { ComponentPanel } from "../controls/component-panel";
+import { DesignPage } from "../controls/design-components/index";
 import "./pc-page-edit.less";
 import { getComponentRender } from "../component-renders/index";
-import { dataSources } from "../asset/data-sources";
+import { dataSources } from "../data-sources";
 import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
 import { ComponentInfo } from "../model";
 import { guid } from "maishu-toolkit";
-import { ComponentLoader } from "../asset/controls/component-loader";
+import { ComponentLoader } from "../controls/component-loader";
 
 interface State {
     pageRecord?: PageRecord,

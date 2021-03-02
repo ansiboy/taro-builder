@@ -3,7 +3,7 @@ import {
     PageFooter, PageFooterProps, PageData, PageBodyProps
 } from "maishu-jueying-core";
 import { guid } from "maishu-toolkit";
-import { errors } from "../errors";
+import { errors } from "../../errors";
 import { ComponentContainerProps } from "../controls/design-components/component-container";
 
 export class PageHelper {

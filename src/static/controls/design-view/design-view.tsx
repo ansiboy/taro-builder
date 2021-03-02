@@ -7,7 +7,7 @@ import { DesignPage } from "../design-components/index";
 import "../design-components/index";
 import { PageHelper } from "../page-helper";
 import { ComponentLoader } from "../component-loader";
-import { ComponentInfo } from "../../../model";
+import { ComponentInfo } from "../../model";
 import { guid } from "maishu-toolkit";
 
 interface Props {

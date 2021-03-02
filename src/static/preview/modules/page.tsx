@@ -3,8 +3,8 @@ import { guid } from "maishu-toolkit";
 import * as React from "react";
 import { PageData, Page, PageBody } from "maishu-jueying-core";
 import { LocalService } from "../../services/local-service";
-import { ComponentLoader } from "../../asset/controls/component-loader"
-import { PageHelper } from "../../asset/controls/page-helper";
+import { ComponentLoader } from "../../controls/component-loader"
+import { PageHelper } from "../../controls/page-helper";
 
 interface State {
     pageData: PageData

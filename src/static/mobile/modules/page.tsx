@@ -1,6 +1,6 @@
 import { Page, PageData } from "maishu-jueying-core";
-import { errors } from "../../asset/errors";
-import { ComponentLoader } from "../../asset/controls/component-loader";
+import { errors } from "../../errors";
+import { ComponentLoader } from "../../controls/component-loader";
 import * as React from "react";
 import { LocalService } from "../../services/local-service";
 
