@@ -4,14 +4,28 @@ import { PageRecord } from "../../../entities";
 import { pathConcat } from "maishu-toolkit";
 import { ComponentInfo } from "../../model";
 import websiteConfig from "website-config";
+import { errorHandle } from "../error-handle";
 
 Service.headers["application-id"] = "7bbfa36c-8115-47ad-8d47-9e52b58e7efd";
 
 export class LocalService extends Service {
 
+    constructor() {
+        super(err => errorHandle(err))
+    }
+
     url(path: string): string {
-        // let u = this.localServiceUrl(path);
-        // return u;
+        let sitePath: string = null;
+        let pageUrl = location.hash.substr(1);
+        if (pageUrl.startsWith("/")) {
+            pageUrl = pageUrl.substr(1);
+            sitePath = pageUrl.split("/")[0];
+        }
+
+        if (sitePath) {
+            path = pathConcat(sitePath, path);
+        }
+
         return path;
     }
 

@@ -6,15 +6,15 @@ export type ServerContextData = {
     db: ConnectionOptions,
     staticRoot?: VirtualDirectory,
 }
-
-export let connection = createParameterDecorator((ctx: ServerContext<ServerContextData>) => {
+let config = require("../config.js");
+export let connection = createParameterDecorator(() => {
     return new Promise(async (resolve, reject) => {
         let connectionManager = getConnectionManager();
-        let name = ctx.data.db.database as string;
+        let name = config.db.database as string;
         console.assert(name != null);
         let connection: Connection;
         if (!connectionManager.has(name)) {
-            let dbOptions = ctx.data.db;
+            let dbOptions = config.db;
             connection = await createConnection(dbOptions);
         }
         else {

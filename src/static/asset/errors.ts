@@ -1,5 +1,4 @@
 import { errors as baseErrors } from "maishu-toolkit";
-import { Settings } from "../..";
 export let errors = Object.assign({
     pageRecordNotExists(id: string) {
         let msg = `Page data record with id '${id}' is not exists.`;
@@ -21,10 +20,10 @@ export let errors = Object.assign({
         let msg = `Page name can not be null or empty.`;
         return new Error(msg);
     },
-    settingFieldNull<T extends Settings>(fieldName: keyof T) {
-        let msg = `Field '${fieldName}' of settings is null.`;
-        return new Error(msg);
-    },
+    // settingFieldNull<T extends Settings>(fieldName: keyof T) {
+    //     let msg = `Field '${fieldName}' of settings is null.`;
+    //     return new Error(msg);
+    // },
     fileNotExists(filePath: string) {
         let msg = `File '${filePath}' is not exists.`;
         return new Error(msg);

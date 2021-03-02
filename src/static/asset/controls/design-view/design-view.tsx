@@ -7,7 +7,6 @@ import { DesignPage } from "../design-components/index";
 import "../design-components/index";
 import { PageHelper } from "../page-helper";
 import { ComponentLoader } from "../component-loader";
-import { services } from "../../services/index";
 import { ComponentInfo } from "../../../model";
 import { guid } from "maishu-toolkit";
 
@@ -130,13 +129,15 @@ export class DesignView extends React.Component<Props, State> {
     }
 
     private renderPageData(pageData: PageData, componentPanel: ComponentPanel) {
-        ComponentLoader.loadComponentTypes(pageData, async (typeName, componentInfo) => {
-            await Promise.all([
-                ComponentLoader.loadComponentEditor(componentInfo),
-                ComponentLoader.loadComponentLayout(componentInfo),
-            ])
-            this.setState({});
-        })
+        // let compoentLoader = new ComponentLoader(pageData);
+        // compoentLoader.loadComponentSuccess.add(async args => {
+        //     let { componentInfo } = args;
+        //     await Promise.all([
+        //         ComponentLoader.loadComponentEditor(componentInfo),
+        //         ComponentLoader.loadComponentLayout(componentInfo),
+        //     ])
+        // })
+
         return <DesignPage pageData={pageData} componentPanel={componentPanel} />
     }
 

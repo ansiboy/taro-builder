@@ -28,12 +28,17 @@ export default class PageView extends React.Component<PageProps, State> {
                 return r;
             })
             .then(r => {
-                (r.pageData as PageData).children.forEach(c=>{
+                (r.pageData as PageData).children.forEach(c => {
                     c.props.data = this.props.data;
                 })
-                ComponentLoader.loadComponentTypes(r.pageData, (typeName, isSuccess) => {
-                    this.setState({ pageData: r.pageData })
-                }, true);
+
+                // ComponentLoader.loadComponentTypes(r.pageData, (typeName, isSuccess) => {
+                //     this.setState({ pageData: r.pageData })
+                // }, true);
+                let componentLoader = new ComponentLoader(r.pageData);
+                componentLoader.loadComponentsComplete.add(() => {
+                    this.setState({ pageData: r.pageData });
+                })
             });
     }
     emptyPageData() {

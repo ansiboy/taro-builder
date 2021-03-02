@@ -1,10 +1,8 @@
 import { Page, PageData } from "maishu-jueying-core";
-import { services } from "../../asset/services/index";
 import { errors } from "../../asset/errors";
 import { ComponentLoader } from "../../asset/controls/component-loader";
 import * as React from "react";
 import { LocalService } from "../../asset/services/local-service";
-import { errorHandle } from "../../asset/error-handle";
 
 interface State {
     pageData?: PageData
@@ -14,7 +12,7 @@ interface Props {
     data: { [key: string]: string }
 }
 
-let localService = new LocalService(err => errorHandle(err))
+let localService = new LocalService()
 
 export default class MobilePage extends React.Component<Props, State>{
     constructor(props) {
@@ -29,14 +27,17 @@ export default class MobilePage extends React.Component<Props, State>{
         if (!id)
             throw errors.urlParameterEmpty("id");
 
-        let r = await services.local.getPageRecord(id);
+        let r = await localService.getPageRecord(id);
         if (r == null)
             throw errors.pageRecordNotExists(id);
 
-        ComponentLoader.loadComponentTypes(r.pageData, () => {
-            this.setState({});
-        }, true);
-        this.setState({ pageData: r.pageData });
+        // ComponentLoader.loadComponentTypes(r.pageData, () => {
+        //     this.setState({});
+        // }, true);
+        let componentLoader = new ComponentLoader(r.pageData);
+        componentLoader.loadComponentsComplete.add(() => {
+            this.setState({ pageData: r.pageData });
+        });
     }
 
     render() {

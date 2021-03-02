@@ -1,10 +1,12 @@
-import { errorHandle } from "../../asset/error-handle";
 import { registerComponent, PageData, componentTypes, ComponentData } from "maishu-jueying-core";
 
 import { errors } from "../errors";
 import { LocalService } from "../services/local-service";
 import * as React from "react";
 import { guid } from "maishu-toolkit";
+import { Callback } from "maishu-toolkit";
+
+let localRequirejs = require as any as typeof requirejs;
 
 /** 组件描述信息 */
 export interface ComponentInfo {
@@ -24,13 +26,31 @@ export interface ComponentInfo {
 }
 
 
-let localService = new LocalService(err => errorHandle(err));
+let localService = new LocalService();
 export class ComponentLoader {
-    static async loadComponentTypes(pageData: PageData, loadComponentFinish: (typeName?: string, componentInfo?: ComponentInfo) => void, isRuntimeMode?: boolean) {
-        isRuntimeMode = isRuntimeMode == null ? false : isRuntimeMode;
+
+    loadComponentsComplete = new Callback();
+    loadComponentSuccess = new Callback<{ typeName: string, componentInfo: ComponentInfo, pageData: PageData }>();
+    loadComponentFail = new Callback<{ typeName: string }>();
+    private _pageData: PageData;
+    private _isRuntimeMode: boolean;
+
+    constructor(pageData: PageData, isRuntimeMode?: boolean) {
+        this._pageData = pageData;
+        this._isRuntimeMode = isRuntimeMode;
+    }
+
+    get pageData() {
+        return this._pageData;
+    }
+
+
+    loadComponentTypes() {
+        let isRuntimeMode = this._isRuntimeMode == null ? false : this._isRuntimeMode;
         let isDesignMode = !isRuntimeMode;
         let pageDataComponentTypes: string[] = [];
-        let stack: Array<ComponentData> = [...pageData.children];
+        let stack: Array<ComponentData> = [...this._pageData.children];
+
         while (stack.length > 0) {
             let item = stack.pop();
 
@@ -50,13 +70,13 @@ export class ComponentLoader {
             }
         }
 
-
         let typesToLoad = pageDataComponentTypes.filter(o => componentTypes[o] == null);
         if (typesToLoad.length == 0) {
-            loadComponentFinish();
+            this.loadComponentsComplete.fire({});
             return;
         }
 
+        let executedCount = 0;
         for (let i = 0; i < typesToLoad.length; i++) {
             let type = typesToLoad[i];
             let componentType = componentTypes[type] as any;
@@ -64,16 +84,22 @@ export class ComponentLoader {
                 registerComponent(type, FakeComponent);
                 loadComponentType(type, isDesignMode).then(c => {
                     registerComponent(type, c.componentType);
-                    loadComponentFinish(type, c.componentInfo);
+                    console.assert(c.componentInfo != null);
+                    this.loadComponentSuccess.fire({
+                        typeName: type, componentInfo: c.componentInfo,
+                        pageData: this._pageData
+                    });
+
 
                 }).catch(err => {
                     console.error(err);
-                    let componentType = createComponentLoadFail(err, () => {
-                        delete componentTypes[type];
-                        ComponentLoader.loadComponentTypes(pageData, loadComponentFinish);
-                    });
-                    registerComponent(type, componentType);
-                    loadComponentFinish(type, null);
+                    this.loadComponentFail.fire({ typeName: type });
+
+                }).finally(() => {
+                    executedCount = executedCount + 1;
+                    if (executedCount >= typesToLoad.length) {
+                        this.loadComponentsComplete.fire({});
+                    }
                 })
             }
         }
@@ -101,12 +127,6 @@ async function loadComponentType(typeName: string, isDesignMode: boolean) {
     let componentInfo = componentInfos.filter(o => o.type == typeName)[0];
     if (componentInfo == null) {
         let error = errors.canntFindComponentInfo(typeName);;
-        // componentInfo = {
-        //     type: InfoComponent.name,
-        //     path: `/info-component.js?text=${error.message}`,
-        //     // props: { text: error.message }
-        // }
-
         let componentType = CreateInfoComponent(error.message);
         return { componentType, componentInfo };
 
@@ -115,7 +135,7 @@ async function loadComponentType(typeName: string, isDesignMode: boolean) {
     let path = isDesignMode ? componentInfo.design || componentInfo.path : componentInfo.path;
 
     let componentType = await new Promise<React.ComponentClass<any>>((resolve, reject) => {
-        requirejs([`${path}`], (mod) => {
+        localRequirejs([`${path}`], (mod) => {
             let compoenntType: React.ComponentClass<any> = mod[typeName] || mod["default"];
             if (compoenntType == null)
                 throw errors.moduleNotExport(path, typeName);
@@ -128,7 +148,7 @@ async function loadComponentType(typeName: string, isDesignMode: boolean) {
             let componentType = CreateInfoComponent(text);
             // return { componentType, componentInfo };
             // reject(err);
-            // console.error(err);
+            console.error(err);
             resolve(componentType)
         })
 
@@ -146,7 +166,7 @@ async function loadComponentEditor(componentInfo: ComponentInfo): Promise<any> {
         return Promise.resolve();
 
     return new Promise((resolve, reject) => {
-        requirejs([`${componentInfo.editor}`], (mod) => {
+        localRequirejs([`${componentInfo.editor}`], (mod) => {
             resolve(mod);
         }, err => {
             let text = typeof err == "string" ? err : err.message;
@@ -163,7 +183,7 @@ async function loadComponentLayout(componentInfo: ComponentInfo): Promise<any> {
         return Promise.resolve();
     //import { componentRenders } from "../component-renders/index";
     return new Promise((resolve, reject) => {
-        requirejs([`${componentInfo.layout}`, "asset/component-renders/index"], (mod, renderModule) => {
+        (require as any)([`${componentInfo.layout}`, "asset/component-renders/index"], (mod, renderModule) => {
             let func = mod?.default || mod;
             if (typeof func != "function") {
                 console.error(`Module ${componentInfo.layout} is not a function.`)

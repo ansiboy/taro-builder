@@ -2,13 +2,51 @@ import { Page, PageData, registerComponent } from "maishu-jueying-core";
 import { DesignerContext, PageDesigner } from "maishu-jueying";
 import * as React from "react";
 import { ComponentPanel } from "../component-panel";
+import { ComponentLoader } from "../component-loader";
 
 type T = { page: DesignPage, designer: PageDesigner, pageData: PageData, componentPanel: ComponentPanel };
 export let DesignPageContext = React.createContext<T>({ page: null, designer: null, pageData: null, componentPanel: null });
 
-// @component({ type: Page.typeName })
-export class DesignPage extends React.Component<{ pageData: PageData, componentPanel: ComponentPanel }> {
+interface State {
+}
+
+export class DesignPage extends React.Component<{ pageData: PageData, componentPanel: ComponentPanel }, State> {
     element: HTMLElement;
+    componentLoader: ComponentLoader;
+
+    constructor(props: DesignPage["props"]) {
+        super(props);
+
+        this.state = {};
+        this.createComponentLoader(this.props.pageData);
+    }
+
+    componentDidMount() {
+    }
+
+    createComponentLoader(pageData: PageData) {
+        this.componentLoader = new ComponentLoader(pageData);
+        this.componentLoader.loadComponentSuccess.add(args => {
+            // let componentInfo = args.componentInfo;
+            // Promise.all([
+            //     ComponentLoader.loadComponentEditor(componentInfo),
+            //     ComponentLoader.loadComponentLayout(componentInfo),
+            // ]).then(() => {
+            //     this.setState({ pageData });
+            // })
+        })
+        this.componentLoader.loadComponentsComplete.add(() => {
+            this.setState({ pageData });
+        })
+
+        this.componentLoader.loadComponentFail.add(() => {
+        })
+        this.componentLoader.loadComponentTypes();
+    }
+
+    UNSAFE_componentWillReceiveProps(props: DesignPage["props"]) {
+        this.createComponentLoader(props.pageData);
+    }
 
     render() {
         return <DesignerContext.Consumer>

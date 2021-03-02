@@ -6,7 +6,6 @@ import { ComponentData, PageData } from "maishu-jueying-core";
 import { PageHelper } from "../asset/controls/page-helper";
 import { DesignerContext, EditorPanel, EditorPanelProps, PageDesigner } from "maishu-jueying";
 import { ComponentPanel } from "../asset/controls/component-panel";
-import { ComponentLoader } from "../asset/controls/component-loader";
 import { DesignPage } from "../asset/controls/design-components/index";
 import "./pc-page-edit.less";
 import { getComponentRender } from "../asset/component-renders/index";
@@ -15,6 +14,7 @@ import { FormValidator, rules as r } from "maishu-dilu";
 import * as ui from "maishu-ui-toolkit";
 import { ComponentInfo } from "../model";
 import { guid } from "maishu-toolkit";
+import { ComponentLoader } from "../asset/controls/component-loader";
 
 interface State {
     pageRecord?: PageRecord,
@@ -38,6 +38,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
     localService: LocalService;
     validator: FormValidator;
     pageDesigner: PageDesigner;
+    // componentLoader: ComponentLoader;
 
     constructor(props) {
         super(props);
@@ -64,7 +65,6 @@ export default class PCPageEdit extends React.Component<Props, State> {
         this.localService.templateList().then(r => {
             this.setState({ templateList: r })
         });
-
     }
 
     private emptyRecord(): Partial<PageRecord> {
@@ -85,14 +85,18 @@ export default class PCPageEdit extends React.Component<Props, State> {
     async componentDidMount() {
         let pageRecord: PageRecord;
         let templateRecord: PageRecord;
-        if (this.state.pageRecord == null) {
-            pageRecord = await this.getPageRecord();
+        this.getPageRecord().then(async pageRecord => {
             if (pageRecord?.templateId) {
                 templateRecord = await this.localService.getPageRecord(pageRecord.templateId);
             }
-        }
 
-        this.setState({ isReady: true, pageRecord, templateRecord });
+            this.getPageRecord().then(async pageRecord => {
+                if (pageRecord?.templateId) {
+                    templateRecord = await this.localService.getPageRecord(pageRecord.templateId);
+                }
+                this.setState({ isReady: true, pageRecord, templateRecord });
+            })
+        })
     }
 
     private async getPageRecord() {
@@ -124,22 +128,18 @@ export default class PCPageEdit extends React.Component<Props, State> {
             PageHelper.mergeTemplate(pageData, template);
         }
 
-        ComponentLoader.loadComponentTypes(pageData,
-            async (typeName, componentInfo) => {
-                await Promise.all([
-                    ComponentLoader.loadComponentEditor(componentInfo),
-                    ComponentLoader.loadComponentLayout(componentInfo),
-                ])
-                let r = this.state.pageRecord;
-                r.pageData = pageData;
-                console.assert(r != null);
-                this.setState({ pageRecord: r });
-            }
-        );
-
-        return <>
-            <DesignPage pageData={pageData} componentPanel={componentPanel} />
-        </>
+        return <DesignPage pageData={pageData} componentPanel={componentPanel}
+            ref={e => {
+                if (!e) return;
+                e.componentLoader.loadComponentSuccess.add(args => {
+                    Promise.all([
+                        ComponentLoader.loadComponentEditor(args.componentInfo),
+                        ComponentLoader.loadComponentLayout(args.componentInfo),
+                    ]).then(() => {
+                        this.setState({});
+                    })
+                })
+            }} />
     }
 
     private bodyVisible(pageData: PageData): boolean {
@@ -264,8 +264,8 @@ export default class PCPageEdit extends React.Component<Props, State> {
     }
 
     render() {
-        let { pageRecord, componentInfos, isReady, templateRecord, templateList } = this.state;
-        let pageData = pageRecord?.pageData;
+        let { pageRecord, templateList } = this.state;
+        // let pageData = pageRecord?.pageData;
         templateList = templateList || [];
         return <>
             <div>
@@ -282,7 +282,7 @@ export default class PCPageEdit extends React.Component<Props, State> {
                     <li className="pull-right">
                         <button className="btn btn-sm btn-primary"
                             onClick={() => this.props.app.redirect("page-list")}>
-                            <i className="icon-reply"></i><span>返回</span>
+                            <i className="fa fa-reply"></i><span>返回</span>
                         </button>
                     </li>
                     <li className="pull-right">
@@ -291,13 +291,13 @@ export default class PCPageEdit extends React.Component<Props, State> {
                                 if (!e) return;
                                 ui.buttonOnClick(e, () => this.save(), { toast: "保存成功" })
                             }}>
-                            <i className="icon-save"></i><span>保存</span>
+                            <i className="fa fa-save"></i><span>保存</span>
                         </button>
                     </li>
                     <li className="pull-right">
                         <button className="btn btn-sm btn-primary"
                             onClick={() => window.open(`preview.html#page?id=${pageRecord.id}`)}>
-                            <i className="icon-eye-open"></i><span>预览</span>
+                            <i className="fa fa-eye"></i><span>预览</span>
                         </button>
                     </li>
 

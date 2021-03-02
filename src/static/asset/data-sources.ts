@@ -1,4 +1,4 @@
-import { PageDataSource as DataSource } from "maishu-chitu-admin/static";
+import { DataSource } from "maishu-toolkit";
 import { PageRecord } from "../../entities";
 import { LocalService } from "./services/local-service";
 

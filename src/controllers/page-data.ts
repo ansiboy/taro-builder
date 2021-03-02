@@ -4,8 +4,9 @@ import { PageRecord } from "../entities";
 import { errors } from "../errors";
 import { connection } from "../common";
 import { guid } from "maishu-toolkit";
-import { currentAppId } from "maishu-chitu-admin";
+// import { currentAppId } from "maishu-chitu-admin";
 import * as fs from "fs";
+import { currentAppId } from "../decoders";
 
 @controller("page-data")
 export class PageDataController {

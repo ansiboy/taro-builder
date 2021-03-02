@@ -130,18 +130,18 @@ export default class PageEdit extends React.Component<Props, State> {
             ref={e => this.designView = e || this.designView}
             toolbarButtons={[
                 <button className="btn btn-sm btn-primary" onClick={() => this.preivew()}>
-                    <i className="icon-eye-open"></i><span>预览</span>
+                    <i className="fa fa-eye-open"></i><span>预览</span>
                 </button>,
                 <button className="btn btn-sm btn-primary"
                     ref={e => {
                         if (!e) return;
                         buttonOnClick(e, () => this.save(), { toast: "保存成功!" })
                     }}>
-                    <i className="icon-save"></i>
+                    <i className="fa fa-save"></i>
                     <span>保存</span></button>,
                 <button className="btn btn-sm btn-primary"
                     onClick={() => this.props.app.back()}>
-                    <i className="icon-reply"></i><span>返回</span>
+                    <i className="fa fa-reply"></i><span>返回</span>
                 </button>
             ]}>
         </DesignView>
