@@ -48,6 +48,7 @@
         "maishu-chitu-react": "^1.27.0",
         "maishu-chitu-service": "^1.21.0",
         "maishu-dilu": "^1.9.1",
+        "maishu-dilu-react": "^1.2.0",
         "maishu-jueying": "^3.1.13",
         "maishu-jueying-core": "^1.5.1",
         "maishu-node-mvc": "^2.16.1",

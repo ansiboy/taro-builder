@@ -1,7 +1,7 @@
 import { controller, action, routeData, serverContext, ServerContext, JavaScriptProcessor, ContentResult } from "maishu-node-mvc";
 import { Connection, DataHelper, SelectArguments } from "maishu-node-data";
 import { PageRecord } from "../entities";
-import { errors } from "../errors";
+import { errors } from "../static/errors";
 import { connection } from "../common";
 import { guid } from "maishu-toolkit";
 // import { currentAppId } from "maishu-chitu-admin";

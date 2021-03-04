@@ -16,6 +16,8 @@ let websiteConfig = {
             "maishu-chitu": "/node_modules/maishu-chitu/dist/index",
             "maishu-chitu-react": "node_modules/maishu-chitu-react/dist/index",
             "maishu-chitu-service": "/node_modules/maishu-chitu-service/dist/index",
+            "maishu-dilu-react": "node_modules/maishu-dilu-react/dist/index",
+
             "maishu-image-components": "node_modules/maishu-image-components/dist/index",
             "maishu-jueying": "node_modules/maishu-jueying/dist/index",
             "maishu-jueying-core": "node_modules/maishu-jueying-core/dist/index",
