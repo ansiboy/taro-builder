@@ -63,7 +63,8 @@ let websiteConfig = {
         { id: "E0D3BC32-989E-4C22-9C75-523820C4ED76", name: "忘记密码", path: "#pc-page-edit?name=forget-password" },
         { id: "99CEE6E1-7B84-4012-8828-A550CAD99411", name: "地址列表", path: "#pc-page-edit?name=receipt-list" },
         { id: "52996F0A-C263-41BF-8891-6ED5421DB44F", name: "地址编辑", path: "#pc-page-edit?name=receipt-edit" },
-        { id: "8B2305F4-12CE-4F94-9F5B-3A6B87174377", name: "会员首页", path: "#pc-page-edit?name=account" }
+        { id: "8B2305F4-12CE-4F94-9F5B-3A6B87174377", name: "会员首页", path: "#pc-page-edit?name=account" },
+        { id: "15A092E7-841F-4CFA-9890-3CADE610B09B", name: "搜索", path: "#pc-page-edit?name=search" }
 
     ],
     containers: {}

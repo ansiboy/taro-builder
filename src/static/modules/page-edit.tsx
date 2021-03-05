@@ -37,7 +37,7 @@ export default class PageEdit extends React.Component<Props, State> {
         //==========================================================================================
         // 设置组件工具栏
         let localService = this.props.app.createService(LocalService);
-        this.loadLessFiles(localService);
+        // this.loadLessFiles(localService);
 
         localService.componentInfos().then(componentInfos => {
             console.assert(componentInfos != null);
@@ -48,13 +48,13 @@ export default class PageEdit extends React.Component<Props, State> {
     }
 
 
-    async loadLessFiles(localService: LocalService) {
-        let files = await localService.clientFiles();
-        let editorLessFiles = files.filter(o => o.startsWith("components") && o.endsWith("editor.less"));
-        editorLessFiles.forEach(path => {
-            Less.renderByRequireJS(path, {});
-        })
-    }
+    // async loadLessFiles(localService: LocalService) {
+    //     let files = await localService.clientFiles();
+    //     let editorLessFiles = files.filter(o => o.startsWith("components") && o.endsWith("editor.less"));
+    //     editorLessFiles.forEach(path => {
+    //         Less.renderByRequireJS(path, {});
+    //     })
+    // }
 
     async save(): Promise<any> {
         let { pageName } = this.designView.state;

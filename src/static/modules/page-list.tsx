@@ -42,17 +42,17 @@ export default class PageListPage extends React.Component {
             columns: [
                 boundField<PageRecord>({ dataField: "name", headerText: "名称" }),
                 dateTimeField<PageRecord>({ dataField: "createDateTime", headerText: "创建时间" }),
-                customDataField({
+                customDataField<PageRecord>({
                     headerText: "操作",
                     itemStyle: { textAlign: "center", width: "120px" },
                     render: (dataItem, cellElement) => {
                         ReactDOM.render(<>
                             <button key="btnAdd" className="btn btn-info btn-minier"
-                                onClick={() => location.href = "page-edit"}>
+                                onClick={() => location.href = "#page-edit?id=" + dataItem.id}>
                                 <i className="fa fa-pencil"></i>
                             </button>
                             <button key="btn-delete" className="btn btn-danger btn-minier"
-                                onClick={() => location.href = "page-edit"}>
+                                onClick={() => location.href = "#page-edit?id=" + dataItem.id}>
                                 <i className="fa fa-trash"></i>
                             </button>
                         </>, cellElement)
@@ -66,7 +66,7 @@ export default class PageListPage extends React.Component {
             <ul className="nav nav-tabs">
                 <li className="pull-right">
                     <button key="btnAdd" className="btn btn-primary "
-                        onClick={() => location.href = "page-edit"}>
+                        onClick={() => location.href = "#page-edit"}>
                         <i className="fa fa-plus"></i>
                         <span>添加</span>
                     </button>

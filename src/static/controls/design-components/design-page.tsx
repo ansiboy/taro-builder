@@ -3,6 +3,7 @@ import { DesignerContext, PageDesigner } from "maishu-jueying";
 import * as React from "react";
 import { ComponentPanel } from "../component-panel";
 import { ComponentLoader } from "../component-loader";
+import "css!devices"
 
 type T = { page: DesignPage, designer: PageDesigner, pageData: PageData, componentPanel: ComponentPanel };
 export let DesignPageContext = React.createContext<T>({ page: null, designer: null, pageData: null, componentPanel: null });
@@ -21,8 +22,6 @@ export class DesignPage extends React.Component<{ pageData: PageData, componentP
         this.createComponentLoader(this.props.pageData);
     }
 
-    componentDidMount() {
-    }
 
     createComponentLoader(pageData: PageData) {
         this.componentLoader = new ComponentLoader(pageData);
@@ -41,11 +40,14 @@ export class DesignPage extends React.Component<{ pageData: PageData, componentP
 
         this.componentLoader.loadComponentFail.add(() => {
         })
-        this.componentLoader.loadComponentTypes();
     }
 
     UNSAFE_componentWillReceiveProps(props: DesignPage["props"]) {
         this.createComponentLoader(props.pageData);
+    }
+
+    componentDidMount() {
+        this.componentLoader.loadComponentTypes();
     }
 
     render() {

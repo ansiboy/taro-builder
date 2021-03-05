@@ -7,19 +7,25 @@ import { ComponentLoader } from "../../controls/component-loader"
 import { PageHelper } from "../../controls/page-helper";
 
 interface State {
-    pageData: PageData
+    pageData?: PageData
 }
 
-export default class PageView extends React.Component<PageProps, State> {
+interface Props {
+    data: {
+        id: string
+    }
+}
+
+export default class PageView extends React.Component<Props, State> {
     private localService: LocalService;
     constructor(props) {
         super(props);
 
         this.state = { pageData: this.emptyPageData() };
-        this.localService = this.props.createService(LocalService);
+        this.localService = new LocalService();
         this.localService.getPageRecord(this.props.data.id as string)
             .then(async r => {
-                if (!r.templateId) {
+                if (!r?.templateId) {
                     return r;
                 }
 
@@ -28,6 +34,11 @@ export default class PageView extends React.Component<PageProps, State> {
                 return r;
             })
             .then(r => {
+                if (r == null) {
+                    this.setState({ pageData: null })
+                    return r;
+                }
+
                 (r.pageData as PageData).children.forEach(c => {
                     c.props.data = this.props.data;
                 })
@@ -56,6 +67,17 @@ export default class PageView extends React.Component<PageProps, State> {
 
     render() {
         let { pageData } = this.state;
+        if (pageData === undefined)
+            return <div className="empty">
+                数据正在加载中...
+            </div>
+
+        if (pageData === null) {
+            return <div className="empty">
+                <div>页面 {this.props.data.id} 不存在</div>
+            </div>
+        }
+
         return <Page pageData={pageData}>
 
         </Page>

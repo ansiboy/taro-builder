@@ -33,21 +33,14 @@ export class ComponentLoader {
     loadComponentSuccess = new Callback<{ typeName: string, componentInfo: ComponentInfo, pageData: PageData }>();
     loadComponentFail = new Callback<{ typeName: string }>();
     private _pageData: PageData;
-    private _isRuntimeMode: boolean;
+    private isDesignMode: boolean;
+    private typesToLoad: string[];
 
     constructor(pageData: PageData, isRuntimeMode?: boolean) {
         this._pageData = pageData;
-        this._isRuntimeMode = isRuntimeMode;
-    }
 
-    get pageData() {
-        return this._pageData;
-    }
-
-
-    loadComponentTypes() {
-        let isRuntimeMode = this._isRuntimeMode == null ? false : this._isRuntimeMode;
-        let isDesignMode = !isRuntimeMode;
+        isRuntimeMode = isRuntimeMode == null ? false : isRuntimeMode;
+        this.isDesignMode = !isRuntimeMode;
         let pageDataComponentTypes: string[] = [];
         let stack: Array<ComponentData> = [...this._pageData.children];
 
@@ -70,38 +63,54 @@ export class ComponentLoader {
             }
         }
 
-        let typesToLoad = pageDataComponentTypes.filter(o => componentTypes[o] == null);
-        if (typesToLoad.length == 0) {
+        this.typesToLoad = pageDataComponentTypes.filter(o => componentTypes[o] == null);
+        for (let i = 0; i < this.typesToLoad.length; i++) {
+            let type = this.typesToLoad[i];
+            let componentType = componentTypes[type] as any;
+            if (componentType == null) {
+                registerComponent(type, FakeComponent);
+            }
+        }
+    }
+
+    get pageData() {
+        return this._pageData;
+    }
+
+
+    loadComponentTypes() {
+
+        if (this.typesToLoad.length == 0) {
             this.loadComponentsComplete.fire({});
             return;
         }
 
         let executedCount = 0;
-        for (let i = 0; i < typesToLoad.length; i++) {
-            let type = typesToLoad[i];
-            let componentType = componentTypes[type] as any;
-            if (componentType == null) {
-                registerComponent(type, FakeComponent);
-                loadComponentType(type, isDesignMode).then(c => {
-                    registerComponent(type, c.componentType);
-                    console.assert(c.componentInfo != null);
-                    this.loadComponentSuccess.fire({
-                        typeName: type, componentInfo: c.componentInfo,
-                        pageData: this._pageData
-                    });
+        for (let i = 0; i < this.typesToLoad.length; i++) {
+            let type = this.typesToLoad[i];
+            // let componentType = componentTypes[type] as any;
+            // if (componentType == null) {
+            //     registerComponent(type, FakeComponent);
+            loadComponentType(type, this.isDesignMode).then(c => {
+                registerComponent(type, c.componentType);
+                console.assert(c.componentInfo != null);
+                this.loadComponentSuccess.fire({
+                    typeName: type, componentInfo: c.componentInfo,
+                    pageData: this._pageData
+                });
 
 
-                }).catch(err => {
-                    console.error(err);
-                    this.loadComponentFail.fire({ typeName: type });
+            }).catch(err => {
+                console.error(err);
+                this.loadComponentFail.fire({ typeName: type });
 
-                }).finally(() => {
-                    executedCount = executedCount + 1;
-                    if (executedCount >= typesToLoad.length) {
-                        this.loadComponentsComplete.fire({});
-                    }
-                })
-            }
+            }).finally(() => {
+                executedCount = executedCount + 1;
+                if (executedCount >= this.typesToLoad.length) {
+                    this.loadComponentsComplete.fire({});
+                }
+            })
+            // }
         }
 
     }

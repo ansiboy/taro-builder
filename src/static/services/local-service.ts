@@ -56,11 +56,11 @@ export class LocalService extends Service {
         return r;
     }
 
-    async clientFiles(): Promise<string[]> {
-        let { protocol, host } = location;
-        let r = await this.get<string[]>(this.url(`clientFiles`));
-        return r;
-    }
+    // async clientFiles(): Promise<string[]> {
+    //     let { protocol, host } = location;
+    //     let r = await this.get<string[]>(this.url(`clientFiles`));
+    //     return r;
+    // }
 
     async componentInfos() {
         let config = await this.componentStationConfig();
