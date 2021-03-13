@@ -4,7 +4,6 @@ import { PageRecord } from "../entities";
 import { errors } from "../static/errors";
 import { connection } from "../common";
 import { guid } from "maishu-toolkit";
-// import { currentAppId } from "maishu-chitu-admin";
 import * as fs from "fs";
 import { currentAppId } from "../decoders";
 
@@ -91,12 +90,6 @@ export class PageDataController {
         return r;
     }
 
-    // /** 获取用户端组件信息 */
-    // @action("/user/componentInfos")
-    // getComponentInfos(@serverContext c: ServerContext<ServerContextData>): ComponentInfo[] {
-    //     return c.data.componentInfos;
-    // }
-
     @action("/website-config.js")
     readWebsiteConfigFile(@serverContext c: ServerContext) {
         let physicalPath = c.rootDirectory.findFile("website-config.js");
@@ -112,41 +105,6 @@ export class PageDataController {
                 ["@babel/plugin-transform-modules-amd", { noInterop: true }]
             ]
         })
-        return new ContentResult(b, { "Content-Type": `application/x-javascript; charset=utf8` });
-    }
-
-    @action("/info-component.js")
-    infoComponentScript(@routeData d: { text: string }) {
-        let script = `
-import * as React from "react";
-
-interface Props {
-    text: string
-}
-
-export default class InfoComponent extends React.Component<Props> {
-    render() {
-        let { text } = this.props;
-        return <div className="text-center" style={{ paddingTop: 20, paddingBottom: 20 }}>
-            ${d.text}
-        </div>
-    }
-}
-        `;
-
-        let b = JavaScriptProcessor.transformJS(script, {
-            "presets": [
-                ["@babel/preset-env", {
-                    "targets": { chrome: 58 }
-                }],
-            ],
-            plugins: [
-                ["@babel/plugin-transform-typescript", { isTSX: true }],
-                ["@babel/plugin-transform-react-jsx", { "pragma": "React.createElement", "pragmaFrag": "React.Fragment" }],
-                ["@babel/plugin-transform-modules-amd", { noInterop: true }]
-            ]
-        })
-
         return new ContentResult(b, { "Content-Type": `application/x-javascript; charset=utf8` });
     }
 

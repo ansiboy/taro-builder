@@ -4,7 +4,7 @@ import { ConnectionOptions } from "maishu-node-data";
 
 export let db: ConnectionOptions = {
     type: "mysql", username: "root", password: "81263", name: "taro-builder",
-    database: "taro-builder", entities: [path.join(__dirname, "./entities.js")],
+    database: "taro-builder", entities: ["./entities.js"],
     synchronize: false,
     // host: "127.0.0.1", port: 3306,
     host: "192.168.2.94", port: 43306
@@ -22,7 +22,8 @@ export default {
     port: 5216,
     virtualPaths,
     proxy: {
-        "/design/(\\S+)": `${componentStation}/$1`,
+        "/design/(\\S*)": `${componentStation}/$1`,
+        // "/preview/modules/(\\S*)": `${componentStation}/modules/$1`,
         "^/ueditor/net/upload/(\\S*)": `http://${imageHost}/Images/upload/$1`,
     }
 }

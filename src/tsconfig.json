@@ -9,7 +9,8 @@
         "allowJs": false,
     },
     "exclude": [
+        "static",
         "sample-app",
-        "lib"
+        "lib",
     ]
 }

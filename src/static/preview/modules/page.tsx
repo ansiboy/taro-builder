@@ -1,4 +1,3 @@
-import { PageProps } from "maishu-chitu-react";
 import { guid } from "maishu-toolkit";
 import * as React from "react";
 import { PageData, Page } from "maishu-jueying-core";

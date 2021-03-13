@@ -1,47 +1,32 @@
-// import { ServerContextData } from "./common";
-// import { errors } from "./errors";
-// import websiteConfig from "./website-config";
-// import { ConnectionOptions } from "maishu-node-data";
-// import * as path from "path";
-// import { VirtualDirectory } from "maishu-node-mvc";
+import * as path from "path";
+import * as fs from "fs";
+import { pathConcat } from "maishu-toolkit";
 
-// export type Settings = AdminSettings & {
-//     db: ConnectionOptions,
-//     componentStation: string,
-// };
+export function filePaths(dir: string): { [key: string]: string } {
+    if (path.isAbsolute(dir) == false)
+        throw `Path ${dir} is not a physical path.`;
 
-// export function start(settings: Settings) {
-//     if (!settings.db) {
-//         throw errors.settingFieldNull("db");
-//     }
+    let r: ReturnType<typeof filePaths> = {};
+    let stack = new Array<string>();
+    stack.push("");
 
-//     if (!settings.componentStation) {
-//         throw errors.settingFieldNull("componentStation");
-//     }
+    while (stack.length > 0) {
+        let relativePath = stack.pop();
+        let p = path.join(dir, relativePath);
+        let names = fs.readdirSync(p);
+        for (let i = 0; i < names.length; i++) {
+            let childPhysicalPath = path.join(p, names[i]);
+            if (fs.statSync(childPhysicalPath).isFile()) {
+                r[pathConcat(relativePath, names[i])] = childPhysicalPath;
+            }
+            else {
+                stack.push(pathConcat(relativePath, names[i]));
+            }
+        }
+    }
 
-//     settings.db = Object.assign({
-//         entities: ["./entities.js"],
-//     } as Settings["db"], settings.db);
+    return r;
+}
 
-//     // settings.virtualPaths = Object.assign(settings.virtualPaths || {}, {
-//     //     "node_modules": path.join(__dirname, "node_modules"),
-//     //     "static": path.join(__dirname, "../src/static"),
-//     // });
 
-//     settings.proxy = Object.assign(settings.proxy || {}, {
-//         "/design/(\\S+)": `${settings.componentStation}/$1`,
-//     });
 
-//     let websiteRoot = new VirtualDirectory(__dirname);
-//     websiteRoot.setPath("static", path.join(__dirname, "../src/static"));
-//     websiteRoot.findDirectory("static").setPath("node_modules", path.join(__dirname, "../node_modules"));
-//     let serverContextData: ServerContextData = { db: settings.db };
-//     settings.websiteConfig = websiteConfig;
-//     settings.serverContextData = serverContextData;
-//     settings.rootDirectory = websiteRoot;
-//     let w = startAdmin(settings).then(r => {
-//         let staticDirectory = r.websiteDirectory.findDirectory("static");
-//         console.assert(staticDirectory != null);
-//         serverContextData.staticRoot = staticDirectory;
-//     })
-// }
